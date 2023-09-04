@@ -1,9 +1,19 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import { RankContext } from "../../contextStore/ranksContext";
 
 const NewRankForm = () => {
   const RankCtx = useContext(RankContext);
+  const [isFormValid, setIsFormValid] = useState(true);
+
+  const handleAddRank = () => {
+    if (RankCtx.name.trim().length <= 0) {
+      setIsFormValid(false);
+    } else {
+      setIsFormValid(true);
+      RankCtx.updateranklist();
+    }
+  };
 
   return (
     <div className="container mb-5">
@@ -13,7 +23,7 @@ const NewRankForm = () => {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              RankCtx.updateranklist();
+              handleAddRank();
             }}
           >
             <label>
@@ -28,6 +38,11 @@ const NewRankForm = () => {
               />
             </label>
             <br />
+            {!isFormValid && (
+              <p className="text-danger">
+                Please fill in all the required fields.
+              </p>
+            )}
             <button type="submit" className="btn btn-primary mt-2">
               Add Rank
             </button>

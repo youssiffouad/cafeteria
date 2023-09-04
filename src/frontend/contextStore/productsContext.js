@@ -6,7 +6,7 @@ export const ProductContext = createContext({
   updateprodlist: () => {},
   name: "",
   updatename: (n) => {},
-  vendid: "",
+  vendorId: "",
   updateVendorid: (c) => {},
   catid: "",
   updatecatid: (c) => {},
@@ -96,8 +96,8 @@ export const ProductProvider = (props) => {
     setName(name);
   };
 
-  const updateVendorid = (vendid) => {
-    setVendorId(vendid);
+  const updateVendorid = (vendorId) => {
+    setVendorId(vendorId);
   };
   const updatecatid = (catid) => {
     setcatid(catid);

@@ -1,9 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import { CustomerContext } from "../../contextStore/customersContext";
 
 const NewCustomerForm = () => {
   const customerCtx = useContext(CustomerContext);
+  const [isFormValid, setIsFormValid] = useState(true);
+  const [iscustValid, setiscustValid] = useState(true);
+
+  const handleAddCustomer = () => {
+    if (customerCtx.name.trim().length < 4 || !customerCtx.rankId) {
+      setIsFormValid(false);
+    } else {
+      setIsFormValid(true);
+      customerCtx.updatecustlist();
+    }
+  };
+  const handleCustomerLenght = () => {
+    if (customerCtx.name.trim().length < 4) {
+      setiscustValid(false);
+    } else {
+      setiscustValid(true);
+    }
+  };
 
   return (
     <div className="container mb-5">
@@ -13,16 +31,24 @@ const NewCustomerForm = () => {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              customerCtx.updatecustlist();
+              handleAddCustomer();
             }}
           >
             <label>
-              Customer Name:
+              Customer Name:{" "}
+              {!iscustValid && (
+                <p className="text-danger">
+                  customer name must be at least 4 characters
+                </p>
+              )}
               <input
                 type="text"
                 value={customerCtx.name}
                 className="form-control"
-                onChange={(event) => customerCtx.updatename(event.target.value)}
+                onChange={(event) => {
+                  handleCustomerLenght();
+                  customerCtx.updatename(event.target.value);
+                }}
               />
             </label>
             <br />
@@ -45,6 +71,11 @@ const NewCustomerForm = () => {
             </label>
 
             <br />
+            {!isFormValid && (
+              <p className="text-danger">
+                Please fill in all the required fields.
+              </p>
+            )}
             <button type="submit" className="btn btn-primary mt-2 ">
               Add Customer
             </button>

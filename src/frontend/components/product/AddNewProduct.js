@@ -1,9 +1,32 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import { ProductContext } from "../../contextStore/productsContext";
 
 const NewProductForm = () => {
   const productsCtx = useContext(ProductContext);
+  const [isFormValid, setIsFormValid] = useState(true);
+
+  const handleAddProduct = () => {
+    const sellingPrice = parseFloat(productsCtx.sellingPrice);
+    const quantity = parseFloat(productsCtx.quantity);
+    if (
+      !productsCtx.catid ||
+      !productsCtx.vendorId ||
+      productsCtx.name.trim().length === 0 ||
+      isNaN(sellingPrice) ||
+      isNaN(quantity)
+    ) {
+      console.log(typeof sellingPrice);
+      console.log(typeof quantity);
+      console.log(productsCtx.catid);
+      console.log(productsCtx.vendid);
+      console.log(productsCtx.name);
+      setIsFormValid(false);
+    } else {
+      setIsFormValid(true);
+      productsCtx.updateprodlist();
+    }
+  };
 
   return (
     <div className="container mb-5">
@@ -13,7 +36,7 @@ const NewProductForm = () => {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              productsCtx.updateprodlist();
+              handleAddProduct();
             }}
           >
             <label>
@@ -86,6 +109,11 @@ const NewProductForm = () => {
               />
             </label>
             <br />
+            {!isFormValid && (
+              <p className="text-danger">
+                Please fill in all the required fields.
+              </p>
+            )}
             <button type="submit" className="btn btn-primary mt-2 ">
               Add Product
             </button>

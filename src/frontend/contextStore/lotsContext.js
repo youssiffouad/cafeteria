@@ -4,7 +4,7 @@ import serverport from "../backendconfiguration";
 export const LotContext = createContext({
   lotList: [],
   updateLotList: () => {},
-  prodid: "",
+  productID: "",
   updateprodid: () => {},
   catid: "",
   updatecatid: () => {},

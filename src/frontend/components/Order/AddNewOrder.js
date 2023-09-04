@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
 import NewOrderItemForm from "./orderItem/AddNewOrderItem";
@@ -8,6 +8,20 @@ import FilterCustomerBYRank from "../customer/filterByrank";
 
 const NewOrderForm = () => {
   const ordersCtx = useContext(OrderContext);
+  const [isFormValid, setIsFormValid] = useState(true);
+
+  const handleAddOrder = () => {
+    if (
+      !ordersCtx.customerId ||
+      !ordersCtx.rankid ||
+      ordersCtx.orders.length === 0
+    ) {
+      setIsFormValid(false);
+    } else {
+      setIsFormValid(true);
+      ordersCtx.updateOrders();
+    }
+  };
 
   return (
     <div className="container mb-5">
@@ -18,7 +32,7 @@ const NewOrderForm = () => {
             onSubmit={(event) => {
               event.preventDefault();
 
-              ordersCtx.updateOrders();
+              handleAddOrder();
             }}
           >
             <FilterCustomerBYRank />
@@ -39,6 +53,11 @@ const NewOrderForm = () => {
             </label>
 
             <br />
+            {!isFormValid && (
+              <p className="text-danger">
+                Please fill in all the required fields.
+              </p>
+            )}
             <button type="submit" className="btn btn-primary mt-2 ">
               Add Order
             </button>

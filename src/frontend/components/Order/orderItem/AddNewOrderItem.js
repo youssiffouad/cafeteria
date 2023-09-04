@@ -1,10 +1,23 @@
-import React, { useContext } from "react";
-
+import React, { useContext, useState } from "react";
 import { OrderItemContext } from "../../../contextStore/Order/OrderItemContext";
 import FilterProdBYCat from "../../product/filterbyCategory";
 
 const NewOrderItemForm = () => {
   const orderItemsCtx = useContext(OrderItemContext);
+  const [isFormValid, setIsFormValid] = useState(true);
+
+  const handleAddOrderItem = () => {
+    if (
+      orderItemsCtx.quantity.trim() === "" ||
+      !orderItemsCtx.cat.id ||
+      !orderItemsCtx.prod.id
+    ) {
+      setIsFormValid(false);
+    } else {
+      setIsFormValid(true);
+      orderItemsCtx.updateorderitems();
+    }
+  };
 
   return (
     <div className="container mb-5">
@@ -23,10 +36,15 @@ const NewOrderItemForm = () => {
               className="form-control"
             />
           </label>
+          {!isFormValid && (
+            <p className="text-danger">
+              Please fill in all the required fields.
+            </p>
+          )}
           <button
             type="button"
             className="btn btn-primary"
-            onClick={orderItemsCtx.updateorderitems}
+            onClick={handleAddOrderItem}
           >
             Add Order Item
           </button>

@@ -6,9 +6,9 @@ import { LotContext } from "../../contextStore/lotsContext";
 
 const FilterProdBYCat = () => {
   const [categories, setCategories] = useState([]);
-  // const [category, setCategory] = useState({ id: "", name: "" });
+  const [category, setCategory] = useState({ id: "", name: "" });
   const [products, setProducts] = useState([]);
-  // const [product, setProduct] = useState({ id: "", name: "" });
+  const [product, setProduct] = useState({ id: "", name: "" });
   const lotCtx = useContext(LotContext);
   const orderItemCtx = useContext(OrderItemContext);
 
@@ -26,10 +26,10 @@ const FilterProdBYCat = () => {
 
   // Change products on changing category
   useEffect(() => {
-    if (orderItemCtx.cat !== "") {
-      console.log(orderItemCtx.cat);
+    if (category.id !== "") {
+      console.log(category);
       console.log(`a7a b2a`);
-      const requestBody = { catid: orderItemCtx.cat.id };
+      const requestBody = { catid: category.id };
       fetch(`http://localhost:${serverport}/products/filtercategory`, {
         method: "POST",
         headers: {
@@ -46,7 +46,7 @@ const FilterProdBYCat = () => {
           console.error("Failed to filter products:", error);
         });
     }
-  }, [orderItemCtx.cat]);
+  }, [category]);
 
   const catChangeHandler = (event) => {
     const selectedCategoryId = event.target.value;
@@ -54,13 +54,15 @@ const FilterProdBYCat = () => {
       return cat.id == selectedCategoryId;
     });
 
-    // setCategory({ id: selectedCategoryId, name: selectedCategory?.name });
+    setCategory({ id: selectedCategoryId, name: selectedCategory?.name });
     console.log(selectedCategory);
+    console.log(category);
 
     orderItemCtx.updatecat({
       id: selectedCategoryId,
       name: selectedCategory?.name,
     });
+    lotCtx.updatecatid(selectedCategoryId);
   };
 
   const ProdChangeHandler = (event) => {
@@ -69,18 +71,19 @@ const FilterProdBYCat = () => {
       return prod.id == selectedProductId;
     });
 
-    // setProduct({
-    //   id: selectedProductId,
-    //   name: selectedProduct?.name,
-    //   price: selectedProduct?.selling_price,
-    // });
-    // console.log(selectedProduct);
+    setProduct({
+      id: selectedProductId,
+      name: selectedProduct?.name,
+      price: selectedProduct?.selling_price,
+    });
+    console.log(selectedProduct);
 
     orderItemCtx.updateprod({
       id: selectedProductId,
       name: selectedProduct?.name,
       price: selectedProduct?.selling_price,
     });
+    console.log(` i cahnged prodid`);
     console.log(selectedProductId);
     lotCtx.updateprodid(selectedProductId);
   };
@@ -91,7 +94,7 @@ const FilterProdBYCat = () => {
         Category
         <select
           className="form-control"
-          value={orderItemCtx.cat.id}
+          value={category.id}
           onChange={catChangeHandler}
         >
           <option value="">Select category Name</option>
@@ -108,7 +111,7 @@ const FilterProdBYCat = () => {
         Product
         <select
           className="form-control"
-          value={orderItemCtx.prod.id}
+          value={product.id}
           onChange={ProdChangeHandler}
         >
           <option value="">Select product Name</option>
