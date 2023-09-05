@@ -24,17 +24,17 @@ const NewCustomerForm = () => {
   };
 
   return (
-    <div className="container mb-5">
+    <div className="container mb-5 add-container">
       <div className="row justify-content-center">
         <div className="col-md-8">
-          <h2>add new Customer</h2>
+          <h2 className="add-heading">add new Customer</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
               handleAddCustomer();
             }}
           >
-            <label>
+            <label className="label">
               Customer Name:{" "}
               {!iscustValid && (
                 <p className="text-danger">
@@ -44,7 +44,7 @@ const NewCustomerForm = () => {
               <input
                 type="text"
                 value={customerCtx.name}
-                className="form-control"
+                className="form-control input"
                 onChange={(event) => {
                   handleCustomerLenght();
                   customerCtx.updatename(event.target.value);
@@ -52,11 +52,11 @@ const NewCustomerForm = () => {
               />
             </label>
             <br />
-            <label>
+            <label className="label">
               Rank:
               <select
                 value={customerCtx.rankId}
-                className="form-control"
+                className="form-control input"
                 onChange={(event) =>
                   customerCtx.updaterankId(event.target.value)
                 }
@@ -76,7 +76,7 @@ const NewCustomerForm = () => {
                 Please fill in all the required fields.
               </p>
             )}
-            <button type="submit" className="btn btn-primary mt-2 ">
+            <button type="submit" className="btn btn-primary mt-2 add-btn">
               Add Customer
             </button>
           </form>

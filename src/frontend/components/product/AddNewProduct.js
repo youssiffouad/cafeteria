@@ -29,9 +29,9 @@ const NewProductForm = () => {
   };
 
   return (
-    <div className="container mb-5">
+    <div className="container mb-5 add-container">
       <div className="row justify-content-center">
-        <div className="col-md-8">
+        <div className="col-md-12">
           <h2>add new Product</h2>
           <form
             onSubmit={(event) => {
@@ -39,21 +39,21 @@ const NewProductForm = () => {
               handleAddProduct();
             }}
           >
-            <label>
+            <label className="label">
               Product Name:
               <input
                 type="text"
                 value={productsCtx.name}
-                className="form-control"
+                className="form-control input"
                 onChange={(event) => productsCtx.updatename(event.target.value)}
               />
             </label>
             <br />
-            <label>
+            <label className="label">
               Vendor:
               <select
                 value={productsCtx.vendid}
-                className="form-control"
+                className="form-control input"
                 onChange={(event) =>
                   productsCtx.updateVendorid(event.target.value)
                 }
@@ -66,11 +66,11 @@ const NewProductForm = () => {
                 ))}
               </select>
             </label>
-            <label>
+            <label className="label">
               category
               <select
                 value={productsCtx.catid}
-                className="form-control"
+                className="form-control input"
                 onChange={(event) =>
                   productsCtx.updatecatid(event.target.value)
                 }
@@ -85,23 +85,23 @@ const NewProductForm = () => {
             </label>
 
             <br />
-            <label>
+            <label className="label">
               Selling Price:
               <input
                 type="text"
                 value={productsCtx.sellingPrice}
-                className="form-control"
+                className="form-control input"
                 onChange={(event) =>
                   productsCtx.updatesellingPrice(event.target.value)
                 }
               />
             </label>
             <br />
-            <label>
+            <label className="label">
               Quantity:
               <input
                 type="text"
-                className="form-control"
+                className="form-control input"
                 value={productsCtx.quantity}
                 onChange={(event) =>
                   productsCtx.updateQuantity(event.target.value)
@@ -114,7 +114,7 @@ const NewProductForm = () => {
                 Please fill in all the required fields.
               </p>
             )}
-            <button type="submit" className="btn btn-primary mt-2 ">
+            <button type="submit" className="btn btn-primary mt-2 add-btn">
               Add Product
             </button>
           </form>

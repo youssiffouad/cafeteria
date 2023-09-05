@@ -24,10 +24,10 @@ const NewOrderForm = () => {
   };
 
   return (
-    <div className="container mb-5">
+    <div className="container mb-5 add-order-container">
       <div className="row justify-content-center">
-        <div className="col-md-8">
-          <h2>add new Order</h2>
+        <div className="col-md-12">
+          <h2 className="add-heading">add new Order</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -40,12 +40,12 @@ const NewOrderForm = () => {
             <NewOrderItemForm />
             <OrderItemList />
 
-            <label>
+            <label className="label">
               Date
               <input
                 type="date"
                 value={ordersCtx.orderDate}
-                className="form-control"
+                className="form-control input "
                 onChange={(event) => {
                   ordersCtx.updateOrderDate(event.target.value);
                 }}
@@ -58,7 +58,7 @@ const NewOrderForm = () => {
                 Please fill in all the required fields.
               </p>
             )}
-            <button type="submit" className="btn btn-primary mt-2 ">
+            <button type="submit" className="btn btn-primary mt-2 add-btn">
               Add Order
             </button>
           </form>

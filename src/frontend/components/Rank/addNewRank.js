@@ -16,7 +16,7 @@ const NewRankForm = () => {
   };
 
   return (
-    <div className="container mb-5">
+    <div className="container mb-5 add-container">
       <div className="row justify-content-center">
         <div className="col-md-8">
           <h2>Add New Rank</h2>
@@ -26,12 +26,12 @@ const NewRankForm = () => {
               handleAddRank();
             }}
           >
-            <label>
+            <label className="label">
               Rank Name:
               <input
                 type="text"
                 value={RankCtx.name}
-                className="form-control"
+                className="form-control input"
                 onChange={(event) => {
                   RankCtx.updatename(event.target.value);
                 }}
@@ -43,7 +43,7 @@ const NewRankForm = () => {
                 Please fill in all the required fields.
               </p>
             )}
-            <button type="submit" className="btn btn-primary mt-2">
+            <button type="submit" className="btn btn-primary mt-2 add-btn">
               Add Rank
             </button>
           </form>

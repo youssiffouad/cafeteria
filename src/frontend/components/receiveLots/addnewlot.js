@@ -36,10 +36,10 @@ const AddNewLot = () => {
   };
 
   return (
-    <div className="container mb-5">
+    <div className="container mb-5 add-container">
       <div className="row justify-content-center">
-        <div className="col-md-8">
-          <h2>add new lot</h2>
+        <div className="col-md-10">
+          <h2 className="add-heading">add new lot</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -48,20 +48,20 @@ const AddNewLot = () => {
           >
             <FilterProdBYCat />
             <br />
-            <label>
+            <label className="label">
               Quantity:
               <input
-                className="form-control"
+                className="form-control input"
                 type="text"
                 value={LotCtx.quantity}
                 onChange={(event) => LotCtx.updatequantity(event.target.value)}
               />
             </label>
             <br />
-            <label>
+            <label className="label">
               Cost:
               <input
-                className="form-control"
+                className="form-control input"
                 type="text"
                 value={LotCtx.cost}
                 onChange={(event) => {
@@ -71,10 +71,10 @@ const AddNewLot = () => {
               />
             </label>
             <br />
-            <label>
+            <label className="label">
               Received Date:
               <input
-                className="form-control"
+                className="form-control input"
                 type="date"
                 value={LotCtx.received_date}
                 onChange={(event) =>
@@ -88,7 +88,7 @@ const AddNewLot = () => {
                 Please fill in all the required fields.
               </p>
             )}
-            <button className="btn btn-primary mt-2 " type="submit">
+            <button className="btn btn-primary mt-2 add-btn " type="submit">
               Add Lot
             </button>
           </form>

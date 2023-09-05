@@ -20,12 +20,12 @@ const NewOrderItemForm = () => {
   };
 
   return (
-    <div className="container mb-5">
+    <div className="container mb-5 add-order-item-container">
       <div className="row justify-content-center">
         <div className="col-md-8">
-          <h2>add new OrderItem</h2>
+          <h2 className="add-heading">add new OrderItem</h2>
           <FilterProdBYCat />
-          <label>
+          <label className="label">
             Quantity
             <input
               type="text"
@@ -33,7 +33,7 @@ const NewOrderItemForm = () => {
               onChange={(event) =>
                 orderItemsCtx.updatequantity(event.target.value)
               }
-              className="form-control"
+              className="form-control input"
             />
           </label>
           {!isFormValid && (
@@ -43,7 +43,7 @@ const NewOrderItemForm = () => {
           )}
           <button
             type="button"
-            className="btn btn-primary"
+            className="btn btn-primary add-btn"
             onClick={handleAddOrderItem}
           >
             Add Order Item
