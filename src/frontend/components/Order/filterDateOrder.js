@@ -5,17 +5,17 @@ const FilterDateOrders = () => {
   const filterdateCtx = useContext(OrderFilterContext);
 
   return (
-    <div className="container">
+    <div className="container" dir="rtl">
       <div className="row">
         <div className="col-md-8">
-          <h1>Filter Orders Between Certain Dates</h1>
+          <h1>اختيار الطلبات في فترة معينة</h1>
           <form
             onSubmit={(event) => {
               event.preventDefault();
               filterdateCtx.handleFilterDate();
             }}
           >
-            <label htmlFor="start">Enter Start Date Filter</label>
+            <label htmlFor="start">بداية الفترة</label>
             <input
               type="date"
               id="start"
@@ -26,7 +26,7 @@ const FilterDateOrders = () => {
               className="form-control"
             />
             <br />
-            <label htmlFor="end">Enter End Date Filter</label>
+            <label htmlFor="end">نهاية الفترة</label>
             <input
               type="date"
               id="end"
@@ -38,7 +38,7 @@ const FilterDateOrders = () => {
             />
             <br />
             <button type="submit" className="btn btn-primary">
-              Apply Filter
+              تطبيق
             </button>
           </form>
         </div>
@@ -46,11 +46,11 @@ const FilterDateOrders = () => {
       <table className="table table-striped table-bordered table-hover">
         <thead>
           <tr>
-            <th className="col-md-2">Order ID</th>
-            <th className="col-md-2">Customer rank</th>
-            <th className="col-md-2">Customer name</th>
-            <th className="col-md-2">Order Date</th>
-            <th className="col-md-2">Order Price</th>
+            <th className="col-md-2">الرقم المسلسل</th>
+            <th className="col-md-2">الرتبة /الدرجة</th>
+            <th className="col-md-2">اسم المستهلك</th>
+            <th className="col-md-2">تاريخ الطلب</th>
+            <th className="col-md-2">سعر الطلب</th>
           </tr>
         </thead>
         <tbody>
@@ -67,9 +67,7 @@ const FilterDateOrders = () => {
         </tbody>
       </table>
 
-      <h1>
-        Total Cost of Selected Orders is {filterdateCtx.filterdateOrdersCost}
-      </h1>
+      <h1>اجمالي سعر الطلبات المختارة {filterdateCtx.filterdateOrdersCost}</h1>
     </div>
   );
 };

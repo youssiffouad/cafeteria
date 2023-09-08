@@ -29,10 +29,10 @@ const NewProductForm = () => {
   };
 
   return (
-    <div className="container mb-5 add-container">
+    <div className="container mb-5 add-container" dir="rtl">
       <div className="row justify-content-center">
-        <div className="col-md-12">
-          <h2>add new Product</h2>
+        <div className="col-md-8">
+          <h2>اضافة منتج جديد</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -40,7 +40,7 @@ const NewProductForm = () => {
             }}
           >
             <label className="label">
-              Product Name:
+              :اسم المنتج
               <input
                 type="text"
                 value={productsCtx.name}
@@ -50,7 +50,7 @@ const NewProductForm = () => {
             </label>
             <br />
             <label className="label">
-              Vendor:
+              المورد:
               <select
                 value={productsCtx.vendid}
                 className="form-control input"
@@ -67,7 +67,7 @@ const NewProductForm = () => {
               </select>
             </label>
             <label className="label">
-              category
+              التصنيف
               <select
                 value={productsCtx.catid}
                 className="form-control input"
@@ -86,7 +86,7 @@ const NewProductForm = () => {
 
             <br />
             <label className="label">
-              Selling Price:
+              سعر البيع:
               <input
                 type="text"
                 value={productsCtx.sellingPrice}
@@ -98,7 +98,7 @@ const NewProductForm = () => {
             </label>
             <br />
             <label className="label">
-              Quantity:
+              الكمية:
               <input
                 type="text"
                 className="form-control input"
@@ -115,7 +115,7 @@ const NewProductForm = () => {
               </p>
             )}
             <button type="submit" className="btn btn-primary mt-2 add-btn">
-              Add Product
+              اضافة
             </button>
           </form>
         </div>

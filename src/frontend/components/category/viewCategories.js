@@ -7,12 +7,15 @@ const CategoryList = () => {
 
   return (
     <React.Fragment>
-      <h2>view all categories</h2>
-      <table className="table table-striped table-bordered table-hover">
+      <h2 className="text-center">عرض التصنيفات</h2>
+      <table
+        className="table table-striped table-bordered table-hover"
+        dir="rtl"
+      >
         <thead>
           <tr>
-            <th className="col-md-2">Category ID</th>
-            <th className="col-md-2">Category Name</th>
+            <th className="col-md-2">الرقم المسلسل</th>
+            <th className="col-md-2">اسم التصنيف</th>
           </tr>
         </thead>
         <tbody>

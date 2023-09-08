@@ -56,13 +56,13 @@ const FilterCustomerBYRank = (props) => {
   return (
     <React.Fragment>
       <label>
-        Rank
+        الرتبة / الدرجة
         <select
           className="form-control"
           value={orderCtx.rankid}
           onChange={rankchangehandler}
         >
-          <option value="">Select Rank</option>
+          <option value="">اختر الرتبة / الدرجة</option>
           {ranks.map((rank) => (
             <option key={rank.id} value={rank.id}>
               {rank.name}
@@ -72,13 +72,13 @@ const FilterCustomerBYRank = (props) => {
       </label>
 
       <label>
-        Customers
+        المستهلك
         <select
           className="form-control"
           value={orderCtx.customerId}
           onChange={custchangehandler}
         >
-          <option value="">Select Customer Name</option>
+          <option value="">اختر اسم المستهلك</option>
           {filteredcusts.map((cust) => (
             <option key={cust.id} value={cust.id}>
               {cust.custname}

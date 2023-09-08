@@ -24,10 +24,10 @@ const NewOrderForm = () => {
   };
 
   return (
-    <div className="container mb-5 add-order-container">
+    <div className="container mb-5 add-order-container" dir="rtl">
       <div className="row justify-content-center">
         <div className="col-md-12">
-          <h2 className="add-heading">add new Order</h2>
+          <h2 className="add-heading">اضافة طلب جديد</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -41,7 +41,7 @@ const NewOrderForm = () => {
             <OrderItemList />
 
             <label className="label">
-              Date
+              تاريخ الطلب
               <input
                 type="date"
                 value={ordersCtx.orderDate}
@@ -59,7 +59,7 @@ const NewOrderForm = () => {
               </p>
             )}
             <button type="submit" className="btn btn-primary mt-2 add-btn">
-              Add Order
+              اضافة
             </button>
           </form>
         </div>

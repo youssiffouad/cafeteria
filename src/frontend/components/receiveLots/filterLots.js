@@ -37,12 +37,12 @@ const FilterLots = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container" dir="rtl">
       <div className="row">
         <div className="col-md-8">
-          <h1>Filter Lots Between Certain Dates</h1>
+          <h1>اظهار المشتريات في فترة معينة</h1>
           <form onSubmit={submithandler}>
-            <label htmlFor="start">Enter Start Date Filter</label>
+            <label htmlFor="start">بداية الفترة</label>
             <input
               type="date"
               id="start"
@@ -51,7 +51,7 @@ const FilterLots = () => {
               className="form-control"
             />
             <br />
-            <label htmlFor="end">Enter End Date Filter</label>
+            <label htmlFor="end">نهاية الفترة</label>
             <input
               type="date"
               id="end"
@@ -61,7 +61,7 @@ const FilterLots = () => {
             />
             <br />
             <button type="submit" className="btn btn-primary">
-              Apply Filter
+              تطبيق
             </button>
           </form>
         </div>
@@ -69,10 +69,10 @@ const FilterLots = () => {
       <table className="table table-striped table-bordered table-hover">
         <thead>
           <tr>
-            <th className="col-md-2">Product Name</th>
-            <th className="col-md-2">Quantity</th>
-            <th className="col-md-2">Date</th>
-            <th className="col-md-2">Cost</th>
+            <th className="col-md-2">اسم المنتج</th>
+            <th className="col-md-2">السعر</th>
+            <th className="col-md-2">تاريخ الشراء</th>
+            <th className="col-md-2">التكلفة</th>
           </tr>
         </thead>
         <tbody>
@@ -87,7 +87,7 @@ const FilterLots = () => {
         </tbody>
       </table>
 
-      <h1>Total Cost of Selected Lots is {lotscost}</h1>
+      <h1>اجمالي التكلفة للمشتريات المختارة {lotscost}</h1>
     </div>
   );
 };

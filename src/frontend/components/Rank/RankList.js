@@ -7,12 +7,15 @@ const RankList = () => {
 
   return (
     <React.Fragment>
-      <h2>view all ranks</h2>
-      <table className="table table-striped table-bordered table-hover">
+      <h2 className="text-center">عرض الرتب / الدرجات</h2>
+      <table
+        className="table table-striped table-bordered table-hover"
+        dir="rtl"
+      >
         <thead>
           <tr>
-            <th className="col-md-2">Rank ID</th>
-            <th className="col-md-2">Rank Name</th>
+            <th className="col-md-2">الرقم</th>
+            <th className="col-md-2">اسم الرتبة / الدرجة</th>
           </tr>
         </thead>
         <tbody>

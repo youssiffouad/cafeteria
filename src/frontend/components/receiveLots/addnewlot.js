@@ -36,10 +36,10 @@ const AddNewLot = () => {
   };
 
   return (
-    <div className="container mb-5 add-container">
+    <div className="container mb-5 add-container" dir="rtl">
       <div className="row justify-content-center">
         <div className="col-md-10">
-          <h2 className="add-heading">add new lot</h2>
+          <h2 className="add-heading">اضافة مشتريات</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -49,7 +49,7 @@ const AddNewLot = () => {
             <FilterProdBYCat />
             <br />
             <label className="label">
-              Quantity:
+              الكمية:
               <input
                 className="form-control input"
                 type="text"
@@ -59,7 +59,7 @@ const AddNewLot = () => {
             </label>
             <br />
             <label className="label">
-              Cost:
+              التكلفة:
               <input
                 className="form-control input"
                 type="text"
@@ -72,7 +72,7 @@ const AddNewLot = () => {
             </label>
             <br />
             <label className="label">
-              Received Date:
+              تاريخ التوريد:
               <input
                 className="form-control input"
                 type="date"
@@ -89,7 +89,7 @@ const AddNewLot = () => {
               </p>
             )}
             <button className="btn btn-primary mt-2 add-btn " type="submit">
-              Add Lot
+              اضافة
             </button>
           </form>
         </div>

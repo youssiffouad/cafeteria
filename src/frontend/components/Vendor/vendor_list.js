@@ -6,25 +6,30 @@ const VendorList = () => {
   const vendorCtx = useContext(vendorContext);
 
   return (
-    <table className="table table-striped table-bordered table-hover">
-      <thead>
-        <h2>list of all Vendors</h2>
-        <tr>
-          <th className="col-md-2">ID</th>
-          <th className="col-md-2">Name</th>
-          <th className="col-md-2">Phone</th>
-        </tr>
-      </thead>
-      <tbody>
-        {vendorCtx.vendorlist.map((vendor) => (
-          <tr key={vendor.id}>
-            <td>{vendor.id}</td>
-            <td>{vendor.name}</td>
-            <td>{vendor.phone}</td>
+    <React.Fragment>
+      <h2 className="text-center">بيانات الموردين</h2>
+      <table
+        className="table table-striped table-bordered table-hover"
+        dir="rtl"
+      >
+        <thead>
+          <tr>
+            <th className="col-md-2">رقم المسلسل</th>
+            <th className="col-md-2">الاسم</th>
+            <th className="col-md-2">التليفون</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {vendorCtx.vendorlist.map((vendor) => (
+            <tr key={vendor.id}>
+              <td>{vendor.id}</td>
+              <td>{vendor.name}</td>
+              <td>{vendor.phone}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </React.Fragment>
   );
 };
 

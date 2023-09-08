@@ -6,15 +6,15 @@ const Debttable = () => {
 
   return (
     <React.Fragment>
-      <h2>View debt orders</h2>
+      <h2>عرض التقريشة</h2>
       <table className="table table-striped table-bordered table-hover">
         <thead>
           <tr>
-            <th className="col-md-2">Order ID</th>
-            <th className="col-md-2">Customer rank</th>
-            <th className="col-md-2">Customer name</th>
-            <th className="col-md-2">Order Date</th>
-            <th className="col-md-2">Order Price</th>
+            <th className="col-md-2">رقم الطلب </th>
+            <th className="col-md-2">الرتبة </th>
+            <th className="col-md-2">الاسم</th>
+            <th className="col-md-2"> تاريخ الطلب </th>
+            <th className="col-md-2">سعر الطلب</th>
             {/* <th className="col-md-2">Actions</th> Added Actions column */}
           </tr>
         </thead>
@@ -35,7 +35,7 @@ const Debttable = () => {
             <td></td>
             <td></td>
             <td></td>
-            <td>Total debt orders Cost: {accountingCtx.notcashorderscost}</td>
+            <td>اجمالي ايرادات التقريشة: {accountingCtx.notcashorderscost}</td>
           </tr>
         </tbody>
       </table>

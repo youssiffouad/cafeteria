@@ -7,15 +7,20 @@ const ProductList = () => {
 
   return (
     <React.Fragment>
-      <h2>view all products</h2>
-      <table className="table table-striped table-bordered table-hover">
+      <h2 dir="rtl" className="text-center">
+        بيانات المنتجات
+      </h2>
+      <table
+        className="table table-striped table-bordered table-hover"
+        dir="rtl"
+      >
         <thead>
           <tr>
-            <th className="col-md-2">Product Name</th>
-            <th className="col-md-2">Vendor Name</th>
-            <th className="col-md-2">Category Name</th>
-            <th className="col-md-2">Selling Price</th>
-            <th className="col-md-2">Quantity</th>
+            <th className="col-md-2">اسم المنتج</th>
+            <th className="col-md-2">اسم المورد</th>
+            <th className="col-md-2">التصنيف</th>
+            <th className="col-md-2">سعر البيع</th>
+            <th className="col-md-2">الكمية</th>
           </tr>
         </thead>
         <tbody>

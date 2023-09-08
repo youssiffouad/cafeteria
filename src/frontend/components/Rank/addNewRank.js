@@ -16,10 +16,10 @@ const NewRankForm = () => {
   };
 
   return (
-    <div className="container mb-5 add-container">
+    <div className="container mb-5 add-container" dir="rtl">
       <div className="row justify-content-center">
         <div className="col-md-8">
-          <h2>Add New Rank</h2>
+          <h2>اضافة رتبة / درجة جديدة</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -27,7 +27,7 @@ const NewRankForm = () => {
             }}
           >
             <label className="label">
-              Rank Name:
+              اسم الرتبة / الدرجة:
               <input
                 type="text"
                 value={RankCtx.name}
@@ -44,7 +44,7 @@ const NewRankForm = () => {
               </p>
             )}
             <button type="submit" className="btn btn-primary mt-2 add-btn">
-              Add Rank
+              اضافة
             </button>
           </form>
         </div>

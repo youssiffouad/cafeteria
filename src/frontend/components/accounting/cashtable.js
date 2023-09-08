@@ -6,15 +6,18 @@ const CashTable = () => {
 
   return (
     <React.Fragment>
-      <h2>View cash orders</h2>
-      <table className="table table-striped table-bordered table-hover">
+      <h2>عرض المخرون النقدي</h2>
+      <table
+        className="table table-striped table-bordered table-hover text-align-right"
+        dir="rtl"
+      >
         <thead>
           <tr>
-            <th className="col-md-2">Order ID</th>
-            <th className="col-md-2">Customer rank</th>
-            <th className="col-md-2">Customer name</th>
-            <th className="col-md-2">Order Date</th>
-            <th className="col-md-2">Order Price</th>
+            <th className="col-md-2"> رقم الطلب</th>
+            <th className="col-md-2">الرتبة</th>
+            <th className="col-md-2">الاسم</th>
+            <th className="col-md-2">تاريخ الطلب</th>
+            <th className="col-md-2">سعر الطلب</th>
             {/* <th className="col-md-2">Actions</th> Added Actions column */}
           </tr>
         </thead>
@@ -35,7 +38,7 @@ const CashTable = () => {
             <td></td>
             <td></td>
             <td></td>
-            <td>Total cash orders Cost: {accountingCtx.cashorderscost}</td>
+            <td>اجمالي المخرون النقدي: {accountingCtx.cashorderscost}</td>
           </tr>
         </tbody>
       </table>

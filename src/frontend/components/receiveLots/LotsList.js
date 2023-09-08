@@ -5,15 +5,18 @@ const LotList = () => {
 
   return (
     <React.Fragment>
-      <h2>view all lots</h2>
-      <table className="table table-striped table-bordered table-hover">
+      <h2 className="text-center">بيانات المشتريات</h2>
+      <table
+        className="table table-striped table-bordered table-hover"
+        dir="rtl"
+      >
         <thead>
           <tr>
-            <th className="col-md-2">Category</th>
-            <th className="col-md-2">Product Name</th>
-            <th className="col-md-2">Quantity</th>
-            <th className="col-md-2">Cost</th>
-            <th className="col-md-2">Date</th>
+            <th className="col-md-2">التصنيف</th>
+            <th className="col-md-2">اسم المنتج</th>
+            <th className="col-md-2">الكمية</th>
+            <th className="col-md-2">التكلفة</th>
+            <th className="col-md-2">تاريخ الشراء</th>
           </tr>
         </thead>
         <tbody>

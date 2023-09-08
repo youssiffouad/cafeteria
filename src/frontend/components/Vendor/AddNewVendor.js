@@ -6,10 +6,10 @@ const NewVendorForm = () => {
   const vendorCtx = useContext(vendorContext);
 
   return (
-    <div className="container mb-5 add-container">
-      <div className="row justify-content-center">
-        <div className="col-md-8">
-          <h2 className="add-heading">Add New Vendor</h2>
+    <div className="container mb-5 add-container" dir="rtl">
+      <div className="row justify-content-center ">
+        <div className="col-md-8 ">
+          <h2 className="add-heading">اضافة مورد جديد</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -17,7 +17,7 @@ const NewVendorForm = () => {
             }}
           >
             <label className="label">
-              Vendor Name:
+              اسم المورد
               <input
                 type="text"
                 value={vendorCtx.name}
@@ -27,7 +27,7 @@ const NewVendorForm = () => {
             </label>
             <br />
             <label className="label">
-              Phone:
+              رقم التليفون
               <input
                 type="text"
                 value={vendorCtx.phone}
@@ -37,7 +37,7 @@ const NewVendorForm = () => {
             </label>
             <br />
             <button type="submit" className="btn btn-primary mt-2 add-btn ">
-              Add Vendor
+              اضافة
             </button>
           </form>
         </div>

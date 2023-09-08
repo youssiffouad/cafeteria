@@ -14,15 +14,15 @@ const OrderItemList = () => {
 
   return (
     <React.Fragment>
-      <h2>view all OrderItems</h2>
-      <h3>Order Items</h3>
+      <h2>عرض عناصر الطلب</h2>
+
       <table className="table table-striped table-bordered table-hover">
         <thead>
           <tr>
-            <th>Category</th>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Price per Item</th>
+            <th>التصنيف</th>
+            <th>المنتج</th>
+            <th>الكمية</th>
+            <th>السعر للعنصر الواحد</th>
           </tr>
         </thead>
         <tbody>
@@ -46,7 +46,7 @@ const OrderItemList = () => {
             <td></td>
             <td></td>
             <td></td>
-            <td>Total Order Cost: {orderitemCtx.totalOrderCost}</td>
+            <td>اجمالي سعر الطلب: {orderitemCtx.totalOrderCost}</td>
           </tr>
         </tbody>
       </table>

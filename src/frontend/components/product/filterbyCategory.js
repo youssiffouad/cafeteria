@@ -91,13 +91,13 @@ const FilterProdBYCat = () => {
   return (
     <React.Fragment>
       <label>
-        Category
+        التصنيف
         <select
           className="form-control"
           value={category.id}
           onChange={catChangeHandler}
         >
-          <option value="">Select category Name</option>
+          <option value="">اختر التصنيف</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.name}
@@ -108,13 +108,13 @@ const FilterProdBYCat = () => {
       </label>
 
       <label>
-        Product
+        المنتج
         <select
           className="form-control"
           value={product.id}
           onChange={ProdChangeHandler}
         >
-          <option value="">Select product Name</option>
+          <option value="">اختر اسم المنتج</option>
           {products.map((prod) => (
             <option key={prod.id} value={prod.id}>
               {prod.name}

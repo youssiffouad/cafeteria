@@ -23,10 +23,10 @@ const NewOrderItemForm = () => {
     <div className="container mb-5 add-order-item-container">
       <div className="row justify-content-center">
         <div className="col-md-8">
-          <h2 className="add-heading">add new OrderItem</h2>
+          <h2 className="add-heading">اضافة عنصر الي الطلب</h2>
           <FilterProdBYCat />
           <label className="label">
-            Quantity
+            الكمية
             <input
               type="text"
               value={orderItemsCtx.quantity}
@@ -46,7 +46,7 @@ const NewOrderItemForm = () => {
             className="btn btn-primary add-btn"
             onClick={handleAddOrderItem}
           >
-            Add Order Item
+            اضافة
           </button>
         </div>
       </div>

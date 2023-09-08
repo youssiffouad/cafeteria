@@ -59,13 +59,13 @@ const App = (props) => {
     <>
       <h2 className="text-center m-5">cafeteria-STC</h2>
       <nav>
-        <ul className="nav nav-pills  justify-content-around mt-5">
+        <ul className="nav nav-pills  justify-content-around mt-5" dir="rtl">
           <li className="nav-item">
             <a
               className={`nav-link ${activeTab === "vendors" ? "active" : ""}`}
               onClick={() => handleTabClick("vendors")}
             >
-              Vendors
+              الموردين
             </a>
           </li>
           <li className="nav-item">
@@ -73,7 +73,7 @@ const App = (props) => {
               className={`nav-link ${activeTab === "products" ? "active" : ""}`}
               onClick={() => handleTabClick("products")}
             >
-              Products
+              المنتجات
             </a>
           </li>
           <li className="nav-item">
@@ -81,7 +81,7 @@ const App = (props) => {
               className={`nav-link ${activeTab === "lots" ? "active" : ""}`}
               onClick={() => handleTabClick("lots")}
             >
-              Lots
+              المشتريات
             </a>
           </li>
           <li className="nav-item">
@@ -91,7 +91,7 @@ const App = (props) => {
               }`}
               onClick={() => handleTabClick("categories")}
             >
-              Categories
+              التصنيفات
             </a>
           </li>
           <li className="nav-item">
@@ -99,7 +99,7 @@ const App = (props) => {
               className={`nav-link ${activeTab === "ranks" ? "active" : ""}`}
               onClick={() => handleTabClick("ranks")}
             >
-              Ranks
+              الرتب
             </a>
           </li>
           <li className="nav-item">
@@ -109,7 +109,7 @@ const App = (props) => {
               }`}
               onClick={() => handleTabClick("customers")}
             >
-              Customers
+              المستهلكين
             </a>
           </li>
           <li className="nav-item">
@@ -117,7 +117,7 @@ const App = (props) => {
               className={`nav-link ${activeTab === "orders" ? "active" : ""}`}
               onClick={() => handleTabClick("orders")}
             >
-              Orders
+              المبيعات
             </a>
           </li>
           <li className="nav-item">
@@ -125,7 +125,7 @@ const App = (props) => {
               className={`nav-link ${activeTab === "profits" ? "active" : ""}`}
               onClick={() => handleTabClick("profits")}
             >
-              Profits
+              الايرادات
             </a>
           </li>
         </ul>

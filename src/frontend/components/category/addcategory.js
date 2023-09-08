@@ -6,10 +6,10 @@ const AddCategory = () => {
   const catCtx = useContext(CategoriesContext);
 
   return (
-    <div className="container mb-5 add-container">
+    <div className="container mb-5 add-container" dir="rtl">
       <div className="row justify-content-center">
         <div className="col-md-12">
-          <h2 className="add-heading">Add New Category</h2>
+          <h2 className="add-heading">اضافة تصنيف جديد</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -18,7 +18,7 @@ const AddCategory = () => {
           >
             <div className="form-group">
               <label htmlFor="categoryName" className="label">
-                Category Name:
+                اسم التصنيف:
               </label>
               <input
                 type="text"
@@ -29,7 +29,7 @@ const AddCategory = () => {
               />
             </div>
             <button type="submit" className="btn btn-primary add-btn">
-              Add Category
+              اضافة
             </button>
           </form>
         </div>

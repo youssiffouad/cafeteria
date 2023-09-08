@@ -34,11 +34,11 @@ const Filterprofits = () => {
     }
   };
   return (
-    <div className="container-lg">
+    <div className="container-lg" dir="rtl">
       <div className="row mt-3">
         <div className="col-md-10">
           <div className="d-flex align-items-center justify-content-between mb-4">
-            <p className="mb-0">Filter Accountings Between Certain Dates</p>
+            <p className="mb-0"> اختر الايرادات في فترة معينة </p>
             <form
               onSubmit={(event) => {
                 event.preventDefault();
@@ -48,7 +48,7 @@ const Filterprofits = () => {
             >
               <div className="col-md-6">
                 <label htmlFor="start" className="form-label">
-                  Enter Start Date Filter
+                  بداية الفترة
                 </label>
                 <input
                   className="form-control"
@@ -62,7 +62,7 @@ const Filterprofits = () => {
               </div>
               <div className="col-md-6">
                 <label htmlFor="end" className="form-label">
-                  Enter End Date Filter
+                  نهاية الفترة
                 </label>
                 <input
                   className="form-control"
@@ -75,7 +75,7 @@ const Filterprofits = () => {
                 />
               </div>
               <button type="submit" className="btn btn-primary ms-3">
-                Apply Filter
+                تطبيق
               </button>
             </form>
           </div>
@@ -89,7 +89,7 @@ const Filterprofits = () => {
                   }`}
                   onClick={() => handleTabClick("cash")}
                 >
-                  CashTable
+                  الايرادات النقدية
                 </a>
               </li>
               <li className="nav-item">
@@ -99,7 +99,7 @@ const Filterprofits = () => {
                   }`}
                   onClick={() => handleTabClick("debt")}
                 >
-                  Debttable
+                  التقريشة
                 </a>
               </li>
             </ul>
@@ -107,10 +107,10 @@ const Filterprofits = () => {
           {renderTabContent()}
 
           <h1>
-            Total Profits:{" "}
+            اجمالي الارباح :{" "}
             {accountingCtx.allorderscost - accountingCtx.lotscost}
           </h1>
-          <h1>Total money: {accountingCtx.allorderscost}</h1>
+          <h1>اجمالي العائد: {accountingCtx.allorderscost}</h1>
         </div>
       </div>
     </div>

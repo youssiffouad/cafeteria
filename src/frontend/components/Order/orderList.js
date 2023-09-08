@@ -11,15 +11,18 @@ const OrderList = () => {
 
   return (
     <OrderItemProvider>
-      <h2>View All Orders</h2>
-      <table className="table table-striped table-bordered table-hover">
+      <h2 className="text-center">عرض كل الطلبات</h2>
+      <table
+        className="table table-striped table-bordered table-hover"
+        dir="rtl"
+      >
         <thead>
           <tr>
-            <th className="col-md-2">Order ID</th>
-            <th className="col-md-2">Customer rank</th>
-            <th className="col-md-2">Customer name</th>
-            <th className="col-md-2">Order Date</th>
-            <th className="col-md-2">Order Price</th>
+            <th className="col-md-2">الرقم المسلسل</th>
+            <th className="col-md-2">الرتبة / الدرجة</th>
+            <th className="col-md-2">اسم المستهلك</th>
+            <th className="col-md-2">تاريخ الطلب</th>
+            <th className="col-md-2">السعر</th>
             {/* <th className="col-md-2">Actions</th> Added Actions column */}
           </tr>
         </thead>

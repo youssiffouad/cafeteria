@@ -24,10 +24,10 @@ const NewCustomerForm = () => {
   };
 
   return (
-    <div className="container mb-5 add-container">
+    <div className="container mb-5 add-container" dir="rtl">
       <div className="row justify-content-center">
         <div className="col-md-8">
-          <h2 className="add-heading">add new Customer</h2>
+          <h2 className="add-heading">اضافة مستهلك جديد</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -35,7 +35,7 @@ const NewCustomerForm = () => {
             }}
           >
             <label className="label">
-              Customer Name:{" "}
+              اسم المستهلك:{" "}
               {!iscustValid && (
                 <p className="text-danger">
                   customer name must be at least 4 characters
@@ -53,7 +53,7 @@ const NewCustomerForm = () => {
             </label>
             <br />
             <label className="label">
-              Rank:
+              الرتبة / الدرجة:
               <select
                 value={customerCtx.rankId}
                 className="form-control input"
@@ -61,7 +61,7 @@ const NewCustomerForm = () => {
                   customerCtx.updaterankId(event.target.value)
                 }
               >
-                <option value="">Select Rank</option>
+                <option value="">اختر الرتبة/ الدرجة</option>
                 {customerCtx.ranks.map((rank) => (
                   <option key={rank.id} value={rank.id}>
                     {rank.name}
@@ -77,7 +77,7 @@ const NewCustomerForm = () => {
               </p>
             )}
             <button type="submit" className="btn btn-primary mt-2 add-btn">
-              Add Customer
+              اضافة مستهلك
             </button>
           </form>
         </div>
