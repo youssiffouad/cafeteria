@@ -2,12 +2,14 @@ const Product = require("../models/Product");
 
 //calling of function to add new product
 exports.addProduct = (req, res) => {
-  const { name, vendor_id, catid, selling_price, quantity } = req.body;
+  const { name, vendor_id, catid, selling_price, buying_price, quantity } =
+    req.body;
   Product.addProduct(
     name,
     vendor_id,
     catid,
     selling_price,
+    buying_price,
     quantity,
     (err, result) => {
       if (err) {
@@ -43,7 +45,6 @@ exports.filterCategoryProducts = (req, res) => {
       console.error(err);
       res.status(500).json({ error: "failed to filter products" });
     } else {
-      console.log(products);
       res.status(200).json(products);
     }
   });

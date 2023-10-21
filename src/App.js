@@ -5,7 +5,7 @@ import Filterprofits from "./frontend/components/accounting/profit";
 import CustomerWhole from "./frontend/components/customer/wholecustomer";
 import OrderWhole from "./frontend/components/Order/wholeOrder";
 import ProductWhole from "./frontend/components/product/wholeProduct";
-import RankWhole from "./frontend/components/Rank/wholeRank";
+
 import LotsWhole from "./frontend/components/receiveLots/wholeLots";
 import VendorWhole from "./frontend/components/Vendor/wholeVendor";
 import "./frontend/UI/navstyle.css";
@@ -37,8 +37,8 @@ const App = (props) => {
         return <LotsWhole />;
       case "categories":
         return <CategoryWhole />;
-      case "ranks":
-        return <RankWhole />;
+      // case "ranks":
+      //   return <RankWhole />;
       case "customers":
         return <CustomerWhole />;
       case "orders":
@@ -94,14 +94,14 @@ const App = (props) => {
               التصنيفات
             </a>
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a
               className={`nav-link ${activeTab === "ranks" ? "active" : ""}`}
               onClick={() => handleTabClick("ranks")}
             >
               الرتب
             </a>
-          </li>
+          </li> */}
           <li className="nav-item">
             <a
               className={`nav-link ${

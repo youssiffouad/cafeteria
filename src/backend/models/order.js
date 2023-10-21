@@ -1,101 +1,160 @@
 const db = require("./db");
 
 class Order {
-  // Function to add a new order
+  // Function to return customer ID given order ID
+  static getCustomerID(orderID, callback) {
+    db.get(
+      `SELECT customer_id FROM Orders WHERE id = ?`,
+      [orderID],
+      (err, row) => {
+        if (err) {
+          console.error(err);
+          callback(err, null);
+        } else {
+          const customerID = row ? row.customer_id : null;
+          callback(null, customerID);
+        }
+      }
+    );
+  }
+
+  // Function to return order items given order ID
+  static getOrderItems(orderID, callback) {
+    db.all(
+      `SELECT * FROM OrderItems WHERE order_id = ?`,
+      [orderID],
+      (err, rows) => {
+        if (err) {
+          console.error(err);
+          callback(err, null);
+        } else {
+          callback(null, rows);
+        }
+      }
+    );
+  }
+
+  // Function to return payment method given order ID
+  static getPaymentMethod(orderID, callback) {
+    db.get(
+      `SELECT payment_method FROM Orders WHERE id = ?`,
+      [orderID],
+      (err, row) => {
+        if (err) {
+          console.error(err);
+          callback(err, null);
+        } else {
+          const paymentMethod = row ? row.payment_method : null;
+          callback(null, paymentMethod);
+        }
+      }
+    );
+  }
+
+  // Function to return total order cost given order ID
+  static getTotalOrderCost(orderID, callback) {
+    db.get(
+      `SELECT price
+      FROM Orders where id=${orderID}
+    `,
+      (err, row) => {
+        if (err) {
+          console.error(err);
+          callback(err, null);
+        } else {
+          console.log(`iam totalordercost`);
+          console.log(row.price);
+
+          callback(null, row.price);
+        }
+      }
+    );
+  }
+  // Main function to add an order
   static addOrder(
     customer_id,
     order_date,
     orderItems,
+    payment_method,
     totalOrderCost,
     callback
   ) {
-    db.run("PRAGMA foreign_keys=on");
+    db.serialize(() => {
+      db.run("PRAGMA foreign_keys=on");
 
-    // Insert the order into the Orders table
-    db.run(
-      `INSERT INTO Orders (customer_id, order_date, price) VALUES (?, ?, ?)`,
-      [customer_id, order_date, totalOrderCost],
-      function (err) {
-        if (err) {
-          console.error(err);
-          callback(err);
-        } else {
-          const orderId = this.lastID; // Retrieve the ID of the newly inserted order
+      db.run("BEGIN TRANSACTION");
 
-          // Decrease the quantity of each product in the Products table
-          decreaseProductQuantity(orderItems, () => {
-            insertOrderItems(orderId, orderItems, () => {
+      insertOrder(
+        customer_id,
+        order_date,
+        totalOrderCost,
+        payment_method,
+        (err, orderId) => {
+          if (err) {
+            db.run("ROLLBACK");
+            callback(err);
+            return;
+          }
+
+          let paymentHandler;
+
+          if (payment_method === "cash") {
+            paymentHandler = (callback) =>
+              handleCashPayment(totalOrderCost, callback);
+          } else if (payment_method === "debt") {
+            paymentHandler = (callback) =>
+              handleDebtPayment(customer_id, totalOrderCost, callback);
+          } else if (payment_method === "soldprod") {
+            paymentHandler = (callback) =>
+              handleSoldProdPayment(-1, orderId, orderItems, callback);
+          }
+
+          paymentHandler((err) => {
+            if (err) {
+              db.run("ROLLBACK");
+              callback(err);
+            } else {
+              db.run("COMMIT");
               callback(null, {
                 message: "Order added successfully",
                 order_id: orderId,
               });
-            });
+            }
           });
         }
-      }
-    );
-
-    // Function to decrease the quantity of each product in the Products table
-    const decreaseProductQuantity = (orderItems, callback) => {
-      orderItems.forEach((item, index) => {
-        const { prod, quantity } = item;
-        db.run(
-          `UPDATE Products SET quantity = quantity - ? WHERE id = ?`,
-          [quantity, prod.id],
-          function (err) {
-            if (err) {
-              console.error(err);
-            } else {
-              console.log(`Decreased quantity for product ${prod.id}`);
-            }
-
-            // Check if all products have been processed
-            if (index === orderItems.length - 1) {
-              callback();
-            }
-          }
-        );
-      });
-    };
-
-    // Function to insert individual order items into the OrderItems table
-    function insertOrderItems(orderId, orderItems, callback) {
-      orderItems.forEach((item, index) => {
-        const { prod, quantity } = item;
-        db.run(
-          `INSERT INTO OrderItems (order_id, product_id, quantity) VALUES (?, ?, ?)`,
-          [orderId, prod.id, quantity],
-          function (err) {
-            if (err) {
-              console.error(err);
-            } else {
-              console.log(
-                `Inserted order item with ID ${this.lastID} for order ${orderId}`
-              );
-            }
-
-            // Check if all order items have been processed
-            if (index === orderItems.length - 1) {
-              callback();
-            }
-          }
-        );
-      });
-    }
+      );
+    });
   }
 
-  // Function to view all orders
+  // Function to view all orders without corresponding orderitem
 
   static viewOrders(callback) {
     db.all(
       `
-      SELECT o.id, o.order_date, c.name AS customer_name,r.name as rankname, SUM(p.selling_price * oi.quantity) AS order_price
+      SELECT o.id, o.order_date,o.payment_method, c.name AS customer_name,r.name as rankname, o.price AS order_price
       FROM Orders o
-      JOIN Customers c ON c.id = o.customer_id
-      join Ranks r on r.id= c.rank_id
-      JOIN OrderItems oi ON oi.order_id = o.id
-      JOIN Products p ON p.id = oi.product_id
-      GROUP BY o.id, o.order_date, customer_name`,
+     left JOIN Customers c ON c.id = o.customer_id
+     left join Ranks r on r.id= c.rank_id`,
+      (err, rows) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, rows);
+        }
+      }
+    );
+  }
+
+  // Function to view all orders with corresponding orderitem
+
+  static viewOrderswithItem(callback) {
+    db.all(
+      `
+      SELECT o.id, o.order_date,o.payment_method,p.name,p.selling_price,oi.quantity, o.price AS order_price
+      FROM Orders o
+       join Products p on p.id = oi.product_id
+       join OrderItems oi on oi.order_id=o.id
+     `,
       (err, rows) => {
         if (err) {
           callback(err);
@@ -129,58 +188,108 @@ class Order {
     );
   }
 
-  // Function to delete an order and increase the quantity of products
   static deleteOrder(orderId, callback) {
     db.serialize(() => {
       db.run("BEGIN TRANSACTION");
 
-      // Retrieve the order items associated with the order
-      db.all(
-        `SELECT product_id, quantity FROM OrderItems WHERE order_id = ?`,
-        [orderId],
-        (err, rows) => {
-          if (err) {
-            console.error(err);
-            db.run("ROLLBACK");
-            callback(err);
-          } else {
-            // Delete the order and associated order items using cascade deletion
-            db.run(`DELETE FROM Orders WHERE id = ?`, [orderId], (err) => {
-              if (err) {
-                console.error(err);
-                db.run("ROLLBACK");
-                callback(err);
-              } else {
-                console.log(
-                  ` i  deeeeeeeeeeeeeeeeeeeeeeleted the fuchon order`
-                );
-                console.log(orderId);
-                // Increase the quantity of each product in the Products table
-                rows.forEach((row) => {
-                  const { product_id, quantity } = row;
-                  db.run(
-                    `UPDATE Products SET quantity = quantity + ? WHERE id = ?`,
-                    [quantity, product_id],
-                    (err) => {
-                      if (err) {
-                        console.error(err);
+      let paymentHandler;
+      let payment_method;
+      let totalOrderCost;
+      let customer_id;
+      let orderItems;
+
+      // Retrieve customer ID
+      this.getCustomerID(orderId, (err, custid) => {
+        if (err) {
+          console.error(err);
+          // Handle the error
+        } else {
+          customer_id = custid;
+
+          // Retrieve order items
+          this.getOrderItems(orderId, (err, rows) => {
+            if (err) {
+              console.error(err);
+              // Handle the error
+            } else {
+              orderItems = rows;
+
+              // Retrieve payment method
+              this.getPaymentMethod(orderId, (err, pm) => {
+                if (err) {
+                  console.error(err);
+                  // Handle the error
+                } else {
+                  payment_method = pm;
+
+                  // Retrieve total order cost
+                  this.getTotalOrderCost(orderId, (err, tot) => {
+                    if (err) {
+                      console.error(err);
+                      // Handle the error
+                    } else {
+                      totalOrderCost = tot;
+                      console.log(payment_method);
+                      console.log(totalOrderCost);
+                      console.log(customer_id);
+                      console.log(orderItems);
+
+                      // Determine payment handler based on payment method
+                      if (payment_method === "cash") {
+                        paymentHandler = (callback) =>
+                          handleCashPayment(-totalOrderCost, callback);
+                      } else if (payment_method === "debt") {
+                        paymentHandler = (callback) =>
+                          handleDebtPayment(
+                            customer_id,
+                            -totalOrderCost,
+                            callback
+                          );
+                      } else if (payment_method === "soldprod") {
+                        paymentHandler = (callback) =>
+                          handleSoldProdPayment(
+                            1,
+                            orderId,
+                            orderItems,
+                            callback
+                          );
+                      }
+
+                      // Invoke the payment handler
+                      if (typeof paymentHandler === "function") {
+                        paymentHandler((err) => {
+                          if (err) {
+                            db.run("ROLLBACK");
+                            callback(err);
+                          } else {
+                            deleteOrderRow(orderId, (err) => {
+                              if (err) {
+                                callback(err);
+                              } else {
+                                db.run("COMMIT");
+                                callback(null, {
+                                  message: "Order deleted successfully",
+                                  order_id: orderId,
+                                });
+                              }
+                            });
+                          }
+                        });
+                      } else {
+                        // Payment handler is not defined
                         db.run("ROLLBACK");
-                        callback(err);
+                        callback(new Error("Invalid payment method"));
                       }
                     }
-                  );
-                });
-
-                db.run("COMMIT");
-                callback(null, { message: "Order deleted successfully" });
-              }
-            });
-          }
+                  });
+                }
+              });
+            }
+          });
         }
-      );
+      });
     });
   }
-
   // Function to filter orders by customer_id
   static filterOrdersByCustomerId(customerId, callback) {
     db.all(
@@ -236,3 +345,193 @@ class Order {
 }
 
 module.exports = Order;
+
+// Function to change the quantity of each product in the Products table
+const changeProductQuantity = (IncOrDec, orderItems, callback) => {
+  orderItems.forEach((item, index) => {
+    const { product_id, quantity } = item;
+    console.log(`the od=rder items are`);
+    console.log(orderItems);
+    console.log(`the product is `);
+    console.log(product_id);
+    console.log(`the quantity is `);
+    console.log(quantity);
+    console.log(`a7aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`);
+    console.log(updateProductInStockValue);
+    // updateProductInStockValue(IncOrDec, product_id, quantity, null);
+    updateProductInStockValue(IncOrDec, product_id, quantity, (err) => {
+      if (err) {
+        console.error(err);
+        console.log(`a7aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`);
+        console.log(typeof updateProductInStockValue);
+        // Handle the error
+      } else {
+        // Handle the success
+      }
+    });
+    db.run(
+      `UPDATE Products SET quantity = quantity + ? WHERE id = ?`,
+      [quantity * parseInt(IncOrDec), product_id],
+      function (err) {
+        if (err) {
+          console.error(err);
+
+          callback(err);
+        } else {
+          console.log(`Decreased quantity for product ${product_id}`);
+        }
+
+        // Check if all products have been processed
+        if (index === orderItems.length - 1) {
+          callback(null);
+        }
+      }
+    );
+  });
+};
+// Function to insert individual order items into the OrderItems table
+function insertOrderItems(orderId, orderItems, callback) {
+  orderItems.forEach((item, index) => {
+    const { prod, quantity } = item;
+    db.run(
+      `INSERT INTO OrderItems (order_id, product_id, quantity) VALUES (?, ?, ?)`,
+      [orderId, prod.id, quantity],
+      function (err) {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log(
+            `Inserted order item with ID ${this.lastID} for order ${orderId}`
+          );
+        }
+
+        // Check if all order items have been processed
+        if (index === orderItems.length - 1) {
+          callback();
+        }
+      }
+    );
+  });
+}
+
+// Function to insert an order into the Orders table
+function insertOrder(
+  customer_id,
+  order_date,
+  totalOrderCost,
+  payment_method,
+  callback
+) {
+  db.run(
+    `INSERT INTO Orders (customer_id, order_date, price, payment_method) VALUES (?, ?, ?, ?)`,
+    [customer_id, order_date, totalOrderCost, payment_method],
+    function (err) {
+      if (err) {
+        console.error(err);
+        callback(err);
+      } else {
+        const orderId = this.lastID;
+        callback(null, orderId);
+      }
+    }
+  );
+}
+
+// Function to handle cash payment method
+function handleCashPayment(totalOrderCost, callback) {
+  db.run(`
+  UPDATE Financial
+  SET cash = cash + ${totalOrderCost}
+  WHERE id = 1;
+`);
+  callback(null);
+}
+
+// Function to handle debt payment method
+function handleDebtPayment(customer_id, totalOrderCost, callback) {
+  db.run(`
+  UPDATE Financial
+  SET owed = owed + ${totalOrderCost}
+  WHERE id = 1;
+`);
+
+  db.run(
+    `UPDATE Customers SET debt = debt + ? WHERE id = ?`,
+    [totalOrderCost, customer_id],
+    function (err) {
+      if (err) {
+        console.error(err);
+        callback(err);
+      } else {
+        callback(null);
+      }
+    }
+  );
+}
+
+// Function to handle soldprod payment method
+function handleSoldProdPayment(IncOrDec, orderId, orderItems, callback) {
+  if (IncOrDec === -1) {
+    changeProductQuantity(-1, orderItems, () => {
+      insertOrderItems(orderId, orderItems, (err) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null);
+        }
+      });
+    });
+  } else if (IncOrDec === 1) {
+    changeProductQuantity(1, orderItems, () => {
+      deleteOrderRow(orderId, (err) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null);
+        }
+      });
+    });
+  }
+}
+
+// Function to delete order row
+function deleteOrderRow(orderId, callback) {
+  db.run(`DELETE FROM Orders WHERE id = ${orderId} `, (err) => {
+    if (err) {
+      console.error(err);
+      callback(err);
+    } else {
+      console.log(`Deleted successfully`);
+      callback(null);
+    }
+  });
+}
+
+// Function to update productsInStockValue in the Financial table
+function updateProductInStockValue(IncOrDec, productID, quantity, callback) {
+  db.get(
+    `SELECT selling_price FROM Products WHERE id = ?`,
+    [productID],
+    (err, row) => {
+      if (err) {
+        console.error(err);
+        callback(err);
+      } else {
+        const sellingPrice = row.selling_price;
+        const addedvalue = parseInt(IncOrDec) * sellingPrice * quantity;
+        db.run(
+          `UPDATE Financial SET productsInStockValue = productsInStockValue + ?`,
+          [addedvalue],
+          (err) => {
+            if (err) {
+              console.error(err);
+              callback(err);
+            } else {
+              callback(null);
+            }
+          }
+        );
+      }
+    }
+  );
+}

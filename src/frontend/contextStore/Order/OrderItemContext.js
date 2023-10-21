@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 export const OrderItemContext = createContext({
   orderitems: [],
@@ -6,7 +6,7 @@ export const OrderItemContext = createContext({
 
   cat: { id: "", name: "" },
   updatecat: (c) => {},
-  prod: { id: "", name: "" },
+  prod: { id: "", name: "", price: "" },
   updateprod: (p) => {},
   quantity: "",
   updatequantity: (q) => {},
@@ -38,7 +38,7 @@ export const OrderItemProvider = (props) => {
     setquantity(q);
   };
 
-  const updateorderitems = () => {
+  const updateorderitems = useEffect(() => {
     const newitem = {
       cat,
       prod,
@@ -47,9 +47,8 @@ export const OrderItemProvider = (props) => {
 
     console.log(newitem);
     console.log(`here is the new updated orderlist`);
-    setorderitems((prev) => [...prev, newitem]);
-    console.log(orderitems);
-  };
+    setorderitems((prev) => [newitem]);
+  }, [cat, prod, quantity]);
   const deleteItem = (id) => {
     const orderItems = [...orderitems];
     console.log(`here is the id ${id}`);
@@ -62,15 +61,7 @@ export const OrderItemProvider = (props) => {
   };
 
   // Create a new variable to store the total order cost
-  const totalOrderCost = orderitems
-    .map((orderItem) => orderItem.quantity * orderItem.prod.price)
-    .reduce((a, b) => a + b, 0);
-  const resetOrderItems = () => {
-    setcat({ id: "", name: "" });
-    setprod({ id: "", name: "" });
-    setquantity("");
-    setorderitems([]);
-  };
+  const totalOrderCost = prod.price * quantity;
 
   return (
     <OrderItemContext.Provider
@@ -84,8 +75,6 @@ export const OrderItemProvider = (props) => {
         quantity,
         updatequantity,
         totalOrderCost,
-
-        resetOrderItems,
         deleteItem,
       }}
     >

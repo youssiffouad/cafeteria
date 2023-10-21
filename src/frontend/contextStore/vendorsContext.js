@@ -20,6 +20,7 @@ export const VendorProvider = (props) => {
       .then((response) => response.json())
       .then((data) => {
         setvendorlist(data);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Failed to fetch vendors:", error);

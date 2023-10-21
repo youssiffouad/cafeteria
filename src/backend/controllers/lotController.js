@@ -2,8 +2,35 @@ const Lot = require("../models/Lot");
 
 //calling of function to add new lot
 exports.addLot = (req, res) => {
-  const { productID, quantity, cost, received_date } = req.body;
-  Lot.addLot(productID, quantity, cost, received_date, (err, result) => {
+  const {
+    productID,
+    quantity,
+    cost,
+    paidAmount,
+    received_date,
+    payment_method,
+  } = req.body;
+  Lot.addLot(
+    productID,
+    quantity,
+    cost,
+    paidAmount,
+    received_date,
+    payment_method,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.status(200).json(result);
+      }
+    }
+  );
+};
+
+//calling of fn todelete lot
+exports.deletLot = (req, res) => {
+  const { Lotid } = req.body;
+  Lot.deleteLot(Lotid, (err, result) => {
     if (err) {
       res.status(500).json({ error: "Internal server error" });
     } else {
@@ -20,7 +47,6 @@ exports.viewFilterDateLots = (req, res) => {
       console.error(err);
       res.status(500).json("Internal server errror failed to get lots");
     } else {
-      console.log(lots);
       res.status(200).json(lots);
     }
   });
@@ -30,16 +56,28 @@ exports.viewFilterDateLots = (req, res) => {
 exports.viewLots = (req, res) => {
   Lot.viewLots((err, lotrecords) => {
     if (err) {
-      console.log("a7a");
       console.error(err);
 
       res
         .status(500)
         .json({ error: "Internal Server Error failed to get all lots" });
     } else {
-      console.log("lot records");
-      console.log(lotrecords);
       res.status(200).json(lotrecords);
+    }
+  });
+};
+
+//calling of fn to insatll payment of certain lot
+exports.installLot = (req, res) => {
+  const { lot_id } = req.body;
+  console.log(
+    `yalahahahahahahahahahahwywywywywywywywywhahahahaywywywywywywywhahahawyywywywywyw${lot_id}`
+  );
+  Lot.installLot(lot_id, (err, result) => {
+    if (err) {
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.status(200).json(result);
     }
   });
 };

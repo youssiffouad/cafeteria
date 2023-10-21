@@ -96,18 +96,19 @@ const NewProductForm = () => {
                 }
               />
             </label>
-            <br />
             <label className="label">
-              الكمية:
+              سعر الشراء:
               <input
                 type="text"
+                value={productsCtx.buying_price}
                 className="form-control input"
-                value={productsCtx.quantity}
                 onChange={(event) =>
-                  productsCtx.updateQuantity(event.target.value)
+                  productsCtx.updatebuying_prices(event.target.value)
                 }
               />
             </label>
+            <br />
+
             <br />
             {!isFormValid && (
               <p className="text-danger">

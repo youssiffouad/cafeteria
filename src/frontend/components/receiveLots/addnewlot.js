@@ -65,7 +65,18 @@ const AddNewLot = () => {
                 type="text"
                 value={LotCtx.cost}
                 onChange={(event) => {
-                  LotCtx.updatecost(event.target.value);
+                  console.log(event.target.value);
+                }}
+              />
+            </label>
+            <label className="label">
+              المبلغ المدفوع:
+              <input
+                className="form-control input"
+                type="text"
+                value={LotCtx.paidAmount}
+                onChange={(event) => {
+                  LotCtx.updatepaidAmount(event.target.value);
                   console.log(event.target.value);
                 }}
               />

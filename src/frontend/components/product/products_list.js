@@ -20,7 +20,9 @@ const ProductList = () => {
             <th className="col-md-2">اسم المورد</th>
             <th className="col-md-2">التصنيف</th>
             <th className="col-md-2">سعر البيع</th>
+            <th className="col-md-2">سعر الشراء</th>
             <th className="col-md-2">الكمية</th>
+            <th className="col-md-2">قيمة المخزون</th>
           </tr>
         </thead>
         <tbody>
@@ -31,7 +33,9 @@ const ProductList = () => {
               <td>{product.catname}</td>
 
               <td>{product.selling_price}</td>
+              <td>{product.buying_price}</td>
               <td>{product.quantity}</td>
+              <td>{product.quantity * product.selling_price}</td>
             </tr>
           ))}
         </tbody>

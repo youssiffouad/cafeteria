@@ -4,11 +4,16 @@ import React, { useState, useEffect, useContext } from "react";
 import serverport from "../../backendconfiguration";
 import { LotContext } from "../../contextStore/lotsContext";
 
-const FilterProdBYCat = () => {
+const FilterProdBYCat = (props) => {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState({ id: "", name: "" });
   const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState({ id: "", name: "" });
+  const [product, setProduct] = useState({
+    id: "",
+    name: "",
+    sellingprice: "",
+    buying_priceperitem: "",
+  });
   const lotCtx = useContext(LotContext);
   const orderItemCtx = useContext(OrderItemContext);
 
@@ -74,7 +79,8 @@ const FilterProdBYCat = () => {
     setProduct({
       id: selectedProductId,
       name: selectedProduct?.name,
-      price: selectedProduct?.selling_price,
+      sellingprice: selectedProduct?.selling_price,
+      buying_priceperitem: selectedProduct?.buying_price,
     });
     console.log(selectedProduct);
 
@@ -86,6 +92,7 @@ const FilterProdBYCat = () => {
     console.log(` i cahnged prodid`);
     console.log(selectedProductId);
     lotCtx.updateprodid(selectedProductId);
+    lotCtx.updateprodBuyingPrice(selectedProduct?.buying_price);
   };
 
   return (

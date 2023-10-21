@@ -15,7 +15,8 @@ db.run(`
   CREATE TABLE IF NOT EXISTS Vendors (
     id INTEGER PRIMARY KEY,
     name TEXT,
-    phone TEXT
+    phone TEXT,
+    owedmoney REAL
   )
 `);
 
@@ -35,6 +36,7 @@ db.run(`
     vendor_id INTEGER,
     category_id INTEGER,
     selling_price REAL,
+    buying_price REAL,
     quantity INTEGER,
     FOREIGN KEY (vendor_id) REFERENCES Vendors(id),
     FOREIGN KEY (category_id) REFERENCES Categories(id)
@@ -48,7 +50,9 @@ db.run(`
     product_id INTEGER,
     quantity INTEGER,
     cost REAL,
+    remaining_payment REAL,
     received_date TEXT,
+    payment_method TEXT,
     FOREIGN KEY (product_id) REFERENCES Products(id)
   )
 `);
@@ -59,6 +63,7 @@ db.run(`
     id INTEGER PRIMARY KEY,
     name TEXT,
     rank_id INTEGER,
+    debt REAL,
     FOREIGN KEY (rank_id) REFERENCES Ranks(id)
   )
 `);
@@ -76,6 +81,7 @@ db.run(`
   CREATE TABLE IF NOT EXISTS Orders (
     id INTEGER PRIMARY KEY,
     price REAl,
+    payment_method REAL,
     customer_id INTEGER,
     order_date TEXT,
 
@@ -94,6 +100,23 @@ db.run(`
     FOREIGN KEY (product_id) REFERENCES Products(id)
   )
 `);
+
+// Create financial table
+db.run(`
+  CREATE TABLE IF NOT EXISTS Financial (
+    id INTEGER PRIMARY KEY,
+    cash REAL,
+    owed REAL,
+    debt REAL,
+    productsInStockValue REAL,
+    revenue REAL,
+    profit REAL
+  );
+
+`);
+
+db.run(`  INSERT OR REPLACE INTO Financial (id, cash, owed, debt, productsInStockValue, revenue, profit)
+VALUES (1, 0, 0, 0, 0, 0, 0);`);
 
 // delete a table
 // const tableName = "Orders";

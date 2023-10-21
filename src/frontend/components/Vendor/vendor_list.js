@@ -17,6 +17,7 @@ const VendorList = () => {
             <th className="col-md-2">رقم المسلسل</th>
             <th className="col-md-2">الاسم</th>
             <th className="col-md-2">التليفون</th>
+            <th className="col-md-2">المبلغ المستحق</th>
           </tr>
         </thead>
         <tbody>
@@ -25,6 +26,7 @@ const VendorList = () => {
               <td>{vendor.id}</td>
               <td>{vendor.name}</td>
               <td>{vendor.phone}</td>
+              <td>{vendor.owedmoney}</td>
             </tr>
           ))}
         </tbody>

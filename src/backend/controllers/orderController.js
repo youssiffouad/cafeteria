@@ -2,12 +2,20 @@ const Order = require("../models/order");
 
 // Function to add a new order
 exports.addOrder = (req, res) => {
-  const { customer_id, order_date, orderItems, totalOrderCost } = req.body;
+  const {
+    customer_id,
+    order_date,
+    orderItems,
+    totalOrderCost,
+    payment_method,
+  } = req.body;
+  console.log(payment_method);
 
   Order.addOrder(
     customer_id,
     order_date,
     orderItems,
+    payment_method,
     totalOrderCost,
     (err, result) => {
       if (err) {
@@ -28,7 +36,18 @@ exports.viewOrders = (req, res) => {
       console.error("Failed to retrieve orders:", err);
       res.status(500).json({ error: "Internal server error" });
     } else {
-      console.log("All orders:", orders);
+      res.status(200).json(orders);
+    }
+  });
+};
+
+// Function to view all orders with corresponding orderitem
+exports.viewOrderswithItem = (req, res) => {
+  Order.viewOrderswithItem((err, orders) => {
+    if (err) {
+      console.error("Failed to retrieve orders:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
       res.status(200).json(orders);
     }
   });
@@ -42,7 +61,6 @@ exports.filterOrdersDate = (req, res) => {
       console.error(err);
       res.status(500).json({ error: "failed to filter orders" });
     } else {
-      console.log("filtered date orders:", filteredorders);
       res.status(200).json(filteredorders);
     }
   });
@@ -56,7 +74,6 @@ exports.filterOrderCust = (req, res) => {
       console.error(err);
       res.status(500).json({ error: "failed to filter orders" });
     } else {
-      console.log("filtered cust orders:", filteredorders);
       res.status(200).json({ filteredorders });
     }
   });
@@ -76,7 +93,6 @@ exports.filterOrderCustandDate = (req, res) => {
           .status(500)
           .json({ error: "failed to filter orders by cust and date" });
       } else {
-        console.log("filtered cust and date orders:", filteredorders);
         res.status(200).json({ filteredorders });
       }
     }

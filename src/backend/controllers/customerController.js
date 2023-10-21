@@ -46,3 +46,18 @@ exports.filterbyRank = (req, res) => {
     }
   });
 };
+
+//calling of fn to intstall orders of certain customers
+exports.installCustDebt = (req, res) => {
+  const { installQuan, custId } = req.body;
+  Customer.installCustDebt(installQuan, custId, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({
+        error: "Internal server error: Failed to indtall debt of customer",
+      });
+    } else {
+      res.status(200).json(result);
+    }
+  });
+};

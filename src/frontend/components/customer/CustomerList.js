@@ -16,6 +16,7 @@ const CustomerList = () => {
           <tr>
             <th className="col-md-2">الرتبة /الدرجة</th>
             <th className="col-md-2">اسم المستهلك</th>
+            <th className="col-md-2">التقريشة المستحقة </th>
           </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@ const CustomerList = () => {
             <tr key={customer.id}>
               <td>{customer.rankname}</td>
               <td>{customer.custname}</td>
+              <td>{customer.debt}</td>
             </tr>
           ))}
         </tbody>

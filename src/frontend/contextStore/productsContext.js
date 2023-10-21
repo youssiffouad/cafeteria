@@ -12,6 +12,8 @@ export const ProductContext = createContext({
   updatecatid: (c) => {},
   sellingPrice: "",
   updatesellingPrice: (s) => {},
+  buying_price: "",
+  updatebuying_price: (b) => {},
   quantity: "",
   updateQuantity: (q) => {},
   vendors: [],
@@ -24,6 +26,7 @@ export const ProductProvider = (props) => {
   const [vendorId, setVendorId] = useState("");
   const [catid, setcatid] = useState("");
   const [sellingPrice, setSellingPrice] = useState("");
+  const [buying_price, setbuying_price] = useState("");
   const [quantity, setQuantity] = useState("");
   const [vendors, setVendors] = useState([]);
   const [categories, setcategories] = useState([]);
@@ -66,7 +69,8 @@ export const ProductProvider = (props) => {
       vendor_id: vendorId,
       catid,
       selling_price: sellingPrice,
-      quantity,
+      buying_price,
+      quantity: 0,
     };
 
     fetch(`http://localhost:${serverport}/products/add`, {
@@ -90,6 +94,7 @@ export const ProductProvider = (props) => {
     setName("");
     setVendorId("");
     setSellingPrice("");
+
     setQuantity("");
   };
   const updatename = (name) => {
@@ -104,6 +109,9 @@ export const ProductProvider = (props) => {
   };
   const updatesellingPrice = (sp) => {
     setSellingPrice(sp);
+  };
+  const updatebuying_price = (bp) => {
+    setbuying_price(bp);
   };
   const updateQuantity = (q) => {
     setQuantity(q);
@@ -122,6 +130,8 @@ export const ProductProvider = (props) => {
         updatecatid,
         sellingPrice,
         updatesellingPrice,
+        buying_price,
+        updatebuying_price,
         quantity,
         updateQuantity,
         vendors,

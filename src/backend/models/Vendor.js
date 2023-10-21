@@ -21,13 +21,16 @@ class Vendor {
   }
   //method to view all vendors
   static viewVendors(callback) {
-    db.all(`select v.id,v.name , v.phone from Vendors v `, (err, rows) => {
-      if (err) {
-        callback(err);
-      } else {
-        callback(null, rows);
+    db.all(
+      `select v.id,v.name ,v.owedmoney, v.phone from Vendors v `,
+      (err, rows) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, rows);
+        }
       }
-    });
+    );
   }
 
   // Add other vendor-related methods here
