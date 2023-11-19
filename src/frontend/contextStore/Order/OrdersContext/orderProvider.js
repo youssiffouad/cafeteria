@@ -7,6 +7,7 @@ import {
   deleteOrder,
 } from "./ordersApICalls";
 import { OrderItemContext } from "../OrderItemContext";
+import usePopUp from "../../../Hooks/use_popup";
 
 export const OrderContext = createContext({
   orders: [],
@@ -29,6 +30,7 @@ export const OrderContext = createContext({
   cashChangeHandler: (c) => {},
 
   updatesoldprod: () => {},
+  Msgcomponent: "",
 });
 
 export const OrderProvider = (props) => {
@@ -42,6 +44,7 @@ export const OrderProvider = (props) => {
   const [cashtoday, setcashtoday] = useState("");
 
   const orderItemCtx = useContext(OrderItemContext);
+  const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
 
   useEffect(() => {
     fetchOrders()
@@ -78,9 +81,13 @@ export const OrderProvider = (props) => {
       .then((data) => {
         console.log(data);
         setOrders(data);
+        controlMsgContent(`successfully updated T2resha`);
+        controlDisplay(true);
       })
       .catch((error) => {
         // Handle error
+        controlMsgContent(`failed to  update T2resha`);
+        controlDisplay(true);
       });
 
     // Reset form fields
@@ -106,6 +113,9 @@ export const OrderProvider = (props) => {
         fetchOrders()
           .then((data) => {
             setOrders(data);
+            console.log(` iupdated the caash`);
+            controlMsgContent(`successfully updated cash today`);
+            controlDisplay(true);
           })
           .catch((error) => {
             // Handle error
@@ -113,6 +123,8 @@ export const OrderProvider = (props) => {
       })
       .catch((error) => {
         // Handle error
+        controlMsgContent(`failed to update cash today : ${error}`);
+        controlDisplay(true);
       });
   };
   const updatesoldprod = () => {
@@ -125,7 +137,7 @@ export const OrderProvider = (props) => {
     };
     console.log(soldprod);
     addOrder(soldprod)
-      .then((data) => {
+      .then(() => {
         // Perform any necessary actions after adding the order
 
         // Fetch orders again to update the list
@@ -136,8 +148,12 @@ export const OrderProvider = (props) => {
           .catch((error) => {
             // Handle error
           });
+        controlMsgContent(`successfully updated sold products`);
+        controlDisplay(true);
       })
       .catch((error) => {
+        controlMsgContent(`failed to update sold products${error}`);
+        controlDisplay(true);
         // Handle error
       });
   };
@@ -151,7 +167,7 @@ export const OrderProvider = (props) => {
     };
 
     addOrder(orderData)
-      .then((data) => {
+      .then(() => {
         // Perform any necessary actions after adding the order
 
         // Fetch orders again to update the list
@@ -177,19 +193,26 @@ export const OrderProvider = (props) => {
 
   const handleDeleteOrder = (orderId) => {
     deleteOrder(orderId)
-      .then((data) => {
+      .then(() => {
         // Perform any necessary actions after deleting the order
 
         // Fetch orders again to update the list
         fetchOrders()
           .then((data) => {
+            setOrderswithItem(data);
             setOrders(data);
+            console.log(`ele b7to `);
+            console.log(data);
+            controlMsgContent(`successfully deleted order`);
+            controlDisplay(true);
           })
           .catch((error) => {
             // Handle error
           });
       })
       .catch((error) => {
+        controlMsgContent(`failed deleted order : ${error}`);
+        controlDisplay(true);
         // Handle error
       });
   };
@@ -239,6 +262,7 @@ export const OrderProvider = (props) => {
         orderDate,
         updateOrderDate,
         deleteOrder: handleDeleteOrder,
+        Msgcomponent,
       }}
     >
       {props.children}

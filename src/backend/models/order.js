@@ -62,6 +62,7 @@ class Order {
           console.error(err);
           callback(err, null);
         } else {
+          console.log(row);
           console.log(`iam totalordercost`);
           console.log(row.price);
 
@@ -349,7 +350,8 @@ module.exports = Order;
 // Function to change the quantity of each product in the Products table
 const changeProductQuantity = (IncOrDec, orderItems, callback) => {
   orderItems.forEach((item, index) => {
-    const { product_id, quantity } = item;
+    const { quantity, product_id } = item;
+
     console.log(`the od=rder items are`);
     console.log(orderItems);
     console.log(`the product is `);
@@ -392,10 +394,10 @@ const changeProductQuantity = (IncOrDec, orderItems, callback) => {
 // Function to insert individual order items into the OrderItems table
 function insertOrderItems(orderId, orderItems, callback) {
   orderItems.forEach((item, index) => {
-    const { prod, quantity } = item;
+    const { product_id, quantity } = item;
     db.run(
       `INSERT INTO OrderItems (order_id, product_id, quantity) VALUES (?, ?, ?)`,
-      [orderId, prod.id, quantity],
+      [orderId, product_id, quantity],
       function (err) {
         if (err) {
           console.error(err);
@@ -471,6 +473,10 @@ function handleDebtPayment(customer_id, totalOrderCost, callback) {
 
 // Function to handle soldprod payment method
 function handleSoldProdPayment(IncOrDec, orderId, orderItems, callback) {
+  console.log(
+    `here are the orderrrrrrrrrrrrrrrrrrrrrrrrrr ittttttttttteeeeeeeeeeeemssssssssssssssssss`
+  );
+  console.log(orderItems);
   if (IncOrDec === -1) {
     changeProductQuantity(-1, orderItems, () => {
       insertOrderItems(orderId, orderItems, (err) => {

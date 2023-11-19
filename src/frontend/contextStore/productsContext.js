@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
+import usePopUp from "../Hooks/use_popup";
 
 export const ProductContext = createContext({
   prodlist: [],
@@ -18,6 +19,7 @@ export const ProductContext = createContext({
   updateQuantity: (q) => {},
   vendors: [],
   categories: [],
+  Msgcomponent: "",
 });
 
 export const ProductProvider = (props) => {
@@ -30,8 +32,9 @@ export const ProductProvider = (props) => {
   const [quantity, setQuantity] = useState("");
   const [vendors, setVendors] = useState([]);
   const [categories, setcategories] = useState([]);
+  const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
 
-  useEffect(() => {
+  const fetchProducts = () => {
     fetch(`http://localhost:${serverport}/products/view`)
       .then((response) => response.json())
       .then((data) => {
@@ -40,9 +43,10 @@ export const ProductProvider = (props) => {
       .catch((error) => {
         console.error("Failed to fetch products:", error);
       });
-  }, [name]);
+  };
 
   useEffect(() => {
+    fetchProducts();
     fetch(`http://localhost:${serverport}/vendors/view`)
       .then((response) => response.json())
       .then((data) => {
@@ -84,9 +88,14 @@ export const ProductProvider = (props) => {
       .then((data) => {
         console.log(data);
         // Perform any necessary actions after adding the product
+        fetchProducts();
+        controlMsgContent(`successfully adde new Product`);
+        controlDisplay(true);
       })
       .catch((error) => {
         console.error("Failed to add product:", error);
+        controlMsgContent(`failed to add new Product`);
+        controlDisplay(true);
         // Handle error
       });
 
@@ -136,6 +145,7 @@ export const ProductProvider = (props) => {
         updateQuantity,
         vendors,
         categories,
+        Msgcomponent,
       }}
     >
       {props.children}

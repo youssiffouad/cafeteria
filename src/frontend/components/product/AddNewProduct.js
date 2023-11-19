@@ -1,35 +1,21 @@
 import React, { useContext, useState } from "react";
 
 import { ProductContext } from "../../contextStore/productsContext";
+import { createPortal } from "react-dom";
 
 const NewProductForm = () => {
   const productsCtx = useContext(ProductContext);
-  const [isFormValid, setIsFormValid] = useState(true);
 
   const handleAddProduct = () => {
-    const sellingPrice = parseFloat(productsCtx.sellingPrice);
-    const quantity = parseFloat(productsCtx.quantity);
-    if (
-      !productsCtx.catid ||
-      !productsCtx.vendorId ||
-      productsCtx.name.trim().length === 0 ||
-      isNaN(sellingPrice) ||
-      isNaN(quantity)
-    ) {
-      console.log(typeof sellingPrice);
-      console.log(typeof quantity);
-      console.log(productsCtx.catid);
-      console.log(productsCtx.vendid);
-      console.log(productsCtx.name);
-      setIsFormValid(false);
-    } else {
-      setIsFormValid(true);
-      productsCtx.updateprodlist();
-    }
+    productsCtx.updateprodlist();
   };
 
   return (
     <div className="container mb-5 add-container" dir="rtl">
+      {createPortal(
+        <productsCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
       <div className="row justify-content-center">
         <div className="col-md-8">
           <h2>اضافة منتج جديد</h2>
@@ -103,18 +89,14 @@ const NewProductForm = () => {
                 value={productsCtx.buying_price}
                 className="form-control input"
                 onChange={(event) =>
-                  productsCtx.updatebuying_prices(event.target.value)
+                  productsCtx.updatebuying_price(event.target.value)
                 }
               />
             </label>
             <br />
 
             <br />
-            {!isFormValid && (
-              <p className="text-danger">
-                Please fill in all the required fields.
-              </p>
-            )}
+
             <button type="submit" className="btn btn-primary mt-2 add-btn">
               اضافة
             </button>

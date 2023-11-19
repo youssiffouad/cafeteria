@@ -98,7 +98,7 @@ class Lot {
       });
 
       await updateProductQuantity(productID, quantity);
-      await updateProductInStockValue(1, productID, quantity);
+      await updateProductInStockValue(productID, quantity);
       await changeCashVlaue(-paidAmount);
       await changeVendoerOwedMoney(lotID, rem); // Use lotID and rem variables
 
@@ -168,7 +168,7 @@ class Lot {
 
       const paidAmount = cost - rem;
       await updateProductQuantity(productID, -quantity);
-      await updateProductInStockValue(1, productID, -quantity);
+      await updateProductInStockValue(productID, -quantity);
       await changeCashVlaue(paidAmount);
       await changeVendoerOwedMoney(lotid, -rem);
 
@@ -383,7 +383,7 @@ async function updateProductQuantity(productID, quantity) {
 }
 
 // Function to update productsInStockValue in the Financial table
-async function updateProductInStockValue(IncOrDec, productID, quantity) {
+async function updateProductInStockValue(productID, quantity) {
   try {
     const row = await new Promise((resolve, reject) => {
       db.get(
@@ -401,7 +401,10 @@ async function updateProductInStockValue(IncOrDec, productID, quantity) {
     });
 
     const sellingPrice = row.selling_price;
-    const addedValue = parseInt(IncOrDec) * sellingPrice * quantity;
+    const addedValue = sellingPrice * quantity;
+    console.log(
+      `addededededeededeededededeghjjhjhjdhgfghhjhjd value is ${addedValue}`
+    );
 
     await new Promise((resolve, reject) => {
       db.run(

@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
+import usePopUp from "../Hooks/use_popup";
 
 export const CustomerContext = createContext({
   custlist: [],
@@ -9,6 +10,7 @@ export const CustomerContext = createContext({
   rankId: "",
   updaterankId: (c) => {},
   ranks: [],
+  Msgcomponent: "",
 });
 
 export const CustomerProvider = (props) => {
@@ -17,6 +19,7 @@ export const CustomerProvider = (props) => {
   const [rankId, setrankId] = useState("");
 
   const [ranks, setranks] = useState([]);
+  const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
 
   //view all customers
   useEffect(() => {
@@ -58,10 +61,15 @@ export const CustomerProvider = (props) => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        controlMsgContent("successfully added new customer");
+        controlDisplay(true);
         // Perform any necessary actions after adding the customer
       })
+
       .catch((error) => {
         console.error("Failed to add customer:", error);
+        controlMsgContent(`Failed to add customer, error`);
+        controlDisplay(true);
         // Handle error
       });
 
@@ -87,6 +95,7 @@ export const CustomerProvider = (props) => {
         rankId,
         updaterankId,
         ranks,
+        Msgcomponent,
       }}
     >
       {props.children}

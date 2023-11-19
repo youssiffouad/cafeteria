@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
+import usePopUp from "../Hooks/use_popup";
 
 export const vendorContext = createContext({
   vendorlist: [],
@@ -8,14 +9,15 @@ export const vendorContext = createContext({
   updatename: (n) => {},
   phone: "",
   updatePhone: (p) => {},
+  Msgcomponent: "",
 });
 
 export const VendorProvider = (props) => {
   const [vendorlist, setvendorlist] = useState([]);
   const [name, setName] = useState("");
   const [phone, setphone] = useState("");
-
-  useEffect(() => {
+  const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+  const fetchVendors = () => {
     fetch(`http://localhost:${serverport}/vendors/view`)
       .then((response) => response.json())
       .then((data) => {
@@ -25,7 +27,10 @@ export const VendorProvider = (props) => {
       .catch((error) => {
         console.error("Failed to fetch vendors:", error);
       });
-  }, [name]);
+  };
+  useEffect(() => {
+    fetchVendors();
+  }, []);
 
   //adding new vendor
   const updatevendorlist = () => {
@@ -44,9 +49,14 @@ export const VendorProvider = (props) => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        fetchVendors();
+        controlMsgContent(`successfully added new vendor`);
+        controlDisplay(true);
         // Perform any necessary actions after adding the vendor
       })
       .catch((error) => {
+        controlMsgContent(`failed to add a new vendor ${error}`);
+        controlDisplay(true);
         console.error("Failed to add vendor:", error);
         // Handle error
       });
@@ -71,6 +81,7 @@ export const VendorProvider = (props) => {
         updatename,
         phone,
         updatephone,
+        Msgcomponent,
       }}
     >
       {props.children}

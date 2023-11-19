@@ -57,8 +57,8 @@ const App = (props) => {
 
   return (
     <>
-      <h2 className="text-center m-5">cafeteria-STC</h2>
-      <nav>
+      <nav className="d-flex justify-content-between align-items-center">
+        <h2 className="text-center m-5">cafeteria-STC</h2>
         <ul className="nav nav-pills  justify-content-around mt-5" dir="rtl">
           <li className="nav-item">
             <a
@@ -119,6 +119,7 @@ const App = (props) => {
             >
               المبيعات
             </a>
+            <div id="dropdown-portal"></div>
           </li>
           <li className="nav-item">
             <a

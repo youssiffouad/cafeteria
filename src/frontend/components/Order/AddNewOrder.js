@@ -1,13 +1,10 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import T2reshaOfToday from "./addt2reshatoday";
 import TotalOfToday from "./addtotaloftoday";
 import CashOfToday from "./addcashtoday";
-
-import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
+import "../../UI/fropdownstyling.css";
 
 const NewOrderForm = () => {
-  const ordersCtx = useContext(OrderContext);
-  const [isFormValid, setIsFormValid] = useState(true);
   const [activeorderTab, setactiveorderTab] = useState("totalsold");
 
   const handleTabClick = (tab) => {
@@ -40,41 +37,35 @@ const NewOrderForm = () => {
 
   return (
     <>
-      <nav>
-        <ul className="nav nav-pills  justify-content-around mt-5" dir="rtl">
-          <li className="nav-item">
-            <a
-              className={`nav-link ${
-                activeorderTab === "totalsold" ? "active" : ""
-              }`}
-              onClick={() => handleTabClick("totalsold")}
-            >
-              اجمالي المبيعات
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              className={`nav-link ${
-                activeorderTab === "cashsold" ? "active" : ""
-              }`}
-              onClick={() => handleTabClick("cashsold")}
-            >
-              الايرادات النقدية
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              className={`nav-link ${
-                activeorderTab === "t2reshasold" ? "active" : ""
-              }`}
-              onClick={() => handleTabClick("t2reshasold")}
-            >
-              التقريشة
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <ul className="custom-list " dir="rtl">
+        <li>
+          <a
+            className={` ${activeorderTab === "totalsold" ? "active" : ""}`}
+            onClick={() => handleTabClick("totalsold")}
+          >
+            اجمالي المبيعات
+          </a>
+        </li>
+        <li>
+          <a
+            className={` ${activeorderTab === "cashsold" ? "active" : ""}`}
+            onClick={() => handleTabClick("cashsold")}
+          >
+            الايرادات النقدية
+          </a>
+        </li>
+        <li>
+          <a
+            className={` ${activeorderTab === "t2reshasold" ? "active" : ""}`}
+            onClick={() => handleTabClick("t2reshasold")}
+          >
+            التقريشة
+          </a>
+        </li>
+      </ul>
+
       {renderTabContent()}
+      <div id="orders-portal"></div>
     </>
   );
 };

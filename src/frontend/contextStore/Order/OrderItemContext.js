@@ -40,8 +40,7 @@ export const OrderItemProvider = (props) => {
 
   const updateorderitems = useEffect(() => {
     const newitem = {
-      cat,
-      prod,
+      product_id: prod.id,
       quantity,
     };
 

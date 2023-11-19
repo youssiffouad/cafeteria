@@ -7,11 +7,11 @@ import { OrderItemProvider } from "../../contextStore/Order/OrderItemContext";
 import { OrderFilterProvider } from "../../contextStore/Order/OrdersContext/filterDateContext";
 import CashList from "./cashList";
 import SoldProdList from "./soldProdList";
+import { createPortal } from "react-dom";
 const OrderWhole = () => {
   return (
     <OrderItemProvider>
       <OrderProvider>
-        <NewOrderForm />
         <T2reshaList />
         <CashList />
         <SoldProdList />

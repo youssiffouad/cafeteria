@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import { CategoriesContext } from "../../contextStore/categoriesContext";
 import "../../UI/inputform.css";
 
+import { createPortal } from "react-dom";
+
 const AddCategory = () => {
   const catCtx = useContext(CategoriesContext);
 
@@ -31,6 +33,10 @@ const AddCategory = () => {
             <button type="submit" className="btn btn-primary add-btn">
               اضافة
             </button>
+            {createPortal(
+              <catCtx.Msgcomponent />,
+              document.getElementById("popup-portal")
+            )}
           </form>
         </div>
       </div>

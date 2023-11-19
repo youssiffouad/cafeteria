@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import serverport from "../../backendconfiguration";
+import usePopUp from "../../Hooks/use_popup";
 
 export const AccountingContext = createContext({
   cash: "",
@@ -7,6 +8,8 @@ export const AccountingContext = createContext({
   debt: "",
   productsInStockValue: "",
   profit: "",
+  reset: () => {},
+  Msgcomponent: "",
 });
 
 export const AccountingProvider = (props) => {
@@ -15,8 +18,8 @@ export const AccountingProvider = (props) => {
   const [debt, setDebt] = useState("");
   const [productsInStockValue, setProductsInStockValue] = useState("");
   const [profit, setProfit] = useState("");
-
-  useEffect(() => {
+  const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+  const viewFinance = () => {
     fetch(`http://localhost:${serverport}/finance/view`)
       .then((response) => {
         console.log(response);
@@ -33,6 +36,32 @@ export const AccountingProvider = (props) => {
       .catch((error) => {
         console.error("Failed to fetch financial data:", error);
       });
+  };
+  const reset = () => {
+    fetch(`http://localhost:${serverport}/finance/reset`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        // Perform any necessary actions after adding the customer
+        controlMsgContent(`reset done successfully`);
+        controlDisplay(true);
+        viewFinance();
+      })
+      .catch((error) => {
+        console.error("Failed to resset:", error);
+        controlMsgContent(`"Failed to resset:", ${error}`);
+        controlDisplay(true);
+        // Handle error
+      });
+  };
+
+  useEffect(() => {
+    viewFinance();
   }, []);
 
   return (
@@ -43,6 +72,8 @@ export const AccountingProvider = (props) => {
         debt,
         productsInStockValue,
         profit,
+        reset,
+        Msgcomponent,
       }}
     >
       {props.children}

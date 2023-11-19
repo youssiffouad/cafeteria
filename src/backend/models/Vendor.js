@@ -4,8 +4,8 @@ class Vendor {
   //function to add new vendor
   static addVendor(name, phone, callback) {
     db.run(
-      `INSERT INTO Vendors (name, phone) VALUES (?, ?)`,
-      [name, phone],
+      `INSERT INTO Vendors (name, phone,owedmoney) VALUES (?, ?,?)`,
+      [name, phone, 0],
       function (err) {
         if (err) {
           console.error(err);

@@ -1,42 +1,22 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { LotContext } from "../../contextStore/lotsContext";
 
 import FilterProdBYCat from "../product/filterbyCategory";
+import { createPortal } from "react-dom";
 
 const AddNewLot = () => {
   const LotCtx = useContext(LotContext);
 
-  const [isFormValid, setIsFormValid] = useState(true);
-
   const handleAddLOtItem = () => {
-    const cost = parseFloat(LotCtx.cost);
-    const quantity = parseFloat(LotCtx.quantity);
-    if (
-      !LotCtx.catid ||
-      !LotCtx.productID ||
-      isNaN(cost) ||
-      isNaN(quantity) ||
-      !LotCtx.received_date
-    ) {
-      console.log(LotCtx.catid);
-      console.log(LotCtx.prodid);
-      console.log(LotCtx.received_date);
-      console.log(typeof cost);
-      console.log(typeof quantity);
-      setIsFormValid(false);
-    } else {
-      console.log(LotCtx.catid);
-      console.log(LotCtx.prodid);
-      console.log(LotCtx.received_date);
-      console.log(typeof cost);
-      console.log(typeof quantity);
-      setIsFormValid(true);
-      LotCtx.updateLotList();
-    }
+    LotCtx.updateLotList();
   };
 
   return (
     <div className="container mb-5 add-container" dir="rtl">
+      {createPortal(
+        <LotCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
       <div className="row justify-content-center">
         <div className="col-md-10">
           <h2 className="add-heading">اضافة مشتريات</h2>
@@ -94,11 +74,7 @@ const AddNewLot = () => {
               />
             </label>
             <br />
-            {!isFormValid && (
-              <p className="text-danger">
-                Please fill in all the required fields.
-              </p>
-            )}
+
             <button className="btn btn-primary mt-2 add-btn " type="submit">
               اضافة
             </button>

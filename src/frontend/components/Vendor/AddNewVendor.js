@@ -1,12 +1,17 @@
 import React, { useContext } from "react";
 
 import { vendorContext } from "../../contextStore/vendorsContext";
+import { createPortal } from "react-dom";
 
 const NewVendorForm = () => {
   const vendorCtx = useContext(vendorContext);
 
   return (
     <div className="container mb-5 add-container" dir="rtl">
+      {createPortal(
+        <vendorCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
       <div className="row justify-content-center ">
         <div className="col-md-8 ">
           <h2 className="add-heading">اضافة مورد جديد</h2>

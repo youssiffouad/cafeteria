@@ -1,8 +1,11 @@
 import React, { useContext } from "react";
+import { createPortal } from "react-dom";
 import { AccountingContext } from "../../contextStore/accountingContext/accountingCOntext";
+import "../../UI/pop-up.css";
 
 const Filterprofits = () => {
   const accountingCtx = useContext(AccountingContext);
+
   console.log(accountingCtx.cash);
 
   return (
@@ -30,6 +33,19 @@ const Filterprofits = () => {
           </tbody>
         </table>
       </div>
+      <button
+        type="button"
+        className="btn btn-primary mt-2 add-btn"
+        onClick={() => {
+          accountingCtx.reset();
+        }}
+      >
+        lollls
+      </button>
+      {createPortal(
+        <accountingCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
     </div>
   );
 };

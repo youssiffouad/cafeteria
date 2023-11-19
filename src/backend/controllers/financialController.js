@@ -12,3 +12,16 @@ exports.viewFinanace = (req, res) => {
     }
   });
 };
+
+//fn to reset all financial data
+exports.resetFinance = (req, res) => {
+  cafeteriaFinance.resetFinance((err, result) => {
+    if (err) {
+      console.error("Failed to reset financialdata:", err);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      console.log(result);
+      res.status(200).json(result);
+    }
+  });
+};

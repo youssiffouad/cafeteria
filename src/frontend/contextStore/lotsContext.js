@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
+import usePopUp from "../Hooks/use_popup";
 
 export const LotContext = createContext({
   lotList: [],
@@ -20,6 +21,7 @@ export const LotContext = createContext({
   updateReceivedDate: () => {},
   handleDeleteLot: (L) => {},
   installLot: (lotid) => {},
+  Msgcomponent: "",
 });
 
 export const LotProvider = (props) => {
@@ -31,6 +33,7 @@ export const LotProvider = (props) => {
   const [cost, setCost] = useState("");
   const [received_date, setReceivedDate] = useState("");
   const [lotList, setLotList] = useState([]);
+  const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
 
   const fetchLots = () => {
     fetch(`http://localhost:${serverport}/lots/view`)
@@ -58,20 +61,18 @@ export const LotProvider = (props) => {
           throw new Error("Failed to delete lot");
         }
         fetchLots();
-        alert("Lot deleted successfully");
+        controlMsgContent(`successfully deleted the lot`);
+        controlDisplay(true);
 
         // Perform any necessary actions after adding the lot
       })
       .catch((error) => {
         console.error(error);
-        alert(error.message);
+        controlMsgContent(`failed to delete the lot :${error}`);
+        controlDisplay(true);
         // Handle error
       });
   };
-
-  useEffect(() => {
-    fetchLots();
-  }, [productID]);
 
   const updatecatid = (catid) => {
     setcatid(catid);
@@ -134,7 +135,7 @@ export const LotProvider = (props) => {
   const updateReceivedDate = (receiveddate) => {
     setReceivedDate(receiveddate);
   };
-  const updateLotList = () => {
+  const updateLotList = useCallback(() => {
     const lotdata = {
       productID,
       catid,
@@ -157,22 +158,25 @@ export const LotProvider = (props) => {
           throw new Error("Failed to add lot");
         }
         console.log(lotdata);
-        alert("Lot added successfully");
 
         // Perform any necessary actions after adding the lot
+        fetchLots();
+        controlMsgContent(`successfully added the new lot`);
+        controlDisplay(true);
       })
       .catch((error) => {
         console.error(error);
-        alert(error.message);
+        controlMsgContent(`failed to add the new lot : ${error}`);
+        controlDisplay(true);
         // Handle error
       });
     // Reset form fields
-    setcatid("");
-    setCost("");
-    setQuantity("");
-    setReceivedDate("");
-    setproductID("");
-  };
+  }, [catid, cost, paidAmount, productID, quantity, received_date]);
+
+  useEffect(() => {
+    fetchLots();
+    console.log(` yes i am ehehehhehehehehhehehrrrrrrrrrrreeeeeeeeeeeee`);
+  }, []);
 
   return (
     <LotContext.Provider
@@ -195,6 +199,7 @@ export const LotProvider = (props) => {
         updateReceivedDate,
         handleDeleteLot,
         installLot,
+        Msgcomponent,
       }}
     >
       {props.children}
