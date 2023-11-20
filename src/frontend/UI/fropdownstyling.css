@@ -21,6 +21,7 @@
 .custom-list li a:hover {
   background-color: #4c93ff;
   color: #fff;
+  cursor: pointer;
 }
 
 .custom-list li a.active {

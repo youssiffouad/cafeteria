@@ -59,7 +59,7 @@ const App = (props) => {
     <>
       <nav className="d-flex justify-content-between align-items-center">
         <h2 className="text-center m-5">cafeteria-STC</h2>
-        <ul className="nav nav-pills  justify-content-around mt-5" dir="rtl">
+        <ul className="nav nav-pills  justify-content-around " dir="rtl">
           <li className="nav-item">
             <a
               className={`nav-link ${activeTab === "vendors" ? "active" : ""}`}
@@ -131,6 +131,7 @@ const App = (props) => {
           </li>
         </ul>
       </nav>
+      <div id="body-portal"></div>
       {renderTabContent()}
     </>
   );

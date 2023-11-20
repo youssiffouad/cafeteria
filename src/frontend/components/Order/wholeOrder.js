@@ -1,6 +1,6 @@
 import React from "react";
 import T2reshaList from "./t2reshaList";
-import NewOrderForm from "./AddNewOrder";
+import OrderDropdown from "./orderdropdown";
 import { OrderProvider } from "../../contextStore/Order/OrdersContext/orderProvider";
 import { OrderItemProvider } from "../../contextStore/Order/OrderItemContext";
 
@@ -12,6 +12,10 @@ const OrderWhole = () => {
   return (
     <OrderItemProvider>
       <OrderProvider>
+        {createPortal(
+          <OrderDropdown />,
+          document.getElementById("dropdown-portal")
+        )}
         <T2reshaList />
         <CashList />
         <SoldProdList />

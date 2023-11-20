@@ -2,13 +2,13 @@ import React, { useContext } from "react";
 import FilterProdBYCat from "../product/filterbyCategory";
 import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
 import { OrderItemContext } from "../../contextStore/Order/OrderItemContext";
-import { createPortal } from "react-dom";
+
 const TotalOfToday = () => {
   const quantityCtx = useContext(OrderItemContext);
   const soldprodCtx = useContext(OrderContext);
   return (
     <>
-      <div className="container mb-5 add-container position-absolute" dir="rtl">
+      <div className="container mb-5 add-container " dir="rtl">
         <div className="row justify-content-center">
           <div className="col-md-10">
             <h2>soldProd today</h2>
