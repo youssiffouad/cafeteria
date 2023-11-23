@@ -46,23 +46,26 @@ export const OrderProvider = (props) => {
   const orderItemCtx = useContext(OrderItemContext);
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
 
+  const fetchordersAndUpdateUI = async () => {
+    try {
+      const ordersData = await fetchOrders();
+      setOrders(ordersData);
+
+      const ordersWithItemData = await fetchOrderswithItem();
+      setOrderswithItem(ordersWithItemData);
+
+      console.log("Orders with items fetched");
+      console.log(ordersWithItemData);
+      console.log(orderswithItem);
+    } catch (error) {
+      // Handle errors
+    }
+  };
   useEffect(() => {
-    fetchOrders()
-      .then((data) => {
-        setOrders(data);
-      })
-      .catch((error) => {
-        // Handle error
-      });
-    fetchOrderswithItem()
-      .then((data) => {
-        setOrderswithItem(data);
-        console.log(`here is the order with items`);
-        console.log(data);
-      })
-      .catch((error) => {
-        // Handle error
-      });
+    console.log("Updated Orders bta3 eluseeffects with items:", orderswithItem);
+  }, [orderswithItem]);
+  useEffect(() => {
+    fetchordersAndUpdateUI();
   }, []);
 
   const updateT2resha = () => {
@@ -127,7 +130,7 @@ export const OrderProvider = (props) => {
         controlDisplay(true);
       });
   };
-  const updatesoldprod = () => {
+  const updatesoldprod = async () => {
     const soldprod = {
       customer_id: null,
       payment_method: "soldprod",
@@ -135,27 +138,20 @@ export const OrderProvider = (props) => {
       orderItems: orderItemCtx.orderitems,
       totalOrderCost: orderItemCtx.totalOrderCost,
     };
-    console.log(soldprod);
-    addOrder(soldprod)
-      .then(() => {
-        // Perform any necessary actions after adding the order
 
-        // Fetch orders again to update the list
-        fetchOrderswithItem()
-          .then((data) => {
-            setOrderswithItem(data);
-          })
-          .catch((error) => {
-            // Handle error
-          });
-        controlMsgContent(`successfully updated sold products`);
-        controlDisplay(true);
-      })
-      .catch((error) => {
-        controlMsgContent(`failed to update sold products${error}`);
-        controlDisplay(true);
-        // Handle error
-      });
+    console.log(soldprod);
+
+    try {
+      // Wait for addOrder to complete
+      await addOrder(soldprod);
+      // Now, fetchOrderswithItem and update the state
+      fetchordersAndUpdateUI();
+      controlMsgContent(`successfully updated sold products`);
+      controlDisplay(true);
+    } catch (error) {
+      controlMsgContent(`failed to update sold products${error}`);
+      controlDisplay(true);
+    }
   };
   const updateOrders = () => {
     const orderData = {
@@ -191,30 +187,17 @@ export const OrderProvider = (props) => {
     orderItemCtx.resetOrderItems();
   };
 
-  const handleDeleteOrder = (orderId) => {
-    deleteOrder(orderId)
-      .then(() => {
-        // Perform any necessary actions after deleting the order
-
-        // Fetch orders again to update the list
-        fetchOrders()
-          .then((data) => {
-            setOrderswithItem(data);
-            setOrders(data);
-            console.log(`ele b7to `);
-            console.log(data);
-            controlMsgContent(`successfully deleted order`);
-            controlDisplay(true);
-          })
-          .catch((error) => {
-            // Handle error
-          });
-      })
-      .catch((error) => {
-        controlMsgContent(`failed deleted order : ${error}`);
-        controlDisplay(true);
-        // Handle error
-      });
+  const handleDeleteOrder = async (orderId) => {
+    try {
+      await deleteOrder(orderId);
+      // Fetch orders again to update the list
+      fetchordersAndUpdateUI();
+      controlMsgContent(`successfully deleted order`);
+      controlDisplay(true);
+    } catch (error) {
+      controlMsgContent(`failed deleted order : ${error}`);
+      controlDisplay(true);
+    }
   };
 
   const updateCustomerId = (c) => {

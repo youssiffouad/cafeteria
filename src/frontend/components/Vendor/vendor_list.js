@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import "../../UI/responsivetable.css";
 
 import { vendorContext } from "../../contextStore/vendorsContext";
 
@@ -7,9 +8,9 @@ const VendorList = () => {
 
   return (
     <React.Fragment>
-      <h2 className="text-center">بيانات الموردين</h2>
+      <h2 className="text-center ">بيانات الموردين</h2>
       <table
-        className="table table-striped table-bordered table-hover"
+        className="table table-striped table-bordered table-hover  myResponsiveTable "
         dir="rtl"
       >
         <thead>

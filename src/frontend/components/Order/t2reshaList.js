@@ -13,7 +13,7 @@ const T2reshaList = () => {
     <OrderItemProvider>
       <h2 className="text-center">عرض كل التقريشة</h2>
       <table
-        className="table table-striped table-bordered table-hover"
+        className="table table-striped table-bordered table-hover myResponsiveTable"
         dir="rtl"
       >
         <thead>

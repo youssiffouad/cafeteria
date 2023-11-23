@@ -9,7 +9,7 @@ const RankList = () => {
     <React.Fragment>
       <h2 className="text-center">عرض الرتب / الدرجات</h2>
       <table
-        className="table table-striped table-bordered table-hover"
+        className="table table-striped table-bordered table-hover myResponsiveTable"
         dir="rtl"
       >
         <thead>

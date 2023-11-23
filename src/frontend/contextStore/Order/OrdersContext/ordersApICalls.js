@@ -19,36 +19,29 @@ export const fetchOrderswithItem = async () => {
       `http://localhost:${serverport}/orders/viewWithItem`
     );
     const data = await response.json();
-    console.log("Fetched orders:", data);
+    console.log("Fetched orderswithItems:", data);
     return data;
   } catch (error) {
     console.error("Failed to fetch orders:", error);
     throw error;
   }
 };
-export const addOrder = (orderData) => {
-  console.log("a7aaaaaaaaaaaaaaaaaaa");
-  return fetch(`http://localhost:${serverport}/orders/add`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(orderData),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to add order");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log(data);
-      return data;
-    })
-    .catch((error) => {
-      console.error("Failed to add order:", error);
-      throw error;
+export const addOrder = async (orderData) => {
+  try {
+    console.log("a7aaaaaaaaaaaaaaaaaaa");
+    const response = await fetch(`http://localhost:${serverport}/orders/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
     });
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Failed to add order:", error);
+    throw error;
+  }
 };
 
 export const deleteOrder = async (orderId) => {

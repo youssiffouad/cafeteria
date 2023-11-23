@@ -1,55 +1,51 @@
-import React from "react";
-import T2reshaOfToday from "./addt2reshatoday";
-import TotalOfToday from "./addtotaloftoday";
-import CashOfToday from "./addcashtoday";
+import React, { useState } from "react";
+
 import "../../UI/fropdownstyling.css";
-import { createPortal } from "react-dom";
 
-import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
+import { Link } from "react-router-dom";
+const OrderDropdown = (props) => {
+  const [display, setdisplay] = useState(false);
 
-const OrderDropdown = () => {
+  const dropdownDynamicClass = props.smallscreen
+    ? "verticalnav vertical-nav-small "
+    : "custom-list position-absolute";
   return (
     <>
-      <Router>
-        <div>
-          <ul className="custom-list ">
-            <li>
-              <Link to="/total"> اجمالي المبيعات</Link>
-            </li>
-            <li>
-              <Link to="/cash">الايرادات النقدية</Link>
-            </li>
-            <li>
-              <Link to="/t2resha">التقريشة</Link>
-            </li>
-          </ul>
-          <Routes>
-            <Route
-              path="/total"
-              element={createPortal(
-                <TotalOfToday />,
-                document.getElementById("body-portal")
-              )}
-            />
+      <li className="nav-item position-relative">
+        <Link
+          className={`nav-link ${props.activetab === "orders" ? "active" : ""}`}
+          onMouseOver={() => {
+            setdisplay(true);
+          }}
+          onMouseLeave={() => setdisplay(false)}
+        >
+          المبيعات
+        </Link>
+        <ul
+          className={`${dropdownDynamicClass} ${!display ? "d-none" : ""}`}
+          onMouseOver={() => {
+            setdisplay(true);
+          }}
+          onMouseLeave={() => setdisplay(false)}
+        >
+          <li>
+            <Link to="/total" onClick={() => props.handleTabClick("orders")}>
+              اجمالي المبيعات
+            </Link>
+          </li>
 
-            <Route
-              path="/cash"
-              element={createPortal(
-                <CashOfToday />,
-                document.getElementById("body-portal")
-              )}
-            />
-
-            <Route
-              path="/t2resha"
-              element={createPortal(
-                <T2reshaOfToday />,
-                document.getElementById("body-portal")
-              )}
-            />
-          </Routes>
-        </div>
-      </Router>
+          <li>
+            <Link to="/cash" onClick={() => props.handleTabClick("orders")}>
+              الايرادات النقدية
+            </Link>
+          </li>
+          <li>
+            <Link to="/t2resha" onClick={() => props.handleTabClick("orders")}>
+              التقريشة
+            </Link>
+          </li>
+        </ul>
+      </li>
     </>
   );
 };

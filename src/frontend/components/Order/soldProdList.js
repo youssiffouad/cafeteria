@@ -8,12 +8,15 @@ import { OrderItemProvider } from "../../contextStore/Order/OrderItemContext";
 
 const SoldProdList = () => {
   const orderCtx = useContext(OrderContext);
-
+  console.log(
+    `orderswithItems from the soldProdList :`,
+    orderCtx.orderswithItem
+  );
   return (
-    <OrderItemProvider>
+    <>
       <h2 className="text-center">عرض المبيعات </h2>
       <table
-        className="table table-striped table-bordered table-hover"
+        className="table table-striped table-bordered table-hover myResponsiveTable"
         dir="rtl"
       >
         <thead>
@@ -51,7 +54,7 @@ const SoldProdList = () => {
             ))}
         </tbody>
       </table>
-    </OrderItemProvider>
+    </>
   );
 };
 

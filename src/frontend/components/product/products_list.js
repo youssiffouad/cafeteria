@@ -11,7 +11,7 @@ const ProductList = () => {
         بيانات المنتجات
       </h2>
       <table
-        className="table table-striped table-bordered table-hover"
+        className="table table-striped table-bordered table-hover myResponsiveTable"
         dir="rtl"
       >
         <thead>

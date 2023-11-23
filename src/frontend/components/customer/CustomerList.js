@@ -9,7 +9,7 @@ const CustomerList = () => {
     <React.Fragment>
       <h2 className="text-center">بيانات المستهلكين</h2>
       <table
-        className="table table-striped table-bordered table-hover"
+        className="table table-striped table-bordered table-hover myResponsiveTable"
         dir="rtl"
       >
         <thead>

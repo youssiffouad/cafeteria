@@ -13,18 +13,18 @@ const usePopUp = () => {
     <>
       {display && (
         <div className="overlay">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-body">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-body">
                 <h1>{msgContent}</h1>
               </div>
-              <div class="modal-footer">
+              <div className="modal-footer">
                 <button
                   onClick={() => {
                     setdisplay(false);
                   }}
                   type="button"
-                  class="btn btn-secondary"
+                  className="btn btn-secondary"
                   data-dismiss="modal"
                 >
                   Close

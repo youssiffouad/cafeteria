@@ -1,5 +1,5 @@
 .add-container {
-  width: 37% !important;
+  width: fit-content !important;
   margin: 3rem auto;
   border: 1px solid #ffffff;
   border-radius: 10px;
@@ -31,6 +31,7 @@
 
 .input {
   font-size: 14px;
+  width: fit-content;
 }
 
 .add-btn {

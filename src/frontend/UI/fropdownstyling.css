@@ -7,6 +7,13 @@
   position: absolute;
   overflow: hidden;
 }
+.vertical-nav-small {
+  list-style: none;
+  position: absolute;
+  top: 0%;
+  overflow: hidden;
+  right: 5rem;
+}
 
 .custom-list li a {
   display: block;
@@ -19,7 +26,7 @@
 }
 
 .custom-list li a:hover {
-  background-color: #4c93ff;
+  background-color: #0d6efd;
   color: #fff;
   cursor: pointer;
 }

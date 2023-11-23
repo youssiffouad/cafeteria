@@ -9,7 +9,7 @@ const LotList = () => {
     <React.Fragment>
       <h2 className="text-center">بيانات المشتريات</h2>
       <table
-        className="table table-striped table-bordered table-hover"
+        className="table table-striped table-bordered table-hover myResponsiveTable"
         dir="rtl"
       >
         <thead>

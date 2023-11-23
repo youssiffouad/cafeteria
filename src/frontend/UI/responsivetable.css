@@ -1,0 +1,30 @@
+/* Define a base width for smaller screens */
+.myResponsiveTable {
+  width: 100%;
+  margin: auto;
+}
+
+/* Adjust the width for larger screens using media queries */
+@media (min-width: 576px) {
+  .myResponsiveTable {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .myResponsiveTable {
+    width: 90%;
+  }
+}
+
+@media (min-width: 992px) {
+  .myResponsiveTable {
+    width: 75%;
+  }
+}
+
+@media (min-width: 1400px) {
+  .myResponsiveTable {
+    width: 65%;
+  }
+}
