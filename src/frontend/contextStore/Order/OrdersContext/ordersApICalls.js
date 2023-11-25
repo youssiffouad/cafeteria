@@ -28,7 +28,7 @@ export const fetchOrderswithItem = async () => {
 };
 export const addOrder = async (orderData) => {
   try {
-    console.log("a7aaaaaaaaaaaaaaaaaaa");
+
     const response = await fetch(`http://localhost:${serverport}/orders/add`, {
       method: "POST",
       headers: {

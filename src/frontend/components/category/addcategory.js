@@ -6,6 +6,19 @@ import { createPortal } from "react-dom";
 
 const AddCategory = () => {
   const catCtx = useContext(CategoriesContext);
+  let errormsg = `ajjdkn`;
+  const submissionHandler = (fieldName, fieldValue) => {
+    console.log(fieldName);
+    console.log(fieldValue);
+    const isValid = catCtx.validateField(fieldName, "name", fieldValue);
+    console.log(isValid);
+    console.log(catCtx.errors);
+    errormsg = isValid ? "" : catCtx.errors[fieldName];
+    console.log(errormsg);
+    if (isValid) {
+      // catCtx.updateCategorieslist();
+    }
+  };
 
   return (
     <div className="mb-5 add-container" dir="rtl">
@@ -13,7 +26,7 @@ const AddCategory = () => {
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          catCtx.updateCategorieslist();
+          submissionHandler("categoryName", catCtx.formState.categoryName);
         }}
       >
         <div className="form-group">
@@ -28,6 +41,7 @@ const AddCategory = () => {
             className="form-control input"
             onChange={(event) => catCtx.updatename(event)}
           />
+          <p>{errormsg}</p>
         </div>
         <button type="submit" className="btn btn-primary add-btn">
           اضافة

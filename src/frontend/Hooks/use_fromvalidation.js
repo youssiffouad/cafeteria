@@ -3,10 +3,18 @@ import { useState } from "react";
 const useFormValidation = (initialFormState) => {
   const [formState, setFormState] = useState(initialFormState);
   const [errors, setErrors] = useState({});
+  const getErrorMsg = (fieldName) => {
+    console.log(fieldName);
+    console.log(errors);
+    return errors[fieldName];
+  };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event, type) => {
     const { name, value } = event.target;
-    setFormState({ ...formState, [name]: value });
+
+    setFormState({ ...formState, [name]: value }, () => {
+      // Call validateField here or perform other actions after state update
+    });
   };
 
   const isEmpty = (value) => {
@@ -15,6 +23,9 @@ const useFormValidation = (initialFormState) => {
 
   const nullCheckValidation = (fieldName, fieldValue) => {
     if (isEmpty(fieldValue)) {
+      console.log(`i am in nullcheck validation`);
+      console.log(fieldName);
+      console.log(fieldValue);
       setErrors((prevErrors) => ({
         ...prevErrors,
         [fieldName]: `${fieldName} cannot be empty`,
@@ -24,9 +35,9 @@ const useFormValidation = (initialFormState) => {
     return true; // Return true indicating validation passed
   };
 
-  const nameFieldValidation = (nameValue) => {
-    const isValid = nullCheckValidation("Name", nameValue);
-    console.log(nameValue);
+  const nameFieldValidation = (fieldName, fieldValue) => {
+    const isValid = nullCheckValidation(fieldName, fieldValue);
+    console.log(fieldValue);
 
     return isValid;
   };
@@ -49,15 +60,15 @@ const useFormValidation = (initialFormState) => {
     return isValid;
   };
 
-  const validateField = (fieldType, fieldValue) => {
+  const validateField = (fieldName, fieldType, fieldValue) => {
     if (fieldType === "name") {
-      return nameFieldValidation(fieldValue);
+      return nameFieldValidation(fieldName, fieldValue);
     } else if (fieldType === "number") {
-      return numberFieldValidation(fieldValue);
+      return numberFieldValidation(fieldName, fieldValue);
     } else if (fieldType === "dropdown") {
-      return dropDownFieldValidation(fieldValue);
+      return dropDownFieldValidation(fieldName, fieldValue);
     } else if (fieldType === "date") {
-      return dateFieldValidation(fieldValue);
+      return dateFieldValidation(fieldName, fieldValue);
     }
     return true; // Return true if no specific validation needed for the field type
   };
@@ -71,6 +82,7 @@ const useFormValidation = (initialFormState) => {
     handleInputChange,
     validateField,
     resetField,
+    getErrorMsg,
   };
 };
 

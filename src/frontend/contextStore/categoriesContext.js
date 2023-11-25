@@ -10,6 +10,8 @@ export const CategoriesContext = createContext({
   updatename: (n) => {},
   Msgcomponent: "",
   formState: {},
+  validateField: (fieldType, fieldValue) => {},
+  errors: {},
 });
 
 export const CategoriesProvider = (props) => {
@@ -17,8 +19,14 @@ export const CategoriesProvider = (props) => {
 
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
   const categoryName = "";
-  const { formState, errors, validateField, resetField, handleInputChange } =
-    useFormValidation({ categoryName });
+  const {
+    formState,
+
+    errors,
+    validateField,
+    resetField,
+    handleInputChange,
+  } = useFormValidation({ categoryName });
 
   useEffect(() => {
     fetch(`http://localhost:${serverport}/Categories/view`)
@@ -63,8 +71,7 @@ export const CategoriesProvider = (props) => {
   };
   const updatename = (event) => {
     // setName(name);
-    handleInputChange(event);
-    validateField("name", formState.categoryName);
+    handleInputChange(event, "name");
   };
 
   return (
@@ -75,6 +82,8 @@ export const CategoriesProvider = (props) => {
 
         formState,
         updatename,
+        validateField,
+        errors,
         Msgcomponent,
       }}
     >
