@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
 import usePopUp from "../Hooks/use_popup";
+import useFormValidation from "../Hooks/use_fromvalidation";
 
 export const CategoriesContext = createContext({
   Categorieslist: [],
@@ -8,12 +9,16 @@ export const CategoriesContext = createContext({
   name: "",
   updatename: (n) => {},
   Msgcomponent: "",
+  formState: {},
 });
 
 export const CategoriesProvider = (props) => {
   const [Categorieslist, setCategorieslist] = useState([]);
-  const [name, setName] = useState("");
+
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+  const categoryName = "";
+  const { formState, errors, validateField, resetField, handleInputChange } =
+    useFormValidation({ categoryName });
 
   useEffect(() => {
     fetch(`http://localhost:${serverport}/Categories/view`)
@@ -24,12 +29,12 @@ export const CategoriesProvider = (props) => {
       .catch((error) => {
         console.error("Failed to fetch Categoriess:", error);
       });
-  }, [name]);
+  }, [formState.categoryName]);
 
   //adding new Categories
   const updateCategorieslist = () => {
     const CategoriesData = {
-      name,
+      name: formState.categoryName,
     };
 
     fetch(`http://localhost:${serverport}/Categories/add`, {
@@ -54,10 +59,12 @@ export const CategoriesProvider = (props) => {
       });
 
     // Reset form fields
-    setName("");
+    resetField("categoryName");
   };
-  const updatename = (name) => {
-    setName(name);
+  const updatename = (event) => {
+    // setName(name);
+    handleInputChange(event);
+    validateField("name", formState.categoryName);
   };
 
   return (
@@ -65,7 +72,8 @@ export const CategoriesProvider = (props) => {
       value={{
         Categorieslist,
         updateCategorieslist,
-        name,
+
+        formState,
         updatename,
         Msgcomponent,
       }}

@@ -22,10 +22,11 @@ const AddCategory = () => {
           </label>
           <input
             type="text"
-            id="categoryName"
-            value={catCtx.name}
+            autoFocus
+            name="categoryName"
+            value={catCtx.formState.categoryName}
             className="form-control input"
-            onChange={(event) => catCtx.updatename(event.target.value)}
+            onChange={(event) => catCtx.updatename(event)}
           />
         </div>
         <button type="submit" className="btn btn-primary add-btn">
