@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const useFormValidation = (initialFormState) => {
-  const [formState, setFormState] = useState(initialFormState);
+  const [formState, setFormState] = useState({
+    ...initialFormState,
+    formValidity: false,
+  });
   const [errors, setErrors] = useState({});
   const getErrorMsg = (fieldName) => {
     console.log(fieldName);
@@ -9,12 +12,13 @@ const useFormValidation = (initialFormState) => {
     return errors[fieldName];
   };
 
-  const handleInputChange = (event, type) => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
-
-    setFormState({ ...formState, [name]: value }, () => {
-      // Call validateField here or perform other actions after state update
+    //modify only the value portion of the sent fieldname
+    setFormState((prevstate) => {
+      return { ...prevstate, [name]: { ...prevstate[name], value } };
     });
+    console.log(formState);
   };
 
   const isEmpty = (value) => {
@@ -30,8 +34,21 @@ const useFormValidation = (initialFormState) => {
         ...prevErrors,
         [fieldName]: `${fieldName} cannot be empty`,
       }));
+      setFormState((prevstate) => {
+        return {
+          ...prevstate,
+          formValidity: false,
+          [fieldName]: { ...prevstate[fieldName], valid: false },
+        };
+      });
       return false; // Return false indicating validation failed
     }
+    setFormState((prevstate) => {
+      return {
+        ...prevstate,
+        [fieldName]: { ...prevstate[fieldName], valid: true },
+      };
+    });
     return true; // Return true indicating validation passed
   };
 
@@ -72,6 +89,7 @@ const useFormValidation = (initialFormState) => {
     }
     return true; // Return true if no specific validation needed for the field type
   };
+
   const resetField = (fieldName) => {
     setFormState({ ...formState, [fieldName]: "" });
   };
@@ -81,6 +99,7 @@ const useFormValidation = (initialFormState) => {
     errors,
     handleInputChange,
     validateField,
+
     resetField,
     getErrorMsg,
   };

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { CategoriesContext } from "../../contextStore/categoriesContext";
 import "../../UI/inputform.css";
 
@@ -6,27 +6,30 @@ import { createPortal } from "react-dom";
 
 const AddCategory = () => {
   const catCtx = useContext(CategoriesContext);
-  let errormsg = `ajjdkn`;
+  useEffect(() => {
+    console.log(catCtx.errors);
+    console.log(catCtx.getErrorMsg("categoryName"));
+  }, [catCtx.errors]);
   const submissionHandler = (fieldName, fieldValue) => {
     console.log(fieldName);
     console.log(fieldValue);
-    const isValid = catCtx.validateField(fieldName, "name", fieldValue);
-    console.log(isValid);
+    catCtx.validateField("categoryName", "name", fieldValue);
     console.log(catCtx.errors);
-    errormsg = isValid ? "" : catCtx.errors[fieldName];
-    console.log(errormsg);
-    if (isValid) {
-      // catCtx.updateCategorieslist();
-    }
+
+    // catCtx.updateCategorieslist();
   };
 
   return (
     <div className="mb-5 add-container" dir="rtl">
       <h5 className="add-heading">اضافة تصنيف جديد</h5>
+
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          submissionHandler("categoryName", catCtx.formState.categoryName);
+          submissionHandler(
+            "categoryName",
+            catCtx.formState.categoryName.value
+          );
         }}
       >
         <div className="form-group">
@@ -37,11 +40,20 @@ const AddCategory = () => {
             type="text"
             autoFocus
             name="categoryName"
-            value={catCtx.formState.categoryName}
+            value={catCtx.formState.categoryName.value}
             className="form-control input"
-            onChange={(event) => catCtx.updatename(event)}
+            onChange={(event) => {
+              catCtx.updatename(event);
+              catCtx.validateField(
+                event.target.name,
+                "name",
+                event.target.value
+              );
+            }}
           />
-          <p>{errormsg}</p>
+          {!catCtx.formState.categoryName.valid && (
+            <p>{catCtx.getErrorMsg("categoryName")}</p>
+          )}
         </div>
         <button type="submit" className="btn btn-primary add-btn">
           اضافة

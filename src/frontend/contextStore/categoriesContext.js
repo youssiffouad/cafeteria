@@ -10,7 +10,8 @@ export const CategoriesContext = createContext({
   updatename: (n) => {},
   Msgcomponent: "",
   formState: {},
-  validateField: (fieldType, fieldValue) => {},
+  validateField: (fieldName, fieldType, fieldValue) => {},
+  getErrorMsg: (FieldName) => {},
   errors: {},
 });
 
@@ -18,11 +19,11 @@ export const CategoriesProvider = (props) => {
   const [Categorieslist, setCategorieslist] = useState([]);
 
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
-  const categoryName = "";
+  const categoryName = { value: "", valid: true };
   const {
     formState,
-
     errors,
+    getErrorMsg,
     validateField,
     resetField,
     handleInputChange,
@@ -83,6 +84,7 @@ export const CategoriesProvider = (props) => {
         formState,
         updatename,
         validateField,
+        getErrorMsg,
         errors,
         Msgcomponent,
       }}
