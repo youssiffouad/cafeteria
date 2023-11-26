@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
 import usePopUp from "../Hooks/use_popup";
+import useFormValidation from "../Hooks/use_fromvalidation";
 
 export const CustomerContext = createContext({
   custlist: [],
@@ -11,7 +12,10 @@ export const CustomerContext = createContext({
   updaterankId: (c) => {},
   ranks: [],
   Msgcomponent: "",
+  formState: {},
 });
+const customerName = { value: "", valid: true };
+const customerRank = { value: "", valid: true };
 
 export const CustomerProvider = (props) => {
   const [custlist, setcustlist] = useState([]);
@@ -20,6 +24,14 @@ export const CustomerProvider = (props) => {
 
   const [ranks, setranks] = useState([]);
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+  const {
+    formState,
+    errors,
+    handleInputChange,
+    validateField,
+    resetField,
+    getErrorMsg,
+  } = useFormValidation({ customerName, customerRank });
 
   //view all customers
   useEffect(() => {
@@ -96,6 +108,12 @@ export const CustomerProvider = (props) => {
         updaterankId,
         ranks,
         Msgcomponent,
+        formState,
+        handleInputChange,
+        validateField,
+        resetField,
+        getErrorMsg,
+        errors,
       }}
     >
       {props.children}

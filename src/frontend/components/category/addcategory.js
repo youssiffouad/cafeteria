@@ -10,9 +10,8 @@ const AddCategory = () => {
     console.log(catCtx.errors);
     console.log(catCtx.getErrorMsg("categoryName"));
   }, [catCtx.errors]);
-  const submissionHandler = (fieldName, fieldValue) => {
-    console.log(fieldName);
-    console.log(fieldValue);
+
+  const submissionHandler = (fieldValue) => {
     catCtx.validateField("categoryName", "name", fieldValue);
     console.log(catCtx.errors);
 
@@ -26,10 +25,7 @@ const AddCategory = () => {
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          submissionHandler(
-            "categoryName",
-            catCtx.formState.categoryName.value
-          );
+          submissionHandler(catCtx.formState.categoryName.value);
         }}
       >
         <div className="form-group">
@@ -38,10 +34,11 @@ const AddCategory = () => {
           </label>
           <input
             type="text"
-            autoFocus
             name="categoryName"
             value={catCtx.formState.categoryName.value}
-            className="form-control input"
+            className={`form-control input ${
+              !catCtx.formState.categoryName.valid && "is-invalid"
+            }`}
             onChange={(event) => {
               catCtx.updatename(event);
               catCtx.validateField(
@@ -52,7 +49,7 @@ const AddCategory = () => {
             }}
           />
           {!catCtx.formState.categoryName.valid && (
-            <p>{catCtx.getErrorMsg("categoryName")}</p>
+            <p className="text-danger">{catCtx.getErrorMsg("categoryName")}</p>
           )}
         </div>
         <button type="submit" className="btn btn-primary add-btn">

@@ -6,7 +6,6 @@ import useFormValidation from "../Hooks/use_fromvalidation";
 export const CategoriesContext = createContext({
   Categorieslist: [],
   updateCategorieslist: () => {},
-  name: "",
   updatename: (n) => {},
   Msgcomponent: "",
   formState: {},
