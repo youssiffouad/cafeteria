@@ -81,7 +81,7 @@ const NewProductForm = () => {
               productsCtx.handleInputChange(event);
               productsCtx.validateField(
                 event.target.name,
-                "number",
+                "name",
                 event.target.value
               );
             }}
