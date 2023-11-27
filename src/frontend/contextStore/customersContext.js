@@ -6,24 +6,23 @@ import useFormValidation from "../Hooks/use_fromvalidation";
 export const CustomerContext = createContext({
   custlist: [],
   updatecustlist: () => {},
-  name: "",
-  updatename: (n) => {},
-  rankId: "",
-  updaterankId: (c) => {},
+
+  handleInputChange: (event) => {},
+  validateField: (fieldName, fieldType, fieldValue) => {},
+
   ranks: [],
   Msgcomponent: "",
   formState: {},
+  errors: {},
 });
-const customerName = { value: "", valid: true };
-const customerRank = { value: "", valid: true };
 
 export const CustomerProvider = (props) => {
   const [custlist, setcustlist] = useState([]);
-  const [name, setName] = useState("");
-  const [rankId, setrankId] = useState("");
 
   const [ranks, setranks] = useState([]);
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+  const customerName = { value: "", valid: true };
+  const customerRank = { value: "", valid: true };
   const {
     formState,
     errors,
@@ -43,7 +42,7 @@ export const CustomerProvider = (props) => {
       .catch((error) => {
         console.error("Failed to fetch customers:", error);
       });
-  }, [name]);
+  }, [formState.customerName.value]);
 
   useEffect(() => {
     fetch(`http://localhost:${serverport}/ranks/view`)
@@ -58,8 +57,8 @@ export const CustomerProvider = (props) => {
 
   const updatecustlist = () => {
     const customerData = {
-      name,
-      rankId,
+      name: formState.customerName.value,
+      rankId: formState.customerRank.value,
     };
     console.log(customerData);
 
@@ -86,15 +85,8 @@ export const CustomerProvider = (props) => {
       });
 
     // Reset form fields
-    setName("");
-    setrankId("");
-  };
-  const updatename = (name) => {
-    setName(name);
-  };
-
-  const updaterankId = (rankId) => {
-    setrankId(rankId);
+    resetField("customerName");
+    resetField("customerRank");
   };
 
   return (
@@ -102,10 +94,6 @@ export const CustomerProvider = (props) => {
       value={{
         custlist,
         updatecustlist,
-        name,
-        updatename,
-        rankId,
-        updaterankId,
         ranks,
         Msgcomponent,
         formState,

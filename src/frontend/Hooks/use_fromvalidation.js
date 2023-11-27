@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const useFormValidation = (initialFormState) => {
   const [formState, setFormState] = useState({
@@ -14,6 +14,8 @@ const useFormValidation = (initialFormState) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    console.log(name);
+    console.log(value);
     //modify only the value portion of the sent fieldname
     setFormState((prevstate) => {
       return { ...prevstate, [name]: { ...prevstate[name], value } };
@@ -65,8 +67,9 @@ const useFormValidation = (initialFormState) => {
     return notempty && didgitsOnly;
   };
 
-  const dropDownFieldValidation = (dropValue) => {
-    const isValid = nullCheckValidation("Dropdown", dropValue);
+  const dropDownFieldValidation = (fieldName, fieldValue) => {
+    const isValid = nullCheckValidation(fieldName, fieldValue);
+    console.log(fieldValue);
 
     return isValid;
   };

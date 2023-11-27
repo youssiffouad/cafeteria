@@ -1,22 +1,16 @@
 import React, { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
 import usePopUp from "../Hooks/use_popup";
+import useFormValidation from "../Hooks/use_fromvalidation";
 
 export const ProductContext = createContext({
   prodlist: [],
   updateprodlist: () => {},
-  name: "",
-  updatename: (n) => {},
-  vendorId: "",
-  updateVendorid: (c) => {},
-  catid: "",
-  updatecatid: (c) => {},
-  sellingPrice: "",
-  updatesellingPrice: (s) => {},
-  buying_price: "",
-  updatebuying_price: (b) => {},
-  quantity: "",
-  updateQuantity: (q) => {},
+  formState: {},
+  errors: {},
+  getErrorMsg: (fieldName) => {},
+  handleInputChange: (event) => {},
+  validateField: (fieldName, fieldType, fieldValue) => {},
   vendors: [],
   categories: [],
   Msgcomponent: "",
@@ -24,15 +18,31 @@ export const ProductContext = createContext({
 
 export const ProductProvider = (props) => {
   const [prodlist, setprodlist] = useState([]);
-  const [name, setName] = useState("");
-  const [vendorId, setVendorId] = useState("");
-  const [catid, setcatid] = useState("");
-  const [sellingPrice, setSellingPrice] = useState("");
-  const [buying_price, setbuying_price] = useState("");
-  const [quantity, setQuantity] = useState("");
+
   const [vendors, setVendors] = useState([]);
   const [categories, setcategories] = useState([]);
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+
+  const prodName = { value: "", valid: true };
+  const vendorId = { value: "", valid: true };
+  const catid = { value: "", valid: true };
+  const sellingPrice = { value: "", valid: true };
+  const buying_price = { value: "", valid: true };
+
+  const {
+    formState,
+    errors,
+    handleInputChange,
+    validateField,
+    resetField,
+    getErrorMsg,
+  } = useFormValidation({
+    prodName,
+    vendorId,
+    catid,
+    sellingPrice,
+    buying_price,
+  });
 
   const fetchProducts = () => {
     fetch(`http://localhost:${serverport}/products/view`)
@@ -69,7 +79,7 @@ export const ProductProvider = (props) => {
 
   const updateprodlist = () => {
     const productData = {
-      name,
+      name: formState.prodName.value,
       vendor_id: vendorId,
       catid,
       selling_price: sellingPrice,
@@ -100,30 +110,11 @@ export const ProductProvider = (props) => {
       });
 
     // Reset form fields
-    setName("");
-    setVendorId("");
-    setSellingPrice("");
+    resetField("prodName");
+    resetField("vendorId");
+    resetField("sellingPrice");
 
-    setQuantity("");
-  };
-  const updatename = (name) => {
-    setName(name);
-  };
-
-  const updateVendorid = (vendorId) => {
-    setVendorId(vendorId);
-  };
-  const updatecatid = (catid) => {
-    setcatid(catid);
-  };
-  const updatesellingPrice = (sp) => {
-    setSellingPrice(sp);
-  };
-  const updatebuying_price = (bp) => {
-    setbuying_price(bp);
-  };
-  const updateQuantity = (q) => {
-    setQuantity(q);
+    resetField("quantity");
   };
 
   return (
@@ -131,18 +122,12 @@ export const ProductProvider = (props) => {
       value={{
         prodlist,
         updateprodlist,
-        name,
-        updatename,
-        vendorId,
-        updateVendorid,
-        catid,
-        updatecatid,
-        sellingPrice,
-        updatesellingPrice,
-        buying_price,
-        updatebuying_price,
-        quantity,
-        updateQuantity,
+        formState,
+        errors,
+        getErrorMsg,
+        handleInputChange,
+        validateField,
+
         vendors,
         categories,
         Msgcomponent,

@@ -12,10 +12,9 @@ const AddCategory = () => {
   }, [catCtx.errors]);
 
   const submissionHandler = (fieldValue) => {
-    catCtx.validateField("categoryName", "name", fieldValue);
+    if (catCtx.validateField("categoryName", "name", fieldValue))
+      catCtx.updateCategorieslist();
     console.log(catCtx.errors);
-
-    // catCtx.updateCategorieslist();
   };
 
   return (
@@ -28,30 +27,26 @@ const AddCategory = () => {
           submissionHandler(catCtx.formState.categoryName.value);
         }}
       >
-        <div className="form-group">
-          <label htmlFor="categoryName" className="label">
-            اسم التصنيف:
-          </label>
-          <input
-            type="text"
-            name="categoryName"
-            value={catCtx.formState.categoryName.value}
-            className={`form-control input ${
-              !catCtx.formState.categoryName.valid && "is-invalid"
-            }`}
-            onChange={(event) => {
-              catCtx.updatename(event);
-              catCtx.validateField(
-                event.target.name,
-                "name",
-                event.target.value
-              );
-            }}
-          />
-          {!catCtx.formState.categoryName.valid && (
-            <p className="text-danger">{catCtx.getErrorMsg("categoryName")}</p>
-          )}
-        </div>
+        <label htmlFor="categoryName" className="label">
+          اسم التصنيف:
+        </label>
+        <input
+          type="text"
+          name="categoryName"
+          value={catCtx.formState.categoryName.value}
+          className={`form-control input ${
+            !catCtx.formState.categoryName.valid && "is-invalid"
+          }`}
+          onChange={(event) => {
+            catCtx.updatename(event);
+            catCtx.validateField(event.target.name, "name", event.target.value);
+          }}
+        />
+        {!catCtx.formState.categoryName.valid && (
+          <p className="text-danger">{catCtx.getErrorMsg("categoryName")}</p>
+        )}
+
+        <br />
         <button type="submit" className="btn btn-primary add-btn">
           اضافة
         </button>
