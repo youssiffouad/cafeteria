@@ -8,26 +8,20 @@ import {
 } from "./ordersApICalls";
 import { OrderItemContext } from "../OrderItemContext";
 import usePopUp from "../../../Hooks/use_popup";
+import useFormValidation from "../../../Hooks/use_fromvalidation";
 
 export const OrderContext = createContext({
   orders: [],
   updateOrders: () => {},
   orderswithItem: [],
-  rankid: "",
-  updaterankid: () => {},
-  customerId: "",
-  updateCustomerId: (c) => {},
-  tsreshaperPerson: "",
-  updatetsreshaperPerson: (t) => {},
+
   payment_method: "",
   updatepayment_method: (pm) => {},
-  orderDate: "",
-  updateOrderDate: (d) => {},
+
   deleteOrder: (o) => {},
   updateT2resha: () => {},
-  cashtoday: "",
+
   updateCashofToday: () => {},
-  cashChangeHandler: (c) => {},
 
   updatesoldprod: () => {},
   Msgcomponent: "",
@@ -36,12 +30,28 @@ export const OrderContext = createContext({
 export const OrderProvider = (props) => {
   const [orders, setOrders] = useState([]);
   const [orderswithItem, setOrderswithItem] = useState([]);
-  const [rankid, setrankid] = useState("");
+
   const [payment_method, setpayment_method] = useState("");
-  const [customerId, setCustomerId] = useState("");
-  const [orderDate, setOrderDate] = useState("");
-  const [t2reshaperPerson, sett2reshaperPerson] = useState("");
-  const [cashtoday, setcashtoday] = useState("");
+
+  const cashtoday = { value: "", valid: true };
+  const orderDate = { value: "", valid: true };
+  const t2reshaperPerson = { value: "", valid: true };
+  const customerId = { value: "", valid: true };
+  const rankid = { value: "", valid: true };
+  const {
+    formState,
+    errors,
+    handleInputChange,
+    validateField,
+    resetField,
+    getErrorMsg,
+  } = useFormValidation({
+    rankid,
+    customerId,
+    orderDate,
+    t2reshaperPerson,
+    cashtoday,
+  });
 
   const orderItemCtx = useContext(OrderItemContext);
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
@@ -180,9 +190,9 @@ export const OrderProvider = (props) => {
       });
 
     // Reset form fields
-    setCustomerId("");
-    setrankid("");
-    setOrderDate("");
+    resetField("customerId");
+    resetField("rankid");
+    resetField("orderDate");
     setpayment_method("");
     orderItemCtx.resetOrderItems();
   };
@@ -200,26 +210,8 @@ export const OrderProvider = (props) => {
     }
   };
 
-  const updateCustomerId = (c) => {
-    setCustomerId(c);
-  };
-
-  const updateOrderDate = (d) => {
-    setOrderDate(d);
-  };
-
-  const updaterankid = (r) => {
-    setrankid(r);
-  };
   const updatepayment_method = (pm) => {
     setpayment_method(pm);
-  };
-  const updatetsreshaperPerson = (t) => {
-    console.log(t);
-    sett2reshaperPerson(t);
-  };
-  const cashChangeHandler = (c) => {
-    setcashtoday(c);
   };
 
   return (
@@ -229,23 +221,18 @@ export const OrderProvider = (props) => {
         orderswithItem,
         updateOrders,
         fetchOrders,
-        rankid,
-        updaterankid,
-        customerId,
-        updateCustomerId,
-        t2reshaperPerson,
-        updatetsreshaperPerson,
         updateCashofToday,
-
         updateT2resha,
-        cashChangeHandler,
         updatesoldprod,
         payment_method,
         updatepayment_method,
-        orderDate,
-        updateOrderDate,
         deleteOrder: handleDeleteOrder,
         Msgcomponent,
+        formState,
+        errors,
+        handleInputChange,
+        validateField,
+        getErrorMsg,
       }}
     >
       {props.children}

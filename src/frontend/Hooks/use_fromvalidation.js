@@ -74,8 +74,8 @@ const useFormValidation = (initialFormState) => {
     return isValid;
   };
 
-  const dateFieldValidation = (dateValue) => {
-    const isValid = nullCheckValidation("Date", dateValue);
+  const dateFieldValidation = (fieldName, fieldValue) => {
+    const isValid = nullCheckValidation(fieldName, fieldValue);
 
     return isValid;
   };

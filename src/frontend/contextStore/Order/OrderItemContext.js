@@ -1,53 +1,29 @@
 import React, { createContext, useEffect, useState } from "react";
+import useFormValidation from "../../Hooks/use_fromvalidation";
 
 export const OrderItemContext = createContext({
   orderitems: [],
   updateorderitems: () => {},
-
-  cat: { id: "", name: "" },
-  updatecat: (c) => {},
-  prod: { id: "", name: "", price: "" },
-  updateprod: (p) => {},
-  quantity: "",
-  updatequantity: (q) => {},
   totalOrderCost: "",
   resetOrderItems: () => {},
   deleteItem: () => {},
-  // itemprice: "",
-  // updateitemprice: (p) => {},
+  handleInputChange: (event) => {},
+  validateField: (fieldname, fieldType, fieldValue) => {},
+  getErrorMsg: (fieldName) => {},
+  errors: {},
+  formState: {},
 });
 
 export const OrderItemProvider = (props) => {
-  const [cat, setcat] = useState({ id: "", name: "" });
-  const [prod, setprod] = useState({ id: "", name: "", price: "" });
-  const [quantity, setquantity] = useState("");
+  const cat = { id: "", name: "", value: "", valid: true };
+  const prod = { id: "", name: "", price: "", value: "", valid: true };
+  const quantity = { value: "", valid: true };
+  const { handleInputChange, validateField, getErrorMsg, errors, formState } =
+    useFormValidation({ cat, prod, quantity });
 
   // const [itemprice, setitemprice] = useState("");
   const [orderitems, setorderitems] = useState([]);
 
-  const updatecat = (c) => {
-    console.log(`this is the cat ${cat}`);
-    setcat(c);
-  };
-  const updateprod = (p) => {
-    console.log(`this is the ${prod}`);
-    setprod(p);
-  };
-  const updatequantity = (q) => {
-    console.log(`this is the ${quantity}`);
-    setquantity(q);
-  };
-
-  const updateorderitems = useEffect(() => {
-    const newitem = {
-      product_id: prod.id,
-      quantity,
-    };
-
-    console.log(newitem);
-    console.log(`here is the new updated orderlist`);
-    setorderitems((prev) => [newitem]);
-  }, [cat, prod, quantity]);
   const deleteItem = (id) => {
     const orderItems = [...orderitems];
     console.log(`here is the id ${id}`);
@@ -66,15 +42,16 @@ export const OrderItemProvider = (props) => {
     <OrderItemContext.Provider
       value={{
         orderitems,
-        updateorderitems,
         cat,
-        updatecat,
         prod,
-        updateprod,
         quantity,
-        updatequantity,
         totalOrderCost,
         deleteItem,
+        handleInputChange,
+        validateField,
+        getErrorMsg,
+        errors,
+        formState,
       }}
     >
       {props.children}

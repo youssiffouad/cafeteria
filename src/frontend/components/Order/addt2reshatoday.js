@@ -1,10 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
 import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
 import { createPortal } from "react-dom";
 import FilterCustomerBYRank from "../customer/filterByrank";
 const T2reshaOfToday = () => {
   const t2reshaCtx = useContext(OrderContext);
+
+  useEffect(() => {
+    console.log(t2reshaCtx.errors);
+    console.log(t2reshaCtx.getErrorMsg("customerName"));
+    console.log(t2reshaCtx.getErrorMsg("customerRank"));
+  }, [t2reshaCtx.errors]);
+  const submissionHandler = (formdata) => {
+    const { orderDate, t2reshaperPerson, customerId, rankid } = formdata;
+    t2reshaCtx.validateField("orderDate", "date", orderDate);
+    t2reshaCtx.validateField("t2reshaperPerson", "date", t2reshaperPerson);
+    t2reshaCtx.validateField("rankid", "dropdown", rankid);
+    t2reshaCtx.validateField("customerId", "dropdown", customerId);
+
+    console.log(t2reshaCtx.errors);
+
+    // t2reshaCtx.updateT2resha();
+  };
 
   return (
     <>
@@ -16,35 +33,71 @@ const T2reshaOfToday = () => {
         <h5>اضافة تقريشة اليوم</h5>
         <form
           onSubmit={(event) => {
+            const formdata = {
+              orderDate: t2reshaCtx.formState.orderDate.value,
+              t2reshaperPerson: t2reshaCtx.formState.t2reshaperPerson.value,
+              customerId: t2reshaCtx.formState.customerId.value,
+              rankid: t2reshaCtx.formState.rankid.value,
+            };
             event.preventDefault();
-            t2reshaCtx.updateT2resha();
+            submissionHandler(formdata);
           }}
         >
-          <FilterCustomerBYRank />
-          <label className="label">
-            قيمة التقريشة:
-            <input
-              className="form-control input"
-              type="text"
-              value={t2reshaCtx.tsreshaperPerson}
-              onChange={(event) =>
-                t2reshaCtx.updatetsreshaperPerson(event.target.value)
-              }
-            />
-          </label>
-
-          <label className="label">
-            التاريخ
-            <input
-              className="form-control input"
-              type="date"
-              value={t2reshaCtx.orderDate}
-              onChange={(event) =>
-                t2reshaCtx.updateOrderDate(event.target.value)
-              }
-            />
-          </label>
-          <br />
+          <div className="row">
+            <FilterCustomerBYRank />
+            <div className="col">
+              <label className="label">
+                قيمة التقريشة:
+                <input
+                  name="t2reshaperPerson"
+                  className={`form-control input ${
+                    !t2reshaCtx.formState.t2reshaperPerson.valid && "is-invalid"
+                  }`}
+                  type="text"
+                  value={t2reshaCtx.formState.t2reshaperPerson.value}
+                  onChange={(event) => {
+                    t2reshaCtx.handleInputChange(event);
+                    t2reshaCtx.validateField(
+                      event.target.name,
+                      "number",
+                      event.target.value
+                    );
+                  }}
+                />
+              </label>
+              {!t2reshaCtx.formState.t2reshaperPerson.valid && (
+                <p className="text-danger">
+                  {t2reshaCtx.getErrorMsg("t2reshaperPerson")}
+                </p>
+              )}
+            </div>
+            <div className="col">
+              <label className="label">
+                التاريخ
+                <input
+                  name="orderDate"
+                  className={`form-control input ${
+                    !t2reshaCtx.formState.orderDate.valid && "is-invalid"
+                  }`}
+                  type="date"
+                  value={t2reshaCtx.formState.orderDate.value}
+                  onChange={(event) => {
+                    t2reshaCtx.handleInputChange(event);
+                    t2reshaCtx.validateField(
+                      event.target.name,
+                      "date",
+                      event.target.value
+                    );
+                  }}
+                />
+              </label>
+              {!t2reshaCtx.formState.orderDate.valid && (
+                <p className="text-danger">
+                  {t2reshaCtx.getErrorMsg("orderDate")}
+                </p>
+              )}
+            </div>
+          </div>
 
           <button className="btn btn-primary mt-2 add-btn " type="submit">
             اضافة

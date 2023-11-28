@@ -22,6 +22,11 @@ const NewProductForm = () => {
     console.log(` here is the catid :${catid}`);
     console.log(` here is the sellingPrice :${sellingPrice}`);
     console.log(` here is the buying_price :${buying_price}`);
+    productsCtx.validateField("prodName", "name", prodName);
+    productsCtx.validateField("vendorId", "name", vendorId);
+    productsCtx.validateField("catid", "name", catid);
+    productsCtx.validateField("sellingPrice", "name", sellingPrice);
+    productsCtx.validateField("buying_price", "name", buying_price);
 
     console.log(productsCtx.errors);
 
@@ -49,117 +54,150 @@ const NewProductForm = () => {
           submissionHandler(formdata);
         }}
       >
-        <label className="label">
-          :اسم المنتج
-          <input
-            name="prodName"
-            type="text"
-            value={productsCtx.formState.prodName.value}
-            className={`form-control input ${
-              !productsCtx.formState.prodName.valid && "is-invalid"
-            }`}
-            onChange={(event) => {
-              productsCtx.handleInputChange(event);
-              productsCtx.validateField(
-                event.target.name,
-                "name",
-                event.target.value
-              );
-            }}
-          />
-        </label>
-
-        <label className="label">
-          المورد:
-          <select
-            name="vendorId"
-            value={productsCtx.formState.vendorId.value}
-            className={`form-control input ${
-              !productsCtx.formState.vendorId.valid && "is-invalid"
-            }`}
-            onChange={(event) => {
-              productsCtx.handleInputChange(event);
-              productsCtx.validateField(
-                event.target.name,
-                "name",
-                event.target.value
-              );
-            }}
-          >
-            <option value="">Select Vendor</option>
-            {productsCtx.vendors.map((vendor) => (
-              <option key={vendor.id} value={vendor.id}>
-                {vendor.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="label">
-          التصنيف
-          <select
-            name="catid"
-            value={productsCtx.formState.catid.value}
-            className={`form-control input ${
-              !productsCtx.formState.catid.valid && "is-invalid"
-            }`}
-            onChange={(event) => {
-              productsCtx.handleInputChange(event);
-              productsCtx.validateField(
-                event.target.name,
-                "name",
-                event.target.value
-              );
-            }}
-          >
-            <option value="">Select Category</option>
-            {productsCtx.categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="label">
-          سعر البيع:
-          <input
-            type="text"
-            name="sellingPrice"
-            value={productsCtx.sellingPrice}
-            className={`form-control input ${
-              !productsCtx.formState.sellingPrice.valid && "is-invalid"
-            }`}
-            onChange={(event) => {
-              productsCtx.handleInputChange(event);
-              productsCtx.validateField(
-                event.target.name,
-                "number",
-                event.target.value
-              );
-            }}
-          />
-        </label>
-        <label className="label">
-          سعر الشراء:
-          <input
-            type="text"
-            name="buying_price"
-            value={productsCtx.buying_price}
-            className={`form-control input ${
-              !productsCtx.formState.buying_price.valid && "is-invalid"
-            }`}
-            onChange={(event) => {
-              productsCtx.handleInputChange(event);
-              productsCtx.validateField(
-                event.target.name,
-                "number",
-                event.target.value
-              );
-            }}
-          />
-        </label>
-
-        <br />
+        <div className="row">
+          <div className="col">
+            <label className="label">
+              :اسم المنتج
+              <input
+                name="prodName"
+                type="text"
+                value={productsCtx.formState.prodName.value}
+                className={`form-control input ${
+                  !productsCtx.formState.prodName.valid && "is-invalid"
+                }`}
+                onChange={(event) => {
+                  productsCtx.handleInputChange(event);
+                  productsCtx.validateField(
+                    event.target.name,
+                    "name",
+                    event.target.value
+                  );
+                }}
+              />
+            </label>
+            {!productsCtx.formState.prodName.valid && (
+              <p className="text-danger">
+                {productsCtx.getErrorMsg("prodName")}
+              </p>
+            )}
+          </div>
+          <div className="col">
+            <label className="label">
+              المورد:
+              <select
+                name="vendorId"
+                value={productsCtx.formState.vendorId.value}
+                className={`form-control input ${
+                  !productsCtx.formState.vendorId.valid && "is-invalid"
+                }`}
+                onChange={(event) => {
+                  productsCtx.handleInputChange(event);
+                  productsCtx.validateField(
+                    event.target.name,
+                    "name",
+                    event.target.value
+                  );
+                }}
+              >
+                <option value="">Select Vendor</option>
+                {productsCtx.vendors.map((vendor) => (
+                  <option key={vendor.id} value={vendor.id}>
+                    {vendor.name}
+                  </option>
+                ))}
+              </select>
+              {!productsCtx.formState.vendorId.valid && (
+                <p className="text-danger">
+                  {productsCtx.getErrorMsg("vendorId")}
+                </p>
+              )}
+            </label>
+          </div>
+          <div className="col">
+            <label className="label">
+              التصنيف
+              <select
+                name="catid"
+                value={productsCtx.formState.catid.value}
+                className={`form-control input ${
+                  !productsCtx.formState.catid.valid && "is-invalid"
+                }`}
+                onChange={(event) => {
+                  productsCtx.handleInputChange(event);
+                  productsCtx.validateField(
+                    event.target.name,
+                    "name",
+                    event.target.value
+                  );
+                }}
+              >
+                <option value="">Select Category</option>
+                {productsCtx.categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              {!productsCtx.formState.catid.valid && (
+                <p className="text-danger">
+                  {productsCtx.getErrorMsg("catid")}
+                </p>
+              )}
+            </label>
+          </div>
+          <div className="col">
+            <label className="label">
+              سعر البيع:
+              <input
+                type="text"
+                name="sellingPrice"
+                value={productsCtx.sellingPrice}
+                className={`form-control input ${
+                  !productsCtx.formState.sellingPrice.valid && "is-invalid"
+                }`}
+                onChange={(event) => {
+                  productsCtx.handleInputChange(event);
+                  productsCtx.validateField(
+                    event.target.name,
+                    "number",
+                    event.target.value
+                  );
+                }}
+              />
+              {!productsCtx.formState.sellingPrice.valid && (
+                <p className="text-danger">
+                  {productsCtx.getErrorMsg("sellingPrice")}
+                </p>
+              )}
+            </label>
+          </div>
+          <div className="col">
+            <label className="label">
+              سعر الشراء:
+              <input
+                type="text"
+                name="buying_price"
+                value={productsCtx.buying_price}
+                className={`form-control input ${
+                  !productsCtx.formState.buying_price.valid && "is-invalid"
+                }`}
+                onChange={(event) => {
+                  productsCtx.handleInputChange(event);
+                  productsCtx.validateField(
+                    event.target.name,
+                    "number",
+                    event.target.value
+                  );
+                }}
+              />
+            </label>
+            {!productsCtx.formState.buying_price.valid && (
+              <p className="text-danger">
+                {productsCtx.getErrorMsg("buying_price")}
+              </p>
+            )}
+          </div>
+        </div>
 
         <button type="submit" className="btn btn-primary mt-2 add-btn">
           اضافة

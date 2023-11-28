@@ -63,10 +63,12 @@ const FilterProdBYCat = (props) => {
     console.log(selectedCategory);
     console.log(category);
 
-    orderItemCtx.updatecat({
-      id: selectedCategoryId,
-      name: selectedCategory?.name,
-    });
+    orderItemCtx.handleInputChange(event);
+    orderItemCtx.validateField(
+      event.target.name,
+      "dropdown",
+      event.target.value
+    );
     lotCtx.updatecatid(selectedCategoryId);
   };
 
@@ -84,11 +86,12 @@ const FilterProdBYCat = (props) => {
     });
     console.log(selectedProduct);
 
-    orderItemCtx.updateprod({
-      id: selectedProductId,
-      name: selectedProduct?.name,
-      price: selectedProduct?.selling_price,
-    });
+    orderItemCtx.handleInputChange(event);
+    orderItemCtx.validateField(
+      event.target.name,
+      "dropdown",
+      event.target.value
+    );
     console.log(` i cahnged prodid`);
     console.log(selectedProductId);
     lotCtx.updateprodid(selectedProductId);
@@ -97,38 +100,54 @@ const FilterProdBYCat = (props) => {
 
   return (
     <React.Fragment>
-      <label>
-        التصنيف
-        <select
-          className="form-control"
-          value={category.id}
-          onChange={catChangeHandler}
-        >
-          <option value="">اختر التصنيف</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-              {cat.id}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="col">
+        <label>
+          التصنيف
+          <select
+            name="cat"
+            className={`form-control input ${
+              !orderItemCtx.formState.cat.valid && "is-invalid"
+            }`}
+            value={orderItemCtx.formState.cat.value}
+            onChange={catChangeHandler}
+          >
+            <option value="">اختر التصنيف</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+                {cat.id}
+              </option>
+            ))}
+          </select>
+        </label>
+        {!orderItemCtx.formState.cat.valid && (
+          <p className="text-danger">{orderItemCtx.getErrorMsg("cat")}</p>
+        )}
+      </div>
 
-      <label>
-        المنتج
-        <select
-          className="form-control"
-          value={product.id}
-          onChange={ProdChangeHandler}
-        >
-          <option value="">اختر اسم المنتج</option>
-          {products.map((prod) => (
-            <option key={prod.id} value={prod.id}>
-              {prod.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="col">
+        <label>
+          المنتج
+          <select
+            name="prod"
+            className={`form-control input ${
+              !orderItemCtx.formState.prod.valid && "is-invalid"
+            }`}
+            value={orderItemCtx.formState.prod.value}
+            onChange={ProdChangeHandler}
+          >
+            <option value="">اختر اسم المنتج</option>
+            {products.map((prod) => (
+              <option key={prod.id} value={prod.id}>
+                {prod.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        {!orderItemCtx.formState.cat.valid && (
+          <p className="text-danger">{orderItemCtx.getErrorMsg("prod")}</p>
+        )}
+      </div>
     </React.Fragment>
   );
 };

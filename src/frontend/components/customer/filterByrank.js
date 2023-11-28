@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import serverport from "../../backendconfiguration";
 import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
 
-const FilterCustomerBYRank = (props) => {
+const FilterCustomerBYRank = () => {
   const [ranks, setranks] = useState([]);
   // const [rankid, setrankid] = useState("");
   const [filteredcusts, setfilteredcusts] = useState([]);
@@ -23,9 +23,9 @@ const FilterCustomerBYRank = (props) => {
 
   // Change customeers on changing rank
   useEffect(() => {
-    if (orderCtx.rankid !== "") {
+    if (orderCtx.formState.rankid.value !== "") {
       console.log("ana geet");
-      const requestBody = { rankid: orderCtx.rankid };
+      const requestBody = { rankid: orderCtx.formState.rankid.value };
       fetch(`http://localhost:${serverport}/customers/filterbyrank`, {
         method: "POST",
         headers: {
@@ -41,51 +41,68 @@ const FilterCustomerBYRank = (props) => {
           console.error("Failed to filter products:", error);
         });
     }
-  }, [orderCtx.rankid]);
+  }, [orderCtx.formState.rankid.value]);
 
   const custchangehandler = (event) => {
-    orderCtx.updateCustomerId(event.target.value);
+    orderCtx.handleInputChange(event);
+    orderCtx.validateField(event.target.name, "dropdown", event.target.value);
+
     // setcustid(event.target.value);
   };
   const rankchangehandler = (event) => {
-    orderCtx.updaterankid(event.target.value);
-    // setrankid(event.target.value);
-    console.log(orderCtx.rankid);
+    orderCtx.handleInputChange(event);
+    orderCtx.validateField(event.target.name, "dropdown", event.target.value);
   };
 
   return (
     <React.Fragment>
-      <label>
-        الرتبة / الدرجة
-        <select
-          className="form-control"
-          value={orderCtx.rankid}
-          onChange={rankchangehandler}
-        >
-          <option value="">اختر الرتبة / الدرجة</option>
-          {ranks.map((rank) => (
-            <option key={rank.id} value={rank.id}>
-              {rank.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="col">
+        <label>
+          الرتبة / الدرجة
+          <select
+            name="rankid"
+            className={`form-control input ${
+              !orderCtx.formState.rankid.valid && "is-invalid"
+            }`}
+            value={orderCtx.formState.rankid.value}
+            onChange={rankchangehandler}
+          >
+            <option value="">اختر الرتبة / الدرجة</option>
+            {ranks.map((rank) => (
+              <option key={rank.id} value={rank.id}>
+                {rank.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        {!orderCtx.formState.rankid.valid && (
+          <p className="text-danger">{orderCtx.getErrorMsg("rankid")}</p>
+        )}
+      </div>
 
-      <label>
-        المستهلك
-        <select
-          className="form-control"
-          value={orderCtx.customerId}
-          onChange={custchangehandler}
-        >
-          <option value="">اختر اسم المستهلك</option>
-          {filteredcusts.map((cust) => (
-            <option key={cust.id} value={cust.id}>
-              {cust.custname}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="col">
+        <label>
+          المستهلك
+          <select
+            name="customerId"
+            className={`form-control input ${
+              !orderCtx.formState.customerId.valid && "is-invalid"
+            }`}
+            value={orderCtx.formState.customerId.value}
+            onChange={custchangehandler}
+          >
+            <option value="">اختر اسم المستهلك</option>
+            {filteredcusts.map((cust) => (
+              <option key={cust.id} value={cust.id}>
+                {cust.custname}
+              </option>
+            ))}
+          </select>
+        </label>
+        {!orderCtx.formState.customerId.valid && (
+          <p className="text-danger">{orderCtx.getErrorMsg("customerId")}</p>
+        )}
+      </div>
     </React.Fragment>
   );
 };
