@@ -1,22 +1,34 @@
 import React, { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
 import usePopUp from "../Hooks/use_popup";
+import useFormValidation from "../Hooks/use_fromvalidation";
 
 export const vendorContext = createContext({
   vendorlist: [],
   updatevendorlist: () => {},
-  name: "",
-  updatename: (n) => {},
-  phone: "",
-  updatePhone: (p) => {},
+  formState: {},
+  handleInputChange: (event) => {},
+  validateField: (fieldName, fieldType, fieldValue) => {},
+  errors: {},
+  getErrorMsg: (fieldName) => {},
   Msgcomponent: "",
 });
 
 export const VendorProvider = (props) => {
   const [vendorlist, setvendorlist] = useState([]);
-  const [name, setName] = useState("");
-  const [phone, setphone] = useState("");
+
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+  const name = { value: "", valid: true };
+  const phone = { value: "", valid: true };
+  const {
+    handleInputChange,
+    validateField,
+    errors,
+    getErrorMsg,
+    resetField,
+    formState,
+  } = useFormValidation({ name, phone });
+
   const fetchVendors = () => {
     fetch(`http://localhost:${serverport}/vendors/view`)
       .then((response) => response.json())
@@ -62,14 +74,6 @@ export const VendorProvider = (props) => {
       });
 
     // Reset form fields
-    setName("");
-  };
-  const updatename = (name) => {
-    setName(name);
-  };
-
-  const updatephone = (phone) => {
-    setphone(phone);
   };
 
   return (
@@ -77,10 +81,12 @@ export const VendorProvider = (props) => {
       value={{
         vendorlist,
         updatevendorlist,
-        name,
-        updatename,
-        phone,
-        updatephone,
+        formState,
+        handleInputChange,
+        validateField,
+        errors,
+        getErrorMsg,
+
         Msgcomponent,
       }}
     >
