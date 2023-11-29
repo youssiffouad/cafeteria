@@ -3,13 +3,16 @@ import { LotProvider } from "../../contextStore/lotsContext";
 import AddNewLot from "./addnewlot";
 import LotList from "./LotsList";
 import FilterLots from "./filterLots";
+import { OrderItemProvider } from "../../contextStore/Order/OrderItemContext";
 const LotsWhole = () => {
   return (
-    <LotProvider>
-      <AddNewLot />
-      <LotList />
-      <FilterLots />
-    </LotProvider>
+    <OrderItemProvider>
+      <LotProvider>
+        <AddNewLot />
+        <LotList />
+        <FilterLots />
+      </LotProvider>
+    </OrderItemProvider>
   );
 };
 

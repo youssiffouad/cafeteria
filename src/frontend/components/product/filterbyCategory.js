@@ -2,19 +2,18 @@ import { OrderItemContext } from "../../contextStore/Order/OrderItemContext";
 
 import React, { useState, useEffect, useContext } from "react";
 import serverport from "../../backendconfiguration";
-import { LotContext } from "../../contextStore/lotsContext";
 
 const FilterProdBYCat = (props) => {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState({ id: "", name: "" });
   const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState({
-    id: "",
-    name: "",
-    sellingprice: "",
-    buying_priceperitem: "",
-  });
-  const lotCtx = useContext(LotContext);
+  // const [product, setProduct] = useState({
+  //   id: "",
+  //   name: "",
+  //   sellingprice: "",
+  //   buying_priceperitem: "",
+  // });
+
   const orderItemCtx = useContext(OrderItemContext);
 
   // Fetch all categories existing
@@ -56,7 +55,7 @@ const FilterProdBYCat = (props) => {
   const catChangeHandler = (event) => {
     const selectedCategoryId = event.target.value;
     const selectedCategory = categories.find((cat) => {
-      return cat.id == selectedCategoryId;
+      return cat.id === selectedCategoryId;
     });
 
     setCategory({ id: selectedCategoryId, name: selectedCategory?.name });
@@ -69,33 +68,20 @@ const FilterProdBYCat = (props) => {
       "dropdown",
       event.target.value
     );
-    lotCtx.updatecatid(selectedCategoryId);
+    // lotCtx.handleInputChange(event);
+    // lotCtx.validateField(event.target.name, "dropdown", event.target.value);
   };
 
   const ProdChangeHandler = (event) => {
-    const selectedProductId = event.target.value;
-    const selectedProduct = products.find((prod) => {
-      return prod.id == selectedProductId;
-    });
-
-    setProduct({
-      id: selectedProductId,
-      name: selectedProduct?.name,
-      sellingprice: selectedProduct?.selling_price,
-      buying_priceperitem: selectedProduct?.buying_price,
-    });
-    console.log(selectedProduct);
-
     orderItemCtx.handleInputChange(event);
     orderItemCtx.validateField(
       event.target.name,
       "dropdown",
       event.target.value
     );
-    console.log(` i cahnged prodid`);
-    console.log(selectedProductId);
-    lotCtx.updateprodid(selectedProductId);
-    lotCtx.updateprodBuyingPrice(selectedProduct?.buying_price);
+
+    // lotCtx.handleInputChange(event);
+    // lotCtx.validateField(event.target.name, "dropdown", event.target.value);
   };
 
   return (

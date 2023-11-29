@@ -14,17 +14,18 @@ export const OrderContext = createContext({
   orders: [],
   updateOrders: () => {},
   orderswithItem: [],
-
   payment_method: "",
   updatepayment_method: (pm) => {},
-
   deleteOrder: (o) => {},
   updateT2resha: () => {},
-
   updateCashofToday: () => {},
-
   updatesoldprod: () => {},
   Msgcomponent: "",
+  formState: {},
+  errors: {},
+  handleInputChange: (event) => {},
+  validateField: (fieldName, fieldType, fieldValue) => {},
+  getErrorMsg: (fieldName) => {},
 });
 
 export const OrderProvider = (props) => {

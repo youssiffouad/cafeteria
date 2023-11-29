@@ -1,39 +1,52 @@
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import serverport from "../backendconfiguration";
 import usePopUp from "../Hooks/use_popup";
+import useFormValidation from "../Hooks/use_fromvalidation";
+import { OrderItemContext } from "./Order/OrderItemContext";
 
 export const LotContext = createContext({
   lotList: [],
   updateLotList: () => {},
-  productID: "",
-  updateprodid: () => {},
-  prodBuyingPrice: "",
-  updateprodBuyingPrice: (pbp) => {},
-  catid: "",
-  updatecatid: () => {},
-  quantity: "",
-  updatequantity: () => {},
-  paidAmount: "",
-  updatepaidAmount: () => {},
-  cost: "",
-  updatecost: () => {},
-  received_date: "",
-  updateReceivedDate: () => {},
+  handleInputChange: (event) => {},
+  validateField: (fieldName, fieldType, fieldValue) => {},
+  getErrorMsg: (fieldName) => {},
+  errors: {},
+  formState: {},
   handleDeleteLot: (L) => {},
   installLot: (lotid) => {},
   Msgcomponent: "",
 });
 
 export const LotProvider = (props) => {
-  const [productID, setproductID] = useState("");
-  const [prodBuyingPrice, setprodBuyingPrice] = useState("");
-  const [catid, setcatid] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [paidAmount, setpaidAmount] = useState("");
-  const [cost, setCost] = useState("");
-  const [received_date, setReceivedDate] = useState("");
   const [lotList, setLotList] = useState([]);
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+  const prodAndCatCtx = useContext(OrderItemContext);
+
+  const prodBuyingPrice = { value: "", valid: true };
+  const quantity = { value: "", valid: true };
+  const paidAmount = { value: "", valid: true };
+  const cost = { value: "", valid: true };
+  const received_date = { value: "", valid: true };
+  const {
+    handleInputChange,
+    validateField,
+    getErrorMsg,
+    errors,
+    formState,
+    resetField,
+  } = useFormValidation({
+    prodBuyingPrice,
+    quantity,
+    paidAmount,
+    cost,
+    received_date,
+  });
 
   const fetchLots = () => {
     fetch(`http://localhost:${serverport}/lots/view`)
@@ -74,21 +87,6 @@ export const LotProvider = (props) => {
       });
   };
 
-  const updatecatid = (catid) => {
-    setcatid(catid);
-  };
-
-  const updatecost = useCallback(() => {
-    console.log(`prodbuying price${prodBuyingPrice}`);
-    console.log(`quantity ${quantity}`);
-    setCost(prodBuyingPrice * quantity);
-  }, [prodBuyingPrice, quantity]);
-
-  //change cost on changing quantity automatically
-  useEffect(() => {
-    updatecost();
-  }, [updatecost]);
-
   const installLot = (lot_id) => {
     const lotid = { lot_id };
     console.log(lotid);
@@ -116,36 +114,17 @@ export const LotProvider = (props) => {
       });
   };
 
-  const updateprodid = (prodid) => {
-    console.log("i updated product id");
-    console.log(prodid);
-    setproductID(prodid);
-  };
-  const updateprodBuyingPrice = (pbp) => {
-    console.log("i updated product buying price");
-    console.log(pbp);
-    setprodBuyingPrice(pbp);
-  };
-  const updatequantity = (quantity) => {
-    setQuantity(quantity);
-  };
-  const updatepaidAmount = (q) => {
-    setpaidAmount(q);
-  };
-  const updateReceivedDate = (receiveddate) => {
-    setReceivedDate(receiveddate);
-  };
-  const updateLotList = useCallback(() => {
+  const updateLotList = () => {
     const lotdata = {
-      productID,
-      catid,
-      quantity,
-      cost,
-      paidAmount,
-      received_date,
+      productID: prodAndCatCtx.formState.prod.value,
+      catid: prodAndCatCtx.formState.cat.value,
+      quantity: formState.quantity.value,
+      cost: formState.cost.value,
+      paidAmount: formState.paidAmount.value,
+      received_date: formState.received_date.value,
     };
     console.log(lotdata);
-    console.log(`the prod id is ${productID}`);
+    console.log(`the prod id is ${prodAndCatCtx.formState.prod.value}`);
     fetch(`http://localhost:${serverport}/lots/add`, {
       method: "POST",
       headers: {
@@ -171,7 +150,7 @@ export const LotProvider = (props) => {
         // Handle error
       });
     // Reset form fields
-  }, [catid, cost, paidAmount, productID, quantity, received_date]);
+  };
 
   useEffect(() => {
     fetchLots();
@@ -183,20 +162,12 @@ export const LotProvider = (props) => {
       value={{
         lotList,
         updateLotList,
-        productID,
-        prodBuyingPrice,
-        received_date,
-        quantity,
-        paidAmount,
-        cost,
-        catid,
-        updatecatid,
-        updatecost,
-        updateprodid,
-        updateprodBuyingPrice,
-        updatequantity,
-        updatepaidAmount,
-        updateReceivedDate,
+        formState,
+        handleInputChange,
+        validateField,
+        errors,
+        getErrorMsg,
+
         handleDeleteLot,
         installLot,
         Msgcomponent,
