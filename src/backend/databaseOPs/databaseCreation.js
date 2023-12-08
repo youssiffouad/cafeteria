@@ -115,8 +115,20 @@ db.run(`
 
 `);
 
-db.run(`  INSERT OR REPLACE INTO Financial (id, cash, owed, debt, productsInStockValue, revenue, profit)
-VALUES (1, 0, 0, 0, 0, 0, 0);`);
+//create users table
+db.run(` 
+create table if not exists Users(
+  id            integer primary key,
+  customer_id   integer ,
+  name          text ,
+  role          text ,
+  password      text ,
+  FOREIGN KEY (customer_id) references Customers(id) on delete cascade
+);
+`);
+
+// db.run(`  INSERT OR REPLACE INTO Financial (id, cash, owed, debt, productsInStockValue, revenue, profit)
+// VALUES (1, 0, 0, 0, 0, 0, 0);`);
 
 // delete a table
 // const tableName = "Orders";

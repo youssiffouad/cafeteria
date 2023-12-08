@@ -13,27 +13,14 @@ const NewCustomerForm = () => {
 
   const submissionHandler = (formdata) => {
     const { customerName, customerRank } = formdata;
-    console.log(` here is the customer name :${customerName}`);
-    console.log(
-      customerCtx.validateField("customerName", "name", customerName)
-    );
-    console.log(` here is the rank name :${customerRank}`);
-    console.log(
-      customerCtx.validateField("customerRank", "dropdown", customerRank)
-    );
 
-    const v2 = customerCtx.validateField(
+    const c1 = customerCtx.validateField(
       "customerRank",
       "dropdown",
       customerRank
     );
-    const v1 = customerCtx.validateField("customerName", "name", customerName);
-
-    if (v1 && v2) console.log("success");
-
-    console.log(customerCtx.errors);
-
-    // customerCtx.updatecustlist();
+    const c2 = customerCtx.validateField("customerName", "name", customerName);
+    if (c1 && c2) customerCtx.updatecustlist();
   };
 
   return (

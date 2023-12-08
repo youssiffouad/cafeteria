@@ -38,7 +38,7 @@ const AddCategory = () => {
             !catCtx.formState.categoryName.valid && "is-invalid"
           }`}
           onChange={(event) => {
-            catCtx.updatename(event);
+            catCtx.handleInputChange(event);
             catCtx.validateField(event.target.name, "name", event.target.value);
           }}
         />

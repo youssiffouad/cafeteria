@@ -1,0 +1,142 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
+import OrderDropdown from "../components/Order/orderdropdown";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../Redux_Store/authSlice";
+import { useDispatch } from "react-redux";
+import { logout } from "../Redux_Store/authSlice";
+
+const Navbar = () => {
+  const [activetab, setactivetab] = useState("");
+  const [isSmall, setisSmall] = useState(false);
+  const [toggleHovered, settoggleHovered] = useState(false);
+  const auth = useSelector(selectAuth);
+  const dispatch = useDispatch();
+
+  const HandleSize = () => {
+    setisSmall(window.innerWidth < 995);
+  };
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    navigate("/");
+    dispatch(logout());
+  };
+
+  const NavDynamicClass =
+    isSmall && !toggleHovered
+      ? "d-none"
+      : isSmall && toggleHovered
+      ? "verticalnav "
+      : "nav nav-pills";
+  const ToggleDynamicClass = isSmall ? "me-5" : "d-none";
+  useEffect(() => {
+    HandleSize();
+    window.addEventListener("resize", HandleSize);
+    return () => {
+      window.removeEventListener("resize", HandleSize);
+    };
+  }, []);
+  const handleTabClick = (clickedtab) => {
+    setactivetab(clickedtab);
+  };
+  return (
+    <>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-between align-items-center">
+        <h2 className="text-center ms-5">cafeteria-STC</h2>
+        <FontAwesomeIcon
+          icon={faBars}
+          id="fawenav"
+          className={ToggleDynamicClass}
+          onMouseEnter={() => settoggleHovered(true)}
+          onMouseLeave={() => settoggleHovered(false)}
+        />
+        <ul
+          className={NavDynamicClass}
+          onMouseEnter={() => settoggleHovered(true)}
+          onMouseLeave={() => settoggleHovered(false)}
+        >
+          <li className="nav-item">
+            <Link
+              to="/home/vendors"
+              className={`nav-link ${activetab === "vendors" ? "active" : ""}`}
+              onClick={() => handleTabClick("vendors")}
+            >
+              الموردين
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link
+              to="/home/products"
+              className={`nav-link ${activetab === "products" ? "active" : ""}`}
+              onClick={() => handleTabClick("products")}
+            >
+              المنتجات
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link
+              to="/home/lots"
+              className={`nav-link ${activetab === "lots" ? "active" : ""}`}
+              onClick={() => handleTabClick("lots")}
+            >
+              المشتريات
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link
+              to="/home/categories"
+              className={`nav-link ${
+                activetab === "categories" ? "active" : ""
+              }`}
+              onClick={() => handleTabClick("categories")}
+            >
+              التصنيفات
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link
+              to="/home/customers"
+              className={`nav-link ${
+                activetab === "customers" ? "active" : ""
+              }`}
+              onClick={() => handleTabClick("customers")}
+            >
+              المستهلكين
+            </Link>
+          </li>
+
+          <OrderDropdown
+            smallscreen={isSmall}
+            activetab={activetab}
+            handleTabClick={handleTabClick}
+          />
+          {auth.isLoggedIn && (
+            <li className="nav-item">
+              <Link
+                to="/home/profits"
+                className={`nav-link ${
+                  activetab === "profits" ? "active" : ""
+                }`}
+                onClick={() => handleTabClick("profits")}
+              >
+                الايرادات
+              </Link>
+            </li>
+          )}
+
+          <button
+            className="btn btn-secondary add-btn"
+            onClick={() => handleLogout()}
+          >
+            logout
+          </button>
+        </ul>
+      </nav>
+      <Outlet />
+    </>
+  );
+};
+export default Navbar;

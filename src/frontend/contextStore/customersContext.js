@@ -32,8 +32,7 @@ export const CustomerProvider = (props) => {
     getErrorMsg,
   } = useFormValidation({ customerName, customerRank });
 
-  //view all customers
-  useEffect(() => {
+  const viewCustomers = () => {
     fetch(`http://localhost:${serverport}/customers/view`)
       .then((response) => response.json())
       .then((data) => {
@@ -42,8 +41,11 @@ export const CustomerProvider = (props) => {
       .catch((error) => {
         console.error("Failed to fetch customers:", error);
       });
-  }, [formState.customerName.value]);
+  };
 
+  useEffect(() => {
+    viewCustomers();
+  }, []);
   useEffect(() => {
     fetch(`http://localhost:${serverport}/ranks/view`)
       .then((response) => response.json())
@@ -75,6 +77,10 @@ export const CustomerProvider = (props) => {
         controlMsgContent("successfully added new customer");
         controlDisplay(true);
         // Perform any necessary actions after adding the customer
+        viewCustomers();
+        // Reset form fields
+        resetField("customerName");
+        resetField("customerRank");
       })
 
       .catch((error) => {
@@ -83,10 +89,6 @@ export const CustomerProvider = (props) => {
         controlDisplay(true);
         // Handle error
       });
-
-    // Reset form fields
-    resetField("customerName");
-    resetField("customerRank");
   };
 
   return (

@@ -9,6 +9,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const custRoutes = require("./routes/customerRoutes");
 const rankRoutes = require("./routes/RankRoutes");
 const financialRoutes = require("./routes/financeRouutes");
+const userRoutes = require("./routes/userRoutes");
 app.use(express.json());
 app.use(cors());
 
@@ -21,6 +22,7 @@ app.use("/categories", categoryRoutes);
 app.use("/customers", custRoutes);
 app.use("/ranks", rankRoutes);
 app.use("/finance", financialRoutes);
+app.use("/users", userRoutes);
 
 const port = 3060;
 app.listen(port, () => {

@@ -6,12 +6,13 @@ import useFormValidation from "../Hooks/use_fromvalidation";
 export const CategoriesContext = createContext({
   Categorieslist: [],
   updateCategorieslist: () => {},
-  updatename: (n) => {},
+
   Msgcomponent: "",
   formState: {},
   validateField: (fieldName, fieldType, fieldValue) => {},
   getErrorMsg: (FieldName) => {},
   errors: {},
+  handleInputChange: (event) => {},
 });
 
 export const CategoriesProvider = (props) => {
@@ -42,7 +43,7 @@ export const CategoriesProvider = (props) => {
   //adding new Categories
   const updateCategorieslist = () => {
     const CategoriesData = {
-      name: formState.categoryName,
+      name: formState.categoryName.value,
     };
 
     fetch(`http://localhost:${serverport}/Categories/add`, {
@@ -69,10 +70,6 @@ export const CategoriesProvider = (props) => {
     // Reset form fields
     resetField("categoryName");
   };
-  const updatename = (event) => {
-    // setName(name);
-    handleInputChange(event, "name");
-  };
 
   return (
     <CategoriesContext.Provider
@@ -81,11 +78,12 @@ export const CategoriesProvider = (props) => {
         updateCategorieslist,
 
         formState,
-        updatename,
+
         validateField,
         getErrorMsg,
         errors,
         Msgcomponent,
+        handleInputChange,
       }}
     >
       {props.children}

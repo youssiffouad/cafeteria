@@ -12,6 +12,24 @@ const useFormValidation = (initialFormState) => {
     return errors[fieldName];
   };
 
+  const resetErrors = (fieldName) => {
+    setErrors(
+      (prevErrors) => ({
+        ...prevErrors,
+        [fieldName]: "",
+      }),
+      console.log(errors)
+    );
+  };
+  const HandleAuthError = (fieldName, msg) => {
+    setErrors(
+      (prevErrors) => ({
+        ...prevErrors,
+        [fieldName]: msg,
+      }),
+      console.log(errors)
+    );
+  };
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     console.log(name);
@@ -94,7 +112,14 @@ const useFormValidation = (initialFormState) => {
   };
 
   const resetField = (fieldName) => {
-    setFormState({ ...formState, [fieldName]: "" });
+    console.log("i called reset field", fieldName);
+    setFormState((prev) => {
+      return {
+        ...prev,
+        [fieldName]: { value: "", valid: true },
+      };
+    });
+    console.log("ya rab ba2a mn el ", fieldName, formState);
   };
 
   return {
@@ -102,9 +127,10 @@ const useFormValidation = (initialFormState) => {
     errors,
     handleInputChange,
     validateField,
-
+    HandleAuthError,
     resetField,
     getErrorMsg,
+    resetErrors,
   };
 };
 

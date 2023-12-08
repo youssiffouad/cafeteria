@@ -29,18 +29,18 @@ const OrderDropdown = (props) => {
           onMouseLeave={() => setdisplay(false)}
         >
           <li>
-            <Link to="/total" onClick={() => props.handleTabClick("orders")}>
+            <Link to="total" onClick={() => props.handleTabClick("orders")}>
               اجمالي المبيعات
             </Link>
           </li>
 
           <li>
-            <Link to="/cash" onClick={() => props.handleTabClick("orders")}>
+            <Link to="cash" onClick={() => props.handleTabClick("orders")}>
               الايرادات النقدية
             </Link>
           </li>
           <li>
-            <Link to="/t2resha" onClick={() => props.handleTabClick("orders")}>
+            <Link to="t2resha" onClick={() => props.handleTabClick("orders")}>
               التقريشة
             </Link>
           </li>

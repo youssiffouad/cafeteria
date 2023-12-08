@@ -2,19 +2,21 @@ import React from "react";
 
 import "./frontend/UI/navstyle.css";
 
-import Navbar from "./navbar";
-import MainContentArea from "./mainContentArea";
-import { BrowserRouter as Router } from "react-router-dom";
+import Navbar from "./frontend/components/navbar";
+
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { selectAuth } from "./frontend/Redux_Store/authSlice";
+import Login from "./frontend/components/login/login";
+import { useSelector } from "react-redux";
+import mainContentArea from "./frontend/components/MCA";
 
 const App = (props) => {
-  return (
-    <>
-      <Router>
-        <Navbar />
-        <MainContentArea />
-      </Router>
-    </>
-  );
+  const router = createBrowserRouter([
+    { path: "/", element: <Login /> },
+    { path: "/home", element: <Navbar />, children: mainContentArea },
+  ]);
+
+  return <RouterProvider router={router} />;
 };
 
 export default App;
