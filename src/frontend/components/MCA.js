@@ -6,8 +6,7 @@ import CustomerWhole from "./customer/wholecustomer";
 import CashOfToday from "./Order/addcashtoday";
 import T2reshaOfToday from "./Order/addt2reshatoday";
 import TotalOfToday from "./Order/addtotaloftoday";
-import ProductWhole from "./product/wholeProduct";
-import LotsWhole from "./receiveLots/wholeLots";
+
 import VendorWhole from "./Vendor/wholeVendor";
 import Filterprofits from "./accounting/profit";
 import { AccountingProvider } from "../contextStore/accountingContext/accountingCOntext";
@@ -15,6 +14,10 @@ import { OrderItemProvider } from "../contextStore/Order/OrderItemContext";
 import { OrderProvider } from "../contextStore/Order/OrdersContext/orderProvider";
 
 import OrderWhole from "./Order/wholeOrder";
+import ProdChoice from "./product/prodChoice";
+import LotChoice from "./receiveLots/lotchoice";
+
+import WholeSandwich from "./sandwiches/wholeSandwich";
 
 const TotalOfTodayWithProviders = () => (
   <>
@@ -51,12 +54,13 @@ const T2reshaOfTodayWithProviders = () => (
 
 const mainContentArea = [
   { path: "vendors", element: <VendorWhole /> },
-  { path: "products", element: <ProductWhole /> },
-  { path: "lots", element: <LotsWhole /> },
+  { path: "products", element: <ProdChoice /> }, //either display the addProd or addConstituent
+  { path: "lots", element: <LotChoice /> }, //either display the addlot or addConstituentLot
   { path: "categories", element: <CategoryWhole /> },
   { path: "customers", element: <CustomerWhole /> },
   { path: "total", element: <TotalOfTodayWithProviders /> },
   { path: "cash", element: <CashOfTodayWithProviders /> },
+  { path: "sandwiches", element: <WholeSandwich /> },
   { path: "t2resha", element: <T2reshaOfTodayWithProviders /> },
   {
     path: "profits",

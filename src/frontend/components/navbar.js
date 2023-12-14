@@ -113,6 +113,17 @@ const Navbar = () => {
             activetab={activetab}
             handleTabClick={handleTabClick}
           />
+          <li className="nav-item">
+            <Link
+              to="/home/sandwiches"
+              className={`nav-link ${
+                activetab === "sandwiches" ? "active" : ""
+              }`}
+              onClick={() => handleTabClick("sandwiches")}
+            >
+              الساندوتشات
+            </Link>
+          </li>
           {auth.isLoggedIn && (
             <li className="nav-item">
               <Link
