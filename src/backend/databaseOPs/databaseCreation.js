@@ -43,6 +43,28 @@ db.run(`
   )
 `);
 
+//create Sanwiches table
+db.run(`
+create table if not exists Sandwiches (
+  id    integer primary key,
+  name     text not null ,
+  cost     real  not null ,
+  selling_price       real not null 
+
+);
+`);
+
+//create Components table
+db.run(`
+create table if not exists Components(
+  id     integer primary key,
+  name      text not null ,
+  number_of_units      real not null,
+  price_per_unit    real not null
+
+);
+`);
+
 // Create Lots table
 db.run(`
   CREATE TABLE IF NOT EXISTS Lots (
@@ -53,6 +75,9 @@ db.run(`
     remaining_payment REAL,
     received_date TEXT,
     payment_method TEXT,
+    is_component boolean,
+    component_id integer,
+    foreign key (component_id) references Components(id)
     FOREIGN KEY (product_id) REFERENCES Products(id)
   )
 `);
@@ -84,6 +109,9 @@ db.run(`
     payment_method REAL,
     customer_id INTEGER,
     order_date TEXT,
+is_sandwich boolean,
+sandwich_id integer ,
+foreign key(sandwich_id) references Sandwiches(id),
 
     FOREIGN KEY (customer_id) REFERENCES Customers(id)  ON DELETE CASCADE
   )
@@ -124,6 +152,30 @@ create table if not exists Users(
   role          text ,
   password      text ,
   FOREIGN KEY (customer_id) references Customers(id) on delete cascade
+);
+`);
+
+//create sandwich_component table
+db.run(`
+create table if not exists  Sandwich_Component(
+  component_id      integer not null,
+  sandwich_id       integer not null,
+  mapping_value     real not null, 
+  primary key(component_id,sandwich_id),
+  foreign key(sandwich_id) references Sandwiches(id),
+  foreign key(component_id) references Components(id)
+);`);
+
+//create Component_Component table
+db.run(`
+create table if not exists Component_Component(
+  parent_component    integer not null,
+  child_component     integer not null,
+  mapping_value     real not null, 
+  primary key(parent_component,child_component),
+  foreign key(child_component) references Components(id),
+  foreign key(parent_component) references Components(id)
+
 );
 `);
 

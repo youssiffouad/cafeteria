@@ -11,7 +11,7 @@ function displayTable(query, tableName) {
     } else {
       const table = new Table({
         head: [tableName],
-        colWidths: [100],
+        colWidths: [180],
       });
 
       rows.forEach((row) => {
