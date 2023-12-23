@@ -82,8 +82,9 @@ class Sandwich {
         const sql = `INSERT INTO Sandwiches (name, cost, selling_price) VALUES (?, ?, ?)`;
         const params = [name, cost, sellingPrice];
 
-        await dbPromise.runAsync(sql, params);
-        const sandwichId = this.lastID;
+        const result = await dbPromise.runAsync(sql, params);
+        console.log(result);
+        const sandwichId = result.lastID;
         await Sandwich.performMapping(sandwichId, componentsList);
 
         await dbPromise.runAsync("COMMIT");
@@ -102,11 +103,12 @@ class Sandwich {
     }
   }
 
-  //perform mapping between the sadwich and its components on adding
+  //perform mapping between the sadwich and its components on adding new sandwich
   static async performMapping(sandwich_id, componentsList) {
     try {
       return await Promise.all(
         componentsList.map(async (ele) => {
+          console.log(ele.component_id, sandwich_id, ele.mapping_value);
           return await Sandwich_Component.addSandwichComponent(
             ele.component_id,
             sandwich_id,

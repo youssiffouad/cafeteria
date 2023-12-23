@@ -19,6 +19,20 @@ class Sandwich_Component {
     });
   }
 
+  //view all SandwichComponents
+  static ViewSandwichComponents() {
+    return new Promise((res, rej) => {
+      const sql = `select * from Sandwich_Component`;
+      db.run(sql, function (err, rows) {
+        if (err) {
+          rej(err);
+        } else {
+          res(rows);
+        }
+      });
+    });
+  }
+
   //deleting mapping between sandwich and component , (removing a component from a sandwich)
   static deleteCertianComponentINsandwich(component_id, sandwich_id) {
     return new Promise((res, rej) => {
@@ -54,4 +68,4 @@ class Sandwich_Component {
   }
 }
 
-module.exports(Sandwich_Component);
+module.exports = Sandwich_Component;
