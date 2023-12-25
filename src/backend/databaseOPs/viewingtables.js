@@ -25,6 +25,7 @@ function displayTable(query, tableName) {
 
 // Display each table
 displayTable("SELECT * FROM Vendors", "Vendors");
+displayTable("SELECT * FROM Components", "Components");
 displayTable("SELECT * FROM Categories", "Categories");
 displayTable("SELECT * FROM Products", "Products");
 displayTable("SELECT * FROM Lots", "Lots");

@@ -23,7 +23,7 @@ class Sandwich_Component {
   static ViewSandwichComponents() {
     return new Promise((res, rej) => {
       const sql = `select * from Sandwich_Component`;
-      db.run(sql, function (err, rows) {
+      db.all(sql, function (err, rows) {
         if (err) {
           rej(err);
         } else {

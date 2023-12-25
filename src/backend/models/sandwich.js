@@ -82,7 +82,13 @@ class Sandwich {
         const sql = `INSERT INTO Sandwiches (name, cost, selling_price) VALUES (?, ?, ?)`;
         const params = [name, cost, sellingPrice];
 
-        const result = await dbPromise.runAsync(sql, params);
+        const result = await new Promise((res, rej) => {
+          dbPromise.run(sql, params, function (err) {
+            if (err) rej(err);
+            else res(this);
+          });
+        });
+
         console.log(result);
         const sandwichId = result.lastID;
         await Sandwich.performMapping(sandwichId, componentsList);
@@ -134,8 +140,18 @@ class Sandwich {
   // View all sandwiches
   static viewSandwiches() {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT s.id, s.name, s.cost, s.selling_price sc. FROM Sandwiches s join Sandwich_Component sc on
-      s.id=sc.sandwich_id `;
+      const sql = `SELECT
+      s.id AS sandwich_id,
+      s.name AS sandwich_name,
+      s.cost AS sandwich_cost,
+      s.selling_price AS sandwich_selling_price,
+      GROUP_CONCAT(c.id) AS component_ids,
+      GROUP_CONCAT(c.name) AS component_names,
+      GROUP_CONCAT(sc.mapping_value) AS mapping_values
+    FROM Sandwiches s
+    JOIN Sandwich_Component sc ON s.id = sc.sandwich_id
+    JOIN Components c ON sc.component_id = c.id
+    GROUP BY s.id`;
 
       db.all(sql, (err, rows) => {
         if (err) {

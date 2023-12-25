@@ -1,28 +1,109 @@
 const db = require("./db");
+const Component_Component = require("../models/Component_Component");
+const dbPromise = require("bluebird").promisifyAll(db); // Or any other promise library
 
 class Component {
   // Add a new component
-  static addComponent(name, numberOfUnits, pricePerUnit) {
-    return new Promise((resolve, reject) => {
-      const sql = `
-        INSERT INTO Components (name, number_of_units, price_per_unit)
-        VALUES (?, ?, ?)
-      `;
-      const params = [name, numberOfUnits, pricePerUnit];
+  // static addComponent(name, numberOfUnits, pricePerUnit) {
+  //   return new Promise((resolve, reject) => {
+  //     const sql = `
+  //       INSERT INTO Components (name, number_of_units, price_per_unit)
+  //       VALUES (?, ?, ?)
+  //     `;
+  //     const params = [name, numberOfUnits, pricePerUnit];
 
-      db.run(sql, params, function (err) {
-        if (err) {
-          reject(err);
+  //     db.run(sql, params, function (err) {
+  //       if (err) {
+  //         reject(err);
+  //       } else {
+  //         const componentId = this.lastID;
+  //         resolve({
+  //           message: "Component added successfully",
+  //           component_id: componentId,
+  //         });
+  //       }
+  //     });
+  //   });
+  // }
+
+  // Add a new component
+  static async addComponent(name, numberOfUnits, pricePerUnit, componentsList) {
+    try {
+      await dbPromise.runAsync("BEGIN TRANSACTION");
+
+      try {
+        let sql;
+        let params;
+        if (componentsList) {
+          let cost = Component.calculateCost(componentsList);
+          sql = `INSERT INTO Components (name,number_of_units, price_per_unit,isNested) VALUES (?, ?, ?,?)`;
+          params = [name, numberOfUnits, cost, 1];
         } else {
-          const componentId = this.lastID;
-          resolve({
-            message: "Component added successfully",
-            component_id: componentId,
-          });
+          sql = `INSERT INTO Components (name, number_of_units, price_per_unit,isNested) VALUES (?, ?, ?,?)`;
+          params = [name, numberOfUnits, pricePerUnit, 0];
         }
-      });
-    });
+
+        const result = await new Promise((res, rej) => {
+          dbPromise.run(sql, params, function (err) {
+            if (err) {
+              rej(err);
+              console.log("ya raby 3la rl errrrrrrorrrrrrrr", err);
+            } else res(this);
+          });
+        });
+
+        console.log(result);
+        const componentId = result.lastID;
+        if (componentsList)
+          await Component.performMapping(componentId, componentsList);
+
+        await dbPromise.runAsync("COMMIT");
+
+        return {
+          message: "Component added successfully",
+          component_id: componentId,
+        };
+      } catch (err) {
+        await dbPromise.runAsync("ROLLBACK");
+        throw err;
+      }
+    } catch (err) {
+      console.error("Error in transaction:", err);
+      throw err;
+    }
   }
+
+  //perform mapping between the composed component and its constituents components on adding new nested component
+  static async performMapping(parent_component_id, componentsList) {
+    try {
+      return await Promise.all(
+        componentsList.map(async (ele) => {
+          console.log(
+            ele.child_component_id,
+            parent_component_id,
+            ele.mapping_value
+          );
+          return await Component_Component.addComponentComponent(
+            parent_component_id,
+            ele.child_component_id,
+            ele.mapping_value
+          );
+        })
+      );
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  //calculate component cost
+  static calculateCost = (componentsList) => {
+    let cost = componentsList.reduce(
+      (prev, curr) => prev + curr.price_per_unit / curr.mapping_value,
+      0
+    );
+    return cost;
+  };
 
   // View all components
   static viewComponents() {

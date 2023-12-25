@@ -71,59 +71,83 @@ class Order {
       }
     );
   }
+
+  //function to add SanwichOrder
+  static addSanwichOrder = async (
+    price,
+    payment_method,
+    customer_id,
+    order_date,
+    sandwich_id
+  ) => {
+    return new Promise((res, rej) => {
+      const sql = `insert into Orders ( price ,payment_method ,customer_id , order_date ,is_sandwich, sandwich_id)`;
+      const params = [
+        price,
+        payment_method,
+        customer_id,
+        order_date,
+        1,
+        sandwich_id,
+      ];
+      db.run(sql, params, function (err) {
+        if (err) {
+          rej(err);
+        } else {
+          const order_id = this.lastID;
+          res({ message: "sandwich order added successfully", order_id });
+        }
+      });
+    });
+  };
   // Main function to add an order
-  static addOrder(
+  static async addOrder(
     customer_id,
     order_date,
     orderItems,
     payment_method,
     totalOrderCost,
-    callback
+    sandwich_id
   ) {
-    db.serialize(() => {
-      db.run("PRAGMA foreign_keys=on");
+    return new Promise((res, rej) => {
+      db.serialize(async () => {
+        try {
+          db.run("PRAGMA foreign_keys=on");
 
-      db.run("BEGIN TRANSACTION");
-
-      insertOrder(
-        customer_id,
-        order_date,
-        totalOrderCost,
-        payment_method,
-        (err, orderId) => {
-          if (err) {
-            db.run("ROLLBACK");
-            callback(err);
-            return;
+          db.run("BEGIN TRANSACTION");
+          let orderId;
+          if (!sandwich_id) {
+            orderId = await insertBasicOrder(
+              customer_id,
+              order_date,
+              totalOrderCost,
+              payment_method
+            );
+          } else {
+            let result = await Order.addSanwichOrder(
+              totalOrderCost,
+              payment_method,
+              customer_id,
+              order_date,
+              sandwich_id
+            );
+            orderId = result.order_id;
           }
 
-          let paymentHandler;
-
-          if (payment_method === "cash") {
-            paymentHandler = (callback) =>
-              handleCashPayment(totalOrderCost, callback);
-          } else if (payment_method === "debt") {
-            paymentHandler = (callback) =>
-              handleDebtPayment(customer_id, totalOrderCost, callback);
-          } else if (payment_method === "soldprod") {
-            paymentHandler = (callback) =>
-              handleSoldProdPayment(-1, orderId, orderItems, callback);
-          }
-
-          paymentHandler((err) => {
-            if (err) {
-              db.run("ROLLBACK");
-              callback(err);
-            } else {
-              db.run("COMMIT");
-              callback(null, {
-                message: "Order added successfully",
-                order_id: orderId,
-              });
-            }
-          });
+          if (payment_method === "cash")
+            await handleCashPayment(totalOrderCost);
+          else if (payment_method === "debt")
+            await handleDebtPayment(customer_id, totalOrderCost);
+          else if (payment_method === "soldprod")
+            await handleSoldProdPayment(-1, orderId, orderItems);
+          db.run("commit");
+          res(orderId);
+        } catch (err) {
+          db.run("rollback");
+          console.log(err);
+          rej(err);
         }
-      );
+      });
     });
   }
 
@@ -342,6 +366,36 @@ class Order {
     );
   }
 
+  // Function to insert an order into the Orders table
+  static insertBasicOrder(
+    customer_id,
+    order_date,
+    totalOrderCost,
+    payment_method
+  ) {
+    return new Promise((res, rej) => {
+      const sql = `INSERT INTO Orders (customer_id, order_date, price, payment_method,is_sandwich ,
+      sandwich_id) VALUES (?, ?, ?, ?,?,?)`;
+      const params = [
+        customer_id,
+        order_date,
+        totalOrderCost,
+        payment_method,
+        0,
+        null,
+      ];
+      db.run(sql, params, function (err) {
+        if (err) {
+          console.error(err);
+          rej(err);
+        } else {
+          const orderId = this.lastID;
+          res(orderId);
+        }
+      });
+    });
+  }
+
   // Add other order-related methods here
 }
 
@@ -416,88 +470,67 @@ function insertOrderItems(orderId, orderItems, callback) {
   });
 }
 
-// Function to insert an order into the Orders table
-function insertOrder(
-  customer_id,
-  order_date,
-  totalOrderCost,
-  payment_method,
-  callback
-) {
-  db.run(
-    `INSERT INTO Orders (customer_id, order_date, price, payment_method) VALUES (?, ?, ?, ?)`,
-    [customer_id, order_date, totalOrderCost, payment_method],
-    function (err) {
-      if (err) {
-        console.error(err);
-        callback(err);
-      } else {
-        const orderId = this.lastID;
-        callback(null, orderId);
-      }
-    }
-  );
-}
-
 // Function to handle cash payment method
-function handleCashPayment(totalOrderCost, callback) {
-  db.run(`
-  UPDATE Financial
-  SET cash = cash + ${totalOrderCost}
-  WHERE id = 1;
-`);
-  callback(null);
+async function handleCashPayment(totalOrderCost) {
+  return new Promise((res, rej) => {
+    db.run(
+      ` UPDATE Financial SET cash = cash + ${totalOrderCost} WHERE id = 1;`,
+      function (err) {
+        if (err) {
+          rej(err);
+        } else {
+          res();
+        }
+      }
+    );
+  });
 }
 
 // Function to handle debt payment method
-function handleDebtPayment(customer_id, totalOrderCost, callback) {
-  db.run(`
-  UPDATE Financial
-  SET owed = owed + ${totalOrderCost}
-  WHERE id = 1;
-`);
-
-  db.run(
-    `UPDATE Customers SET debt = debt + ? WHERE id = ?`,
-    [totalOrderCost, customer_id],
-    function (err) {
-      if (err) {
-        console.error(err);
-        callback(err);
-      } else {
-        callback(null);
+async function handleDebtPayment(customer_id, totalOrderCost) {
+  return new Promise((res, rej) => {
+    db.run(
+      `
+    UPDATE Financial
+    SET owed = owed + ${totalOrderCost}
+    WHERE id = 1;
+  `,
+      function (err) {
+        if (err) {
+          rej(err);
+        } else {
+          res();
+        }
       }
-    }
-  );
+    );
+  });
 }
 
 // Function to handle soldprod payment method
-function handleSoldProdPayment(IncOrDec, orderId, orderItems, callback) {
-  console.log(
-    `here are the orderrrrrrrrrrrrrrrrrrrrrrrrrr ittttttttttteeeeeeeeeeeemssssssssssssssssss`
-  );
-  console.log(orderItems);
-  if (IncOrDec === -1) {
-    changeProductQuantity(-1, orderItems, () => {
-      insertOrderItems(orderId, orderItems, (err) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null);
-        }
+async function handleSoldProdPayment(IncOrDec, orderId, orderItems) {
+  return new Promise((res, rej) => {
+    if (IncOrDec === -1) {
+      changeProductQuantity(-1, orderItems, () => {
+        insertOrderItems(orderId, orderItems, (err) => {
+          if (err) {
+            rej(err);
+          } else {
+            res();
+          }
+        });
       });
-    });
-  } else if (IncOrDec === 1) {
-    changeProductQuantity(1, orderItems, () => {
-      deleteOrderRow(orderId, (err) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null);
-        }
+    } else if (IncOrDec === 1) {
+      changeProductQuantity(1, orderItems, () => {
+        deleteOrderRow(orderId, (err) => {
+          if (err) {
+            rej(err);
+          } else {
+            res();
+          }
+        });
       });
-    });
-  }
+    }
+  });
 }
 
 // Function to delete order row
