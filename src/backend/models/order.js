@@ -80,25 +80,27 @@ class Order {
     order_date,
     sandwich_id
   ) => {
-    return new Promise((res, rej) => {
-      const sql = `insert into Orders ( price ,payment_method ,customer_id , order_date ,is_sandwich, sandwich_id)`;
-      const params = [
-        price,
-        payment_method,
-        customer_id,
-        order_date,
-        1,
-        sandwich_id,
-      ];
-      db.run(sql, params, function (err) {
-        if (err) {
-          rej(err);
-        } else {
-          const order_id = this.lastID;
-          res({ message: "sandwich order added successfully", order_id });
-        }
+    try {
+      return new Promise((res, rej) => {
+        const sql = `insert into Orders ( price ,payment_method ,customer_id , order_date ,is_sandwich, sandwich_id)`;
+        const params = [
+          price,
+          payment_method,
+          customer_id,
+          order_date,
+          1,
+          sandwich_id,
+        ];
+        db.run(sql, params, function (err) {
+          if (err) {
+            rej(err);
+          } else {
+            const order_id = this.lastID;
+            res({ message: "sandwich order added successfully", order_id });
+          }
+        });
       });
-    });
+    } catch (err) {}
   };
   // Main function to add an order
   static async addOrder(
@@ -117,7 +119,7 @@ class Order {
           db.run("BEGIN TRANSACTION");
           let orderId;
           if (!sandwich_id) {
-            orderId = await insertBasicOrder(
+            orderId = await Order.insertBasicOrder(
               customer_id,
               order_date,
               totalOrderCost,

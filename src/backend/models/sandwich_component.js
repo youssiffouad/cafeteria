@@ -33,6 +33,38 @@ class Sandwich_Component {
     });
   }
 
+  //fn to get component ids of certain sandwich
+  static getComponentIds(sandwichId) {
+    return new Promise((res, rej) => {
+      const sql = `select sc.component_id from Sandwich_Component sc where sc.sandwich_id =? `;
+      db.all(sql, [sandwichId], function (err, rows) {
+        if (err) {
+          console.log("failed to get the components of hte sandwich", err);
+          rej(err);
+        } else {
+          res(rows);
+        }
+      });
+    });
+  }
+
+  //fn to get mapping value of certain component and sandwich
+  static getMappingValue(component_id, sandwich_id) {
+    return new Promise((res, rej) => {
+      const sql = `select mapping_value from Sandwich_Component where component_id = ? and sandwich_id =? `;
+      const params = [component_id, sandwich_id];
+      db.get(sql, params, function (err, row) {
+        if (err) {
+          console.log(err);
+          rej(err);
+        } else {
+          console.log(row);
+          res(row);
+        }
+      });
+    });
+  }
+
   //deleting mapping between sandwich and component , (removing a component from a sandwich)
   static deleteCertianComponentINsandwich(component_id, sandwich_id) {
     return new Promise((res, rej) => {

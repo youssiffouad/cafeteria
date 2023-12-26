@@ -120,6 +120,22 @@ class Component {
     });
   }
 
+  //fn to get no of units for certain component
+  static getNoOfUnits(componentId) {
+    return new Promise((res, rej) => {
+      const sql = `select number_of_units from Components where id=?`;
+      db.get(sql, [componentId], function (err, row) {
+        if (err) {
+          console.log(err);
+          rej(err);
+        } else {
+          console.log(row);
+          res(row);
+        }
+      });
+    });
+  }
+
   // Update component name by ID
   static updateComponentName(componentId, newName) {
     return new Promise((resolve, reject) => {
