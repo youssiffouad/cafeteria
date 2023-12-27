@@ -1,21 +1,6 @@
-const Component = require("../models/component");
-const testAddcomponent = async (
-  name,
-  numberOfUnits,
-  pricePerUnit,
-  complist
-) => {
-  const response = await Component.addComponent(
-    name,
-    numberOfUnits,
-    pricePerUnit,
-    complist
-  );
-  console.log("heeeeeeeeeeeeereeeeeeeeeeeee  is", response);
+const component = require("../models/component");
+const testAddComp = async () => {
+  const res = await component.addComponent("comp1", 0, 70, null, 1);
+  console.log(res);
 };
-const testViewComponents = async () => {
-  const response = await Component.viewComponents();
-  console.log(response);
-};
-
-testViewComponents();
+testAddComp();
