@@ -73,7 +73,7 @@ class Order {
   }
 
   //function to add SanwichOrder
-  static addSanwichOrder = async (
+  static insertSandwichOrder = async (
     price,
     payment_method,
     customer_id,
@@ -126,7 +126,7 @@ class Order {
               payment_method
             );
           } else {
-            let result = await Order.addSanwichOrder(
+            let result = await Order.insertSandwichOrder(
               totalOrderCost,
               payment_method,
               customer_id,

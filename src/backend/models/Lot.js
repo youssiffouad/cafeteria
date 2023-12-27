@@ -1,4 +1,8 @@
 const db = require("./db");
+const Product = require("./Product");
+const updateProductInStockValue = require("../businessLogic/updateProdInStock");
+const Finance = require("./financial");
+const Vendor = require("./Vendor");
 
 class Lot {
   static getCost(lotid, callback) {
@@ -53,6 +57,71 @@ class Lot {
       }
     });
   }
+
+  //function to insert a new ordinary lot
+  static insertOrdinaryLot = (
+    productID,
+    quantity,
+    cost,
+    received_date,
+    payment_method
+  ) => {
+    return new Promise((res, rej) => {
+      const rem = cost - paidAmount;
+      const sql = `INSERT INTO Lots (product_id, quantity, cost,remaining_payment, received_date,payment_method,is_component) VALUES (?, ?, ?, ?,?,?,?)`;
+      const params = [
+        productID,
+        quantity,
+        cost,
+        rem,
+        received_date,
+        payment_method,
+        0,
+      ];
+      db.run(sql, params, function (err) {
+        if (err) {
+          rej("failed to insert hte ordinary order", err);
+        } else {
+          console.log("successfully added the new lot", this.lastID);
+          res(this.lastID);
+        }
+      });
+    });
+  };
+
+  //function to insert a component Lot
+  static insertComponentLot(
+    productID,
+    quantity,
+    cost,
+    received_date,
+    payment_method,
+    component_id
+  ) {
+    return new Promise((res, rej) => {
+      const rem = cost - paidAmount;
+      const sql = `INSERT INTO Lots (product_id, quantity, cost,remaining_payment, received_date,payment_method,component_id,is_component) VALUES (?, ?, ?, ?,?,?,?,?)`;
+      const params = [
+        productID,
+        quantity,
+        cost,
+        rem,
+        received_date,
+        payment_method,
+        component_id,
+        1,
+      ];
+      db.run(sql, params, function (err) {
+        if (err) {
+          console.log("error inserting component Lot", err);
+          rej(err);
+        } else {
+          console.log("successfully added new componentLot", this.lastID);
+          res(this.lastID);
+        }
+      });
+    });
+  }
   // Function to add a new lot
   static async addLot(
     productID,
@@ -97,10 +166,10 @@ class Lot {
         });
       });
 
-      await updateProductQuantity(productID, quantity);
+      await Product.updateProductQuantity(productID, quantity);
       await updateProductInStockValue(productID, quantity);
-      await changeCashVlaue(-paidAmount);
-      await changeVendoerOwedMoney(lotID, rem); // Use lotID and rem variables
+      await Finance.changeCashVlaue(-paidAmount);
+      await Vendor.changeVendoerOwedMoney(lotID, rem); // Use lotID and rem variables
 
       console.log("Quantity and productInStockValue updated");
       callback(null, {
@@ -167,10 +236,10 @@ class Lot {
       });
 
       const paidAmount = cost - rem;
-      await updateProductQuantity(productID, -quantity);
+      await Product.updateProductQuantity(productID, -quantity);
       await updateProductInStockValue(productID, -quantity);
-      await changeCashVlaue(paidAmount);
-      await changeVendoerOwedMoney(lotid, -rem);
+      await Finance.changeCashVlaue(paidAmount);
+      await Vendor.changeVendoerOwedMoney(lotid, -rem);
 
       await new Promise((resolve, reject) => {
         deleteLotRow(lotid, (err) => {
@@ -360,96 +429,6 @@ class Lot {
 
 module.exports = Lot;
 
-// Function to update product quantity in the Products table
-async function updateProductQuantity(productID, quantity) {
-  try {
-    await new Promise((resolve, reject) => {
-      db.run(
-        `UPDATE Products SET quantity = quantity + ? WHERE id = ?`,
-        [quantity, productID],
-        function (err) {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            resolve();
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Function to update productsInStockValue in the Financial table
-async function updateProductInStockValue(productID, quantity) {
-  try {
-    const row = await new Promise((resolve, reject) => {
-      db.get(
-        `SELECT selling_price FROM Products WHERE id = ?`,
-        [productID],
-        (err, row) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            resolve(row);
-          }
-        }
-      );
-    });
-
-    const sellingPrice = row.selling_price;
-    const addedValue = sellingPrice * quantity;
-    console.log(
-      `addededededeededeededededeghjjhjhjdhgfghhjhjd value is ${addedValue}`
-    );
-
-    await new Promise((resolve, reject) => {
-      db.run(
-        `UPDATE Financial SET productsInStockValue = productsInStockValue + ?`,
-        [addedValue],
-        (err) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            resolve();
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-//function to change cash value
-const changeCashVlaue = async (amount) => {
-  try {
-    await new Promise((resolve, reject) => {
-      db.run(
-        `
-    UPDATE Financial
-    SET cash = cash + ${amount}
-    WHERE id = 1;
-  `,
-        (err) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            resolve(null);
-          }
-        }
-      );
-    });
-  } catch (err) {
-    console.error(err);
-  }
-};
-
 //function to return vendorid of lot
 function getVendorIdFromLotId(lotId) {
   return new Promise((resolve, reject) => {
@@ -470,32 +449,6 @@ function getVendorIdFromLotId(lotId) {
   });
 }
 
-//fn to change vendor owedmoney
-const changeVendoerOwedMoney = async (lotid, remainingPayment) => {
-  try {
-    const vendorid = await getVendorIdFromLotId(lotid);
-    console.log(`the vendorid is ${vendorid}`);
-
-    db.run(
-      `UPDATE Vendors SET owedmoney =owedmoney+ ${remainingPayment} WHERE id = ${vendorid}`,
-      (err) => {
-        if (err) {
-          console.error(err);
-        } else {
-          console.log(`the remaining payment equals ${remainingPayment}`);
-          console.log(`the vendorid is ${vendorid}`);
-          updatemyDebt(remainingPayment, (err) => {
-            if (err) {
-              console.error(err);
-            }
-          });
-        }
-      }
-    );
-  } catch (error) {
-    console.error(error);
-  }
-};
 //fn to update debt
 const updatemyDebt = (newdebt, callback) => {
   db.run(`update financial set debt =debt +${newdebt}`, (err) => {

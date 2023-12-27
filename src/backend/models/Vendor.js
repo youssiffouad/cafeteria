@@ -33,6 +33,33 @@ class Vendor {
     );
   }
 
+  //fn to change vendor owedmoney
+  static changeVendoerOwedMoney = async (lotid, remainingPayment) => {
+    try {
+      const vendorid = await getVendorIdFromLotId(lotid);
+      console.log(`the vendorid is ${vendorid}`);
+
+      db.run(
+        `UPDATE Vendors SET owedmoney =owedmoney+ ${remainingPayment} WHERE id = ${vendorid}`,
+        (err) => {
+          if (err) {
+            console.error(err);
+          } else {
+            console.log(`the remaining payment equals ${remainingPayment}`);
+            console.log(`the vendorid is ${vendorid}`);
+            updatemyDebt(remainingPayment, (err) => {
+              if (err) {
+                console.error(err);
+              }
+            });
+          }
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // Add other vendor-related methods here
 }
 

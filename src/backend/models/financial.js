@@ -19,6 +19,50 @@ class Finance {
     );
   }
 
+  //function to update productInStockvlaue
+  static updateProdInStocKCakue(addedValue) {
+    return new Promise((res, rej) => {
+      const sql = `update Financial  SET productsInStockValue = productsInStockValue + ? `;
+      db.run(sql, addedValue, function (err) {
+        if (err) {
+          console.log(
+            "failed to updateProduct In Stock value in financial table",
+            err
+          );
+          rej(err);
+        } else {
+          console.log("successfully updated the product in stock value");
+          res();
+        }
+      });
+    });
+  }
+
+  //function to change cash value
+  static changeCashVlaue = async (amount) => {
+    try {
+      await new Promise((resolve, reject) => {
+        db.run(
+          `
+    UPDATE Financial
+    SET cash = cash + ${amount}
+    WHERE id = 1;
+  `,
+          (err) => {
+            if (err) {
+              console.error(err);
+              reject(err);
+            } else {
+              resolve(null);
+            }
+          }
+        );
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   //function to reset all financial data
   static resetFinance(callback) {
     db.serialize(() => {

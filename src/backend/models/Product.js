@@ -59,6 +59,43 @@ class Product {
     );
   };
 
+  //function to get selling price of certain product
+  static getSellingPrice(productID) {
+    return new Promise((res, rej) => {
+      const sql = `SELECT selling_price FROM Products WHERE id = ?`;
+      db.get(sql, productID, function (err, selling_price) {
+        if (err) {
+          console.log(`failed to get selling price of${productID}`, err);
+          rej(err);
+        } else {
+          console.log(`successfully got the selling price ${selling_price}`);
+          res(selling_price);
+        }
+      });
+    });
+  }
+
+  // Function to update product quantity in the Products table
+  static async updateProductQuantity(productID, quantity) {
+    await new Promise((resolve, reject) => {
+      db.run(
+        `UPDATE Products SET quantity = quantity + ? WHERE id = ?`,
+        [quantity, productID],
+        function (err) {
+          if (err) {
+            console.error(
+              `failed to update product ${productID} with quantity ${quantity}`,
+              err
+            );
+            reject(err);
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
+  }
+
   // Add other product-related methods here
 }
 
