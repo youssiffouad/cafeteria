@@ -11,8 +11,6 @@ class Finance {
         if (err) {
           callback(err);
         } else {
-          console.log(`a7aaaaaaaaaaaaaaaaaaaaaaaaaa`);
-          console.log(rows);
           callback(null, rows);
         }
       }

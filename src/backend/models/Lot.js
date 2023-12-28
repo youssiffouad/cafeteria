@@ -91,18 +91,17 @@ class Lot {
 
   //function to insert a component Lot
   static insertComponentLot(
-    productID,
     quantity,
     cost,
+    paidAmount,
     received_date,
     payment_method,
     component_id
   ) {
     return new Promise((res, rej) => {
       const rem = cost - paidAmount;
-      const sql = `INSERT INTO Lots (product_id, quantity, cost,remaining_payment, received_date,payment_method,component_id,is_component) VALUES (?, ?, ?, ?,?,?,?,?)`;
+      const sql = `INSERT INTO Lots (quantity, cost,remaining_payment, received_date,payment_method,component_id,is_component) VALUES (?, ?, ?,?,?,?,?)`;
       const params = [
-        productID,
         quantity,
         cost,
         rem,
@@ -121,64 +120,6 @@ class Lot {
         }
       });
     });
-  }
-  // Function to add a new lot
-  static async addLot(
-    productID,
-    quantity,
-    cost,
-    paidAmount,
-    received_date,
-    payment_method,
-    callback
-  ) {
-    try {
-      console.log(productID);
-      if (!productID) {
-        const error = new Error("productID is sent null");
-        console.error(error);
-        callback(error);
-        return;
-      }
-
-      let lotID; // Declare lotID variable
-      const rem = cost - paidAmount;
-      await new Promise((resolve, reject) => {
-        db.serialize(() => {
-          db.run("PRAGMA foreign_keys = ON;");
-
-          console.log(`cost is ${cost}`);
-          console.log(`paidAmount is ${paidAmount}`);
-          db.run(
-            `INSERT INTO Lots (product_id, quantity, cost,remaining_payment, received_date,payment_method) VALUES (?, ?, ?, ?,?,?)`,
-            [productID, quantity, cost, rem, received_date, payment_method],
-            function (err) {
-              if (err) {
-                console.error(err);
-                reject(err);
-              } else {
-                lotID = this.lastID; // Assign value to lotID
-                console.log("lot added");
-                resolve();
-              }
-            }
-          );
-        });
-      });
-
-      await Product.updateProductQuantity(productID, quantity);
-      await updateProductInStockValue(productID, quantity);
-      await Finance.changeCashVlaue(-paidAmount);
-      await Vendor.changeVendoerOwedMoney(lotID, rem); // Use lotID and rem variables
-
-      console.log("Quantity and productInStockValue updated");
-      callback(null, {
-        message: "Lot added successfully",
-        lot_id: lotID,
-      });
-    } catch (error) {
-      callback(error);
-    }
   }
   //function to delete lot
   static async deleteLot(lotid, callback) {
@@ -428,26 +369,6 @@ class Lot {
 }
 
 module.exports = Lot;
-
-//function to return vendorid of lot
-function getVendorIdFromLotId(lotId) {
-  return new Promise((resolve, reject) => {
-    db.get(
-      "SELECT vendor_id FROM Products JOIN Lots ON Products.id = Lots.product_id WHERE Lots.id = ?",
-      [lotId],
-      (err, row) => {
-        if (err) {
-          console.error(err);
-          reject(err);
-        } else {
-          console.log(row);
-          console.log(row.vendor_id);
-          resolve(row.vendor_id);
-        }
-      }
-    );
-  });
-}
 
 //fn to update debt
 const updatemyDebt = (newdebt, callback) => {

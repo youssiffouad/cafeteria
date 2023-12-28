@@ -26,8 +26,14 @@ class Component {
   //   });
   // }
 
-  // Add a new component
-  static async addComponent(name, numberOfUnits, pricePerUnit, componentsList) {
+  // Add a new component --------the compoentList contains child_component_id  &  mapping_value   &  price_per_unit
+  static async addComponent(
+    name,
+    numberOfUnits,
+    pricePerUnit,
+    componentsList,
+    vendor_id
+  ) {
     try {
       await dbPromise.runAsync("BEGIN TRANSACTION");
 
@@ -36,11 +42,11 @@ class Component {
         let params;
         if (componentsList) {
           let cost = Component.calculateCost(componentsList);
-          sql = `INSERT INTO Components (name,number_of_units, price_per_unit,isNested) VALUES (?, ?, ?,?)`;
-          params = [name, numberOfUnits, cost, 1];
+          sql = `INSERT INTO Components (name,number_of_units, price_per_unit,vendor_id,isNested) VALUES (?, ?, ?,?,?)`;
+          params = [name, numberOfUnits, cost, vendor_id, 1];
         } else {
-          sql = `INSERT INTO Components (name, number_of_units, price_per_unit,isNested) VALUES (?, ?, ?,?)`;
-          params = [name, numberOfUnits, pricePerUnit, 0];
+          sql = `INSERT INTO Components (name, number_of_units, price_per_unit,vendor_id,isNested) VALUES (?, ?,?, ?,?)`;
+          params = [name, numberOfUnits, pricePerUnit, vendor_id, 0];
         }
 
         const result = await new Promise((res, rej) => {
@@ -108,7 +114,7 @@ class Component {
   // View all components
   static viewComponents() {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT c.id, c.name, c.number_of_units, c.price_per_unit FROM Components c`;
+      const sql = `SELECT c.id, c.name, c.number_of_units, c.price_per_unit, c.vendor_id FROM Components c`;
 
       db.all(sql, (err, rows) => {
         if (err) {

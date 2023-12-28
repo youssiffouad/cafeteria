@@ -56,14 +56,16 @@ create table if not exists Sandwiches (
 
 //create Components table
 db.run(`
-create table if not exists Components(
-  id     integer primary key,
-  name      text not null ,
-  number_of_units      real not null,
-  price_per_unit    real not null,
-  isNested boolean not null 
-
-);
+create table if not exists Components (
+   id     integer primary key,
+   name      text not null ,
+   number_of_units      real not null,
+   price_per_unit    real not null,
+   vendor_id integer ,
+   isNested boolean not null ,
+   foreign key(vendor_id) references Vendors(id)
+  
+)
 `);
 
 // Create Lots table
@@ -218,18 +220,6 @@ db.serialize(() => {
     }
   });
 });
-
-//inset into Components
-
-db.run(
-  `INSERT INTO Components (name, number_of_units, price_per_unit,isNested) VALUES (?, ?, ?,?)`,
-  ["salad", 0, 50, 1],
-  function (err) {
-    if (err) {
-      console.log("a7aaaaaaa w b3dean", err);
-    }
-  }
-);
 
 // Close the database connection
 db.close();
