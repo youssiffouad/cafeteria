@@ -37,7 +37,9 @@ class Vendor {
   //fn to change vendor owedmoney (it should take a paramter to determine wether it is product lot or component lot)---> 0 for product,,,,, 1 for component
   static changeVendoerOwedMoney = async (type, lotid, remainingPayment) => {
     try {
+      console.log("before getting hte wrong one");
       const vendorid = await Vendor.getVendorIdFromLotId(type, lotid);
+      console.log("after getting hte wrong one");
       console.log(`the vendorid is ${vendorid}`);
 
       db.run(
@@ -58,7 +60,8 @@ class Vendor {
         }
       );
     } catch (error) {
-      console.error(error);
+      console.error("a problem exists", error);
+      throw error;
     }
   };
 
@@ -68,31 +71,21 @@ class Vendor {
       if (type === 0) {
         db.get(
           "SELECT vendor_id FROM Products JOIN Lots ON Products.id = Lots.product_id WHERE Lots.id = ?",
-          [80],
+          [lotId],
           (err, row) => {
             if (err) {
               console.error(err);
               reject(err);
             } else {
-              if (row != null || row != undefined) {
-                console.log("here is the vendor id of hte compoennt lot", row);
-                resolve(row.vendor_id);
-              } else {
-                console.log("saddddddddd");
-                db.run("rollback");
-                reject(
-                  new Error(
-                    `the vendor id of componentLot ${lotId} is undefined or null`
-                  )
-                );
-              }
+              console.log("here is the vendor id of hte compoennt lot", row);
+              resolve(row.vendor_id);
             }
           }
         );
       } else {
         db.get(
           "SELECT vendor_id FROM Components JOIN Lots ON Components.id = Lots.component_id WHERE Lots.id = ?",
-          [70],
+          [lotId],
           (err, row) => {
             if (err) {
               console.error(err);

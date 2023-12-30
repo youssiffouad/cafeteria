@@ -35,7 +35,22 @@ class Lot {
       );
     });
   }
+  //function to get component id of certain lot
+  static getComponentId(lotId) {
+    return new Promise((res, rej) => {
+      const sql = `select component_id from Lots where id = ?`;
 
+      db.get(sql, [lotId], function (err, row) {
+        if (err) {
+          rej(err);
+        } else {
+          res(row.component_id);
+        }
+      });
+    });
+  }
+
+  //function to get product id of certain lot
   static getProductId(lotid) {
     return new Promise((res, rej) => {
       db.get(`SELECT product_id FROM Lots WHERE id = ${lotid}`, (err, row) => {
@@ -137,6 +152,8 @@ class Lot {
   static async deleteLot(lotid, callback) {
     try {
       const productID = await Lot.getProductId(lotid);
+      const componentID = await Lot.getComponentId(lotid);
+
       const quantity = await Lot.getQuantity(lotid);
       const rem = await Lot.getRemainingPayment(lotid);
       const cost = await Lot.getCost(lotid);
