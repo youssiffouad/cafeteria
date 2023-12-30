@@ -63,13 +63,15 @@ class Product {
   static getSellingPrice(productID) {
     return new Promise((res, rej) => {
       const sql = `SELECT selling_price FROM Products WHERE id = ?`;
-      db.get(sql, productID, function (err, selling_price) {
+      db.get(sql, productID, function (err, row) {
         if (err) {
           console.log(`failed to get selling price of${productID}`, err);
           rej(err);
         } else {
-          console.log(`successfully got the selling price ${selling_price}`);
-          res(selling_price);
+          console.log(
+            `successfully got the selling price ${row.selling_price}`
+          );
+          res(row.selling_price);
         }
       });
     });

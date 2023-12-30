@@ -1,4 +1,5 @@
 const db = require("./db");
+const finance = require("../models/financial");
 
 class Vendor {
   //function to add new vendor
@@ -44,10 +45,11 @@ class Vendor {
         (err) => {
           if (err) {
             console.error(err);
+            // db.run("ROLLBACK");
           } else {
             console.log(`the remaining payment equals ${remainingPayment}`);
             console.log(`the vendorid is ${vendorid}`);
-            updatemyDebt(remainingPayment, (err) => {
+            finance.updatemyDebt(remainingPayment, (err) => {
               if (err) {
                 console.error(err);
               }
@@ -66,35 +68,53 @@ class Vendor {
       if (type === 0) {
         db.get(
           "SELECT vendor_id FROM Products JOIN Lots ON Products.id = Lots.product_id WHERE Lots.id = ?",
-          [lotId],
+          [80],
           (err, row) => {
             if (err) {
               console.error(err);
               reject(err);
             } else {
-              console.log(row);
-              console.log(row.vendor_id);
-              resolve(row.vendor_id);
+              if (row != null || row != undefined) {
+                console.log("here is the vendor id of hte compoennt lot", row);
+                resolve(row.vendor_id);
+              } else {
+                console.log("saddddddddd");
+                db.run("rollback");
+                reject(
+                  new Error(
+                    `the vendor id of componentLot ${lotId} is undefined or null`
+                  )
+                );
+              }
             }
           }
         );
       } else {
         db.get(
           "SELECT vendor_id FROM Components JOIN Lots ON Components.id = Lots.component_id WHERE Lots.id = ?",
-          [lotId],
+          [70],
           (err, row) => {
             if (err) {
               console.error(err);
               reject(err);
             } else {
-              console.log("here is the vendor id of hte compoennt lot", row);
-              resolve(row);
+              if (1) {
+                console.log("here is the vendor id of hte compoennt lot", row);
+                resolve(row.vendor_id);
+              } else {
+                reject(
+                  new Error(
+                    `the vendor id of componentLot ${lotId} is undefined or null`
+                  )
+                );
+              }
             }
           }
         );
       }
     });
   }
+
   // Add other vendor-related methods here
 }
 

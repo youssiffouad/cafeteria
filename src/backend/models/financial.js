@@ -108,6 +108,19 @@ class Finance {
       callback(null, { message: "order added successfully" });
     });
   }
+
+  //fn to update debt
+  static updatemyDebt = (newdebt, callback) => {
+    db.run(`update financial set debt =debt +${newdebt}`, (err) => {
+      if (err) {
+        console.error(err);
+        callback(err);
+      } else {
+        console.log(`my debt updated successfully`);
+        callback(null);
+      }
+    });
+  };
 }
 
 module.exports = Finance;

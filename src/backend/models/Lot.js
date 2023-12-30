@@ -5,56 +5,67 @@ const Finance = require("./financial");
 const Vendor = require("./Vendor");
 
 class Lot {
-  static getCost(lotid, callback) {
-    db.get(`SELECT cost FROM Lots WHERE id = ${lotid}`, (err, row) => {
-      if (err) {
-        console.error(err);
-        callback(err, null);
-      } else {
-        const totalCost = row ? row.cost : null;
-        callback(null, totalCost);
-      }
-    });
-  }
-
-  static getRemainingPayment(lotid, callback) {
-    db.get(
-      `SELECT remaining_payment FROM Lots WHERE id = ${lotid}`,
-      (err, row) => {
+  static getCost(lotid) {
+    return new Promise((res, rej) => {
+      db.get(`SELECT cost FROM Lots WHERE id = ${lotid}`, (err, row) => {
         if (err) {
-          console.error(err);
-          callback(err, null);
+          console.error("failed to get cost", err);
+          rej(err);
         } else {
-          const remaining_payment = row ? row.remaining_payment : null;
-          callback(null, remaining_payment);
+          const totalCost = row ? row.cost : null;
+          res(totalCost);
         }
-      }
-    );
-  }
-
-  static getProductId(lotid, callback) {
-    db.get(`SELECT product_id FROM Lots WHERE id = ${lotid}`, (err, row) => {
-      if (err) {
-        console.error(err);
-        callback(err, null);
-      } else {
-        const product_id = row ? row.product_id : null;
-        console.log(` iam at getprod id`);
-        console.log(product_id);
-        callback(null, product_id);
-      }
+      });
     });
   }
 
-  static getQuantity(lotid, callback) {
-    db.get(`SELECT quantity FROM Lots WHERE id = ${lotid}`, (err, row) => {
-      if (err) {
-        console.error(err);
-        callback(err, null);
-      } else {
-        const quantity = row ? row.quantity : null;
-        callback(null, quantity);
-      }
+  static getRemainingPayment(lotid) {
+    return new Promise((res, rej) => {
+      db.get(
+        `SELECT remaining_payment FROM Lots WHERE id = ${lotid}`,
+        (err, row) => {
+          if (err) {
+            console.error("failed to get remaining payment", err);
+            rej(err);
+          } else {
+            const remaining_payment = row ? row.remaining_payment : null;
+            res(remaining_payment);
+          }
+        }
+      );
+    });
+  }
+
+  static getProductId(lotid) {
+    return new Promise((res, rej) => {
+      db.get(`SELECT product_id FROM Lots WHERE id = ${lotid}`, (err, row) => {
+        if (err) {
+          console.error("failed to get product id of certain lot", err);
+          rej(err);
+        } else {
+          const product_id = row ? row.product_id : null;
+          console.log(` iam at getprod id`);
+          console.log(
+            "suuccessfully got the product id of the lot ",
+            product_id
+          );
+          res(product_id);
+        }
+      });
+    });
+  }
+
+  static getQuantity(lotid) {
+    return new Promise((res, rej) => {
+      db.get(`SELECT quantity FROM Lots WHERE id = ${lotid}`, (err, row) => {
+        if (err) {
+          console.error("failed to get quantity of certain lot", err);
+          rej(err);
+        } else {
+          const quantity = row ? row.quantity : null;
+          res(quantity);
+        }
+      });
     });
   }
 
@@ -63,6 +74,7 @@ class Lot {
     productID,
     quantity,
     cost,
+    paidAmount,
     received_date,
     payment_method
   ) => {
@@ -124,74 +136,17 @@ class Lot {
   //function to delete lot
   static async deleteLot(lotid, callback) {
     try {
-      let productID, quantity, rem, cost;
-
-      await new Promise((resolve, reject) => {
-        db.run("PRAGMA foreign_keys = ON;");
-
-        this.getProductId(lotid, (err, res) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            productID = res;
-            resolve();
-          }
-        });
-      });
-
-      await new Promise((resolve, reject) => {
-        this.getQuantity(lotid, (err, res) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            quantity = res;
-            resolve();
-          }
-        });
-      });
-
-      await new Promise((resolve, reject) => {
-        this.getRemainingPayment(lotid, (err, res) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            rem = res;
-            resolve();
-          }
-        });
-      });
-
-      await new Promise((resolve, reject) => {
-        this.getCost(lotid, (err, res) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            cost = res;
-            resolve();
-          }
-        });
-      });
-
+      const productID = await Lot.getProductId(lotid);
+      const quantity = await Lot.getQuantity(lotid);
+      const rem = await Lot.getRemainingPayment(lotid);
+      const cost = await Lot.getCost(lotid);
       const paidAmount = cost - rem;
       await Product.updateProductQuantity(productID, -quantity);
       await updateProductInStockValue(productID, -quantity);
       await Finance.changeCashVlaue(paidAmount);
       await Vendor.changeVendoerOwedMoney(lotid, -rem);
 
-      await new Promise((resolve, reject) => {
-        deleteLotRow(lotid, (err) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-      });
+      await Lot.removeLotRow(lotid);
 
       console.log("Quantity and productInStockValue updated");
       callback(null, {
@@ -365,33 +320,22 @@ class Lot {
       throw error;
     }
   }
+
+  // Function to delete lot row
+  static removeLotRow(lotid) {
+    return new Promise((res, rej) => {
+      db.run(`DELETE FROM Lots WHERE id = ${lotid} `, (err) => {
+        if (err) {
+          console.error("failed to remove lot row", err);
+          rej(err);
+        } else {
+          console.log(`removed lot row successfully`);
+          res();
+        }
+      });
+    });
+  }
   // Add other lot-related methods here
 }
 
 module.exports = Lot;
-
-//fn to update debt
-const updatemyDebt = (newdebt, callback) => {
-  db.run(`update financial set debt =debt +${newdebt}`, (err) => {
-    if (err) {
-      console.error(err);
-      callback(err);
-    } else {
-      console.log(`my debt updated successfully`);
-      callback(null);
-    }
-  });
-};
-
-// Function to delete order row
-function deleteLotRow(lotid, callback) {
-  db.run(`DELETE FROM Lots WHERE id = ${lotid} `, (err) => {
-    if (err) {
-      console.error(err);
-      callback(err);
-    } else {
-      console.log(`Deleted successfully`);
-      callback(null);
-    }
-  });
-}
