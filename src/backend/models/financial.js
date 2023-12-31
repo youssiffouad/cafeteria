@@ -110,15 +110,17 @@ class Finance {
   }
 
   //fn to update debt
-  static updatemyDebt = (newdebt, callback) => {
-    db.run(`update financial set debt =debt +${newdebt}`, (err) => {
-      if (err) {
-        console.error(err);
-        callback(err);
-      } else {
-        console.log(`my debt updated successfully`);
-        callback(null);
-      }
+  static updatemyDebt = async (addedDebt) => {
+    return new Promise((res, rej) => {
+      db.run(`update financial set debt =debt +${addedDebt}`, (err) => {
+        if (err) {
+          console.error(err);
+          rej(err);
+        } else {
+          console.log(`my debt updated successfully`);
+          res(null);
+        }
+      });
     });
   };
 }

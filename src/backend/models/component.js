@@ -1,6 +1,5 @@
 const db = require("./db");
 const Component_Component = require("../models/Component_Component");
-const dbPromise = require("bluebird").promisifyAll(db); // Or any other promise library
 
 class Component {
   // Add a new component
@@ -35,9 +34,8 @@ class Component {
     vendor_id
   ) {
     try {
-      await dbPromise.runAsync("BEGIN TRANSACTION");
-
-      try {
+      db.serialize(async () => {
+        db.run("BEGIN");
         let sql;
         let params;
         if (componentsList) {
@@ -50,7 +48,7 @@ class Component {
         }
 
         const result = await new Promise((res, rej) => {
-          dbPromise.run(sql, params, function (err) {
+          db.run(sql, params, function (err) {
             if (err) {
               rej(err);
               console.log("ya raby 3la rl errrrrrrorrrrrrrr", err);
@@ -63,17 +61,15 @@ class Component {
         if (componentsList)
           await Component.performMapping(componentId, componentsList);
 
-        await dbPromise.runAsync("COMMIT");
+        db.run("COMMIT");
 
         return {
           message: "Component added successfully",
           component_id: componentId,
         };
-      } catch (err) {
-        await dbPromise.runAsync("ROLLBACK");
-        throw err;
-      }
+      });
     } catch (err) {
+      db.run("ROLLBACK");
       console.error("Error in transaction:", err);
       throw err;
     }
@@ -120,6 +116,7 @@ class Component {
         if (err) {
           reject(err);
         } else {
+          console.log(rows);
           resolve(rows);
         }
       });
@@ -135,7 +132,7 @@ class Component {
           console.log(err);
           rej(err);
         } else {
-          console.log(row);
+          console.log(row.number_of_units);
           res(row);
         }
       });

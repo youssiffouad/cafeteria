@@ -1,7 +1,8 @@
 const Lot = require("../models/Lot");
+const addOrdinaryLot = require("../businessLogic/addOrdinaryLot");
 
-//calling of function to add new lot
-exports.addLot = (req, res) => {
+//calling of function to add new ordinary(product)lot
+exports.addOrdinaryLot = async (req, res) => {
   const {
     productID,
     quantity,
@@ -10,20 +11,13 @@ exports.addLot = (req, res) => {
     received_date,
     payment_method,
   } = req.body;
-  Lot.addLot(
+  await addOrdinaryLot(
     productID,
     quantity,
     cost,
     paidAmount,
     received_date,
-    payment_method,
-    (err, result) => {
-      if (err) {
-        res.status(500).json({ error: "Internal server error" });
-      } else {
-        res.status(200).json(result);
-      }
-    }
+    payment_method
   );
 };
 

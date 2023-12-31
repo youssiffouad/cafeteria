@@ -1,8 +1,8 @@
 const lot = require("../../models/Lot");
 lot.viewLots((err, rows) => {
   if (err) {
-    console.log("error viewin g all lots test", err);
+    console.log("error viewing all lots test", err);
   } else {
-    console.log(rows);
+    console.log("here are hte lots", rows);
   }
 });

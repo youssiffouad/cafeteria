@@ -32,6 +32,7 @@ const addOrdinaryLot = async (
     await Product.updateProductQuantity(productID, quantity);
     await updateProductInStockValue(productID, quantity);
     await Finance.changeCashVlaue(-paidAmount);
+    await Finance.updatemyDebt(cost - paidAmount);
     await Vendor.changeVendoerOwedMoney(0, lotID, rem); // Use lotID and rem variables
     db.run("COMMIT", function (err) {
       console.log(

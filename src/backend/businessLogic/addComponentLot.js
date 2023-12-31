@@ -14,11 +14,15 @@ const addComponentLot = async (
 ) => {
   try {
     db.serialize(async () => {
+      db.run("BEGIN", () => {
+        console.log(" is started the txn of adding new compoent lot");
+      });
       const rem = cost - paidAmount;
       //step1- insert into lot table
       const lotID = await Lot.insertComponentLot(
         quantity,
         cost,
+        paidAmount,
         received_date,
         payment_method,
         component_id
@@ -32,9 +36,16 @@ const addComponentLot = async (
       //step 3-change financial,product and vendor status
 
       await Finance.changeCashVlaue(-paidAmount);
+      await Finance.updatemyDebt(cost - paidAmount);
       await Vendor.changeVendoerOwedMoney(1, lotID, rem); // Use lotID and rem variables
+      db.run("COMMIT", () => {
+        console.log("i commited hte txn of adding component lot");
+      });
     });
   } catch (err) {
+    db.run("rollback", () => {
+      console.log("i rolled back adding component lot");
+    });
     console.log("error while adding componetLot", err);
     throw err;
   }

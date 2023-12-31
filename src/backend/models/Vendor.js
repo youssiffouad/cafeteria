@@ -34,6 +34,20 @@ class Vendor {
     );
   }
 
+  //function to get owed money of certain vendor
+  static getOwedMoneyOfvendor = async (vendorId) => {
+    return new Promise((res, rej) => {
+      const sql = `SELECT owedmoney FROM Vendors WHERE id = ?`;
+      db.get(sql, vendorId, function (err, row) {
+        if (err) {
+          rej(err);
+        } else {
+          res(row.owed_money);
+        }
+      });
+    });
+  };
+
   //fn to change vendor owedmoney (it should take a paramter to determine wether it is product lot or component lot)---> 0 for product,,,,, 1 for component
   static changeVendoerOwedMoney = async (type, lotid, remainingPayment) => {
     try {
@@ -91,7 +105,7 @@ class Vendor {
               console.error(err);
               reject(err);
             } else {
-              if (1) {
+              if (row != null || row != undefined) {
                 console.log("here is the vendor id of hte compoennt lot", row);
                 resolve(row.vendor_id);
               } else {

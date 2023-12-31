@@ -3,6 +3,9 @@ const Product = require("./Product");
 const updateProductInStockValue = require("../businessLogic/updateProdInStock");
 const Finance = require("./financial");
 const Vendor = require("./Vendor");
+const Component = require("../models/component");
+const e = require("cors");
+const { getVendorIdFromLotId } = require("./Vendor");
 
 class Lot {
   static getCost(lotid) {
@@ -153,15 +156,23 @@ class Lot {
     try {
       const productID = await Lot.getProductId(lotid);
       const componentID = await Lot.getComponentId(lotid);
-
       const quantity = await Lot.getQuantity(lotid);
       const rem = await Lot.getRemainingPayment(lotid);
       const cost = await Lot.getCost(lotid);
       const paidAmount = cost - rem;
-      await Product.updateProductQuantity(productID, -quantity);
-      await updateProductInStockValue(productID, -quantity);
+      if (productID !== null || productID !== undefined) {
+        await Product.updateProductQuantity(productID, -quantity);
+        await updateProductInStockValue(productID, -quantity);
+        await Vendor.changeVendoerOwedMoney(0, lotid, -rem);
+      } else if (componentID !== null || componentID !== undefined) {
+        //step2- decrease component number of units(get no of units )
+        const noOfUnits = await Component.getNoOfUnits(component_id);
+        const newNumberOfUnits = noOfUnits - quantity;
+        Component.updateComponentNumberOfUnits(componentID, newNumberOfUnits);
+        await Vendor.changeVendoerOwedMoney(1, lotid, -rem);
+      }
+
       await Finance.changeCashVlaue(paidAmount);
-      await Vendor.changeVendoerOwedMoney(lotid, -rem);
 
       await Lot.removeLotRow(lotid);
 
@@ -189,11 +200,16 @@ class Lot {
       }
     );
   };
-  //function to view all lots with product names with category_name
+  // Function to view all lots with product names, category names, and component names
   static viewLots(callback) {
     db.all(
-      `select l.id,l.cost,l.remaining_payment, l.received_date,l.quantity,l.payment_method ,p.name as prodname,c.name as catname
-       from Lots l join Products p join Categories c on p.id=l.product_id and c.id=p.category_id`,
+      `SELECT l.id, l.cost, l.remaining_payment, l.received_date, l.quantity, l.payment_method,
+            p.name AS prodname, c.name AS catname, comp.name AS compname,
+            CASE WHEN l.is_component THEN 'Component' ELSE 'Product' END AS lot_type
+       FROM Lots l
+      left JOIN Products p ON p.id = l.product_id
+       left JOIN Categories c ON c.id = p.category_id
+       left JOIN Components comp ON comp.id = l.component_id`,
       (err, rows) => {
         if (err) {
           callback(err);
@@ -203,85 +219,33 @@ class Lot {
       }
     );
   }
+  //function to update remaining payment of certain lot
+  static SetRemainingPayment = async (lotid, newValue) => {
+    return new Promise((res, rej) => {
+      const sql = `UPDATE Lots SET remaining_payment = ? WHERE id = ?`;
+      const params = [lotid, newValue];
+      db.run(sql, params, function (err) {
+        if (err) rej(err);
+        else res();
+      });
+    });
+  };
 
   //function to install payment of certain lot(update remaining payment)
 
   static async installLot(lotId, callback) {
     try {
-      const row = await new Promise((resolve, reject) => {
-        db.get(
-          "SELECT remaining_payment FROM Lots WHERE id = ?",
-          [lotId],
-          (err, row) => {
-            if (err) {
-              console.error("Failed to fetch lot details:", err);
-              reject(err);
-            } else {
-              resolve(row);
-            }
-          }
-        );
-      });
+      const remainingPayment = await Lot.getRemainingPayment(lotId);
 
-      if (!row) {
-        throw new Error(`Lot with ID ${lotId} not found`);
-      }
-
-      const remainingPayment = row.remaining_payment;
-      console.log(remainingPayment);
       const installQuan = remainingPayment;
       const updatedRemainingPayment = remainingPayment - installQuan;
-      console.log(updatedRemainingPayment);
+      await Lot.SetRemainingPayment(lotId, updatedRemainingPayment);
 
-      await new Promise((resolve, reject) => {
-        db.run(
-          "UPDATE Lots SET remaining_payment = ? WHERE id = ?",
-          [updatedRemainingPayment, lotId],
-          (err) => {
-            if (err) {
-              console.error("Failed to update remaining_payment:", err);
-              reject(err);
-            } else {
-              console.log("Payment successfully installed");
-              resolve();
-            }
-          }
-        );
-      });
+      //change product Vendor owed money if the lot is product
 
-      const vendorRow = await new Promise((resolve, reject) => {
-        db.get(
-          "SELECT p.vendor_id FROM Products p join Lots l on l.product_id=p.id    WHERE l.id = ?",
-          [lotId],
-          (err, row) => {
-            if (err) {
-              console.error("Failed to fetch lot vendor ID:", err);
-              reject(err);
-            } else {
-              resolve(row);
-            }
-          }
-        );
-      });
+      const vendorId = await Vendor.getVendorIdFromLotId(0, lotId);
 
-      const vendorId = vendorRow.vendor_id;
-
-      const owedMoneyRow = await new Promise((resolve, reject) => {
-        db.get(
-          "SELECT owedmoney FROM Vendors WHERE id = ?",
-          [vendorId],
-          (err, row) => {
-            if (err) {
-              console.error("Failed to fetch vendor owed money:", err);
-              reject(err);
-            } else {
-              resolve(row);
-            }
-          }
-        );
-      });
-
-      const owedMoney = owedMoneyRow.owedmoney;
+      const owedMoney = await Vendor.getOwedMoneyOfvendor(vendorId);
 
       await new Promise((resolve, reject) => {
         db.run(
