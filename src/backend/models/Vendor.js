@@ -48,7 +48,11 @@ class Vendor {
     });
   };
 
-  //fn to change vendor owedmoney (it should take a paramter to determine wether it is product lot or component lot)---> 0 for product,,,,, 1 for component
+  //fn to change vendor owedmoney (it should take a paramter to determine
+  // wether it is product lot or component lot)---> 0 for product,,,,, 1 for component
+  //type 0---->product,,,,,1------>component
+  //lotid-------> i sthe lotid
+  //remaining paymetn is added to the current owed money
   static changeVendoerOwedMoney = async (type, lotid, remainingPayment) => {
     try {
       console.log("before getting hte wrong one");

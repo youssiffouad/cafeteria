@@ -4,7 +4,8 @@ const router = express.Router();
 
 const lotController = require("../controllers/lotController");
 
-router.post("/add", lotController.addLot);
+router.post("/addordinaryLot", lotController.addOrdinaryLot);
+router.post("/addcomponentLot", lotController.addComponentLot);
 router.post("/filterdate", lotController.viewFilterDateLots);
 router.post("/install", lotController.installLot);
 router.post("/delete", lotController.deletLot);

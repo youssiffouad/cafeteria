@@ -1,5 +1,6 @@
 const Lot = require("../models/Lot");
 const addOrdinaryLot = require("../businessLogic/addOrdinaryLot");
+const addComponentLot = require("../businessLogic/addComponentLot");
 
 //calling of function to add new ordinary(product)lot
 exports.addOrdinaryLot = async (req, res) => {
@@ -18,6 +19,26 @@ exports.addOrdinaryLot = async (req, res) => {
     paidAmount,
     received_date,
     payment_method
+  );
+};
+
+//controller to add new component lot
+exports.addComponentLot = async (req, res) => {
+  const {
+    quantity,
+    cost,
+    paidAmount,
+    received_date,
+    payment_method,
+    component_id,
+  } = req.body;
+  await addComponentLot(
+    quantity,
+    cost,
+    paidAmount,
+    received_date,
+    payment_method,
+    component_id
   );
 };
 
@@ -62,17 +83,11 @@ exports.viewLots = (req, res) => {
 };
 
 //calling of fn to insatll payment of certain lot
-exports.installLot = (req, res) => {
+exports.installLot = async (req, res) => {
   const { lot_id } = req.body;
   console.log(
     `yalahahahahahahahahahahwywywywywywywywywhahahahaywywywywywywywhahahawyywywywywyw${lot_id}`
   );
-  Lot.installLot(lot_id, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: "Internal server error" });
-    } else {
-      res.status(200).json(result);
-    }
-  });
+  await Lot.installLot(lot_id);
 };
 // Add other lot-related controller methods here

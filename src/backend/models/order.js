@@ -2,74 +2,82 @@ const db = require("./db");
 
 class Order {
   // Function to return customer ID given order ID
-  static getCustomerID(orderID, callback) {
-    db.get(
-      `SELECT customer_id FROM Orders WHERE id = ?`,
-      [orderID],
-      (err, row) => {
-        if (err) {
-          console.error(err);
-          callback(err, null);
-        } else {
-          const customerID = row ? row.customer_id : null;
-          callback(null, customerID);
+  static async getCustomerID(orderID) {
+    return new Promise((res, rej) => {
+      db.get(
+        `SELECT customer_id FROM Orders WHERE id = ?`,
+        [orderID],
+        (err, row) => {
+          if (err) {
+            console.error(err);
+            res("error in getting customer id of certain order", err);
+          } else {
+            const customerID = row ? row.customer_id : null;
+            res(customerID);
+          }
         }
-      }
-    );
+      );
+    });
   }
 
   // Function to return order items given order ID
-  static getOrderItems(orderID, callback) {
-    db.all(
-      `SELECT * FROM OrderItems WHERE order_id = ?`,
-      [orderID],
-      (err, rows) => {
-        if (err) {
-          console.error(err);
-          callback(err, null);
-        } else {
-          callback(null, rows);
+  static async getOrderItems(orderID) {
+    return new Promise((res, rej) => {
+      db.all(
+        `SELECT * FROM OrderItems WHERE order_id = ?`,
+        [orderID],
+        (err, rows) => {
+          if (err) {
+            console.error("error getting order items", err);
+            rej(err);
+          } else {
+            res(rows);
+          }
         }
-      }
-    );
+      );
+    });
   }
 
   // Function to return payment method given order ID
-  static getPaymentMethod(orderID, callback) {
-    db.get(
-      `SELECT payment_method FROM Orders WHERE id = ?`,
-      [orderID],
-      (err, row) => {
-        if (err) {
-          console.error(err);
-          callback(err, null);
-        } else {
-          const paymentMethod = row ? row.payment_method : null;
-          callback(null, paymentMethod);
+  static async getPaymentMethod(orderID) {
+    return new Promise((res, rej) => {
+      db.get(
+        `SELECT payment_method FROM Orders WHERE id = ?`,
+        [orderID],
+        (err, row) => {
+          if (err) {
+            console.error("failed to get payment method of certain order", err);
+            rej(err);
+          } else {
+            const paymentMethod = row ? row.payment_method : null;
+            res(paymentMethod);
+          }
         }
-      }
-    );
+      );
+    });
   }
 
   // Function to return total order cost given order ID
-  static getTotalOrderCost(orderID, callback) {
-    db.get(
-      `SELECT price
-      FROM Orders where id=${orderID}
-    `,
-      (err, row) => {
-        if (err) {
-          console.error(err);
-          callback(err, null);
-        } else {
-          console.log(row);
-          console.log(`iam totalordercost`);
-          console.log(row.price);
+  static getTotalOrderCost(orderID) {
+    return new Promise((res, rej) => {
+      db.get(
+        `SELECT price
+        FROM Orders where id=${orderID}
+      `,
+        (err, row) => {
+          if (err) {
+            console.error("failed to get total order cost", err);
+            rej(err);
+          } else {
+            console.log(row);
+            console.log(`iam totalordercost`);
+            console.log(row.price);
 
-          callback(null, row.price);
+            res(row.price);
+          }
         }
-      }
-    );
+      );
+    });
   }
 
   //function to add SanwichOrder
@@ -80,8 +88,8 @@ class Order {
     order_date,
     sandwich_id
   ) => {
-    try {
-      return new Promise((res, rej) => {
+    return new Promise((res, rej) => {
+      try {
         const sql = `insert into Orders ( price ,payment_method ,customer_id , order_date ,is_sandwich, sandwich_id)`;
         const params = [
           price,
@@ -99,8 +107,11 @@ class Order {
             res({ message: "sandwich order added successfully", order_id });
           }
         });
-      });
-    } catch (err) {}
+      } catch (err) {
+        console.log("failed to inset sandwich order", err);
+        rej(err);
+      }
+    });
   };
   // Main function to add an order
   static async addOrder(
@@ -215,108 +226,48 @@ class Order {
     );
   }
 
-  static deleteOrder(orderId, callback) {
-    db.serialize(() => {
-      db.run("BEGIN TRANSACTION");
+  static deleteOrder(orderId) {
+    db.serialize(async () => {
+      try {
+        db.run("BEGIN TRANSACTION");
 
-      let paymentHandler;
-      let payment_method;
-      let totalOrderCost;
-      let customer_id;
-      let orderItems;
+        let customer_id = await Order.getCustomerID(orderId);
 
-      // Retrieve customer ID
-      this.getCustomerID(orderId, (err, custid) => {
-        if (err) {
-          console.error(err);
-          // Handle the error
-        } else {
-          customer_id = custid;
+        // Retrieve order items
+        let orderItems = await Order.getOrderItems(orderId);
 
-          // Retrieve order items
-          this.getOrderItems(orderId, (err, rows) => {
-            if (err) {
-              console.error(err);
-              // Handle the error
-            } else {
-              orderItems = rows;
+        // Retrieve payment method
+        let payment_method = await Order.getPaymentMethod(orderId);
 
-              // Retrieve payment method
-              this.getPaymentMethod(orderId, (err, pm) => {
-                if (err) {
-                  console.error(err);
-                  // Handle the error
-                } else {
-                  payment_method = pm;
+        // Retrieve total order cost
+        let totalOrderCost = await Order.getTotalOrderCost(orderId);
+        // Determine payment handler based on payment method
+        if (payment_method === "cash") await handleCashPayment(-totalOrderCost);
+        else if (payment_method === "debt")
+          await handleDebtPayment(customer_id, -totalOrderCost);
+        else if (payment_method === "soldprod")
+          await handleSoldProdPayment(1, orderId, orderItems);
 
-                  // Retrieve total order cost
-                  this.getTotalOrderCost(orderId, (err, tot) => {
-                    if (err) {
-                      console.error(err);
-                      // Handle the error
-                    } else {
-                      totalOrderCost = tot;
-                      console.log(payment_method);
-                      console.log(totalOrderCost);
-                      console.log(customer_id);
-                      console.log(orderItems);
-
-                      // Determine payment handler based on payment method
-                      if (payment_method === "cash") {
-                        paymentHandler = (callback) =>
-                          handleCashPayment(-totalOrderCost, callback);
-                      } else if (payment_method === "debt") {
-                        paymentHandler = (callback) =>
-                          handleDebtPayment(
-                            customer_id,
-                            -totalOrderCost,
-                            callback
-                          );
-                      } else if (payment_method === "soldprod") {
-                        paymentHandler = (callback) =>
-                          handleSoldProdPayment(
-                            1,
-                            orderId,
-                            orderItems,
-                            callback
-                          );
-                      }
-
-                      // Invoke the payment handler
-                      if (typeof paymentHandler === "function") {
-                        paymentHandler((err) => {
-                          if (err) {
-                            db.run("ROLLBACK");
-                            callback(err);
-                          } else {
-                            deleteOrderRow(orderId, (err) => {
-                              if (err) {
-                                callback(err);
-                              } else {
-                                db.run("COMMIT");
-                                callback(null, {
-                                  message: "Order deleted successfully",
-                                  order_id: orderId,
-                                });
-                              }
-                            });
-                          }
-                        });
-                      } else {
-                        // Payment handler is not defined
-                        db.run("ROLLBACK");
-                        callback(new Error("Invalid payment method"));
-                      }
-                    }
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
+        deleteOrderRow(orderId, (err) => {
+          if (err) {
+            throw err;
+          } else {
+            db.run("COMMIT");
+            console.log({
+              message: "Order deleted successfully",
+              order_id: orderId,
+            });
+          }
+        });
+        db.run("commit");
+      } catch (err) {
+        db.run("rollback");
+        console.log("failed to delte order");
+        throw err;
+      }
     });
   }
+
   // Function to filter orders by customer_id
   static filterOrdersByCustomerId(customerId, callback) {
     db.all(

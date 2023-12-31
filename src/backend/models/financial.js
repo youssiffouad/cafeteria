@@ -37,13 +37,13 @@ class Finance {
   }
 
   //function to change cash value
-  static changeCashVlaue = async (amount) => {
+  static changeCashVlaue = async (amountAdded) => {
     try {
       await new Promise((resolve, reject) => {
         db.run(
           `
     UPDATE Financial
-    SET cash = cash + ${amount}
+    SET cash = cash + ${amountAdded}
     WHERE id = 1;
   `,
           (err) => {
