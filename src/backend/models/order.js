@@ -38,6 +38,24 @@ class Order {
     });
   }
 
+  static getSandwichIdFromOrderId = async (orderId) => {
+    return new Promise((res, rej) => {
+      const sql = `select sandwich_id from Orders where id=?`;
+      db.get(sql, orderId, function (err, row) {
+        if (err) {
+          console.log(
+            "failed to get sandwich id of certain order",
+            orderId,
+            err
+          );
+          rej(err);
+        } else {
+          res(row.sandwich_id);
+        }
+      });
+    });
+  };
+
   // Function to return payment method given order ID
   static async getPaymentMethod(orderID) {
     return new Promise((res, rej) => {
@@ -349,6 +367,19 @@ class Order {
     });
   }
 
+  // Function to delete order row
+  static deleteOrderRow(orderId, callback) {
+    db.run(`DELETE FROM Orders WHERE id = ${orderId} `, (err) => {
+      if (err) {
+        console.error(err);
+        callback(err);
+      } else {
+        console.log(`Deleted successfully`);
+        callback(null);
+      }
+    });
+  }
+
   // Add other order-related methods here
 }
 
@@ -482,19 +513,6 @@ async function handleSoldProdPayment(IncOrDec, orderId, orderItems) {
           }
         });
       });
-    }
-  });
-}
-
-// Function to delete order row
-function deleteOrderRow(orderId, callback) {
-  db.run(`DELETE FROM Orders WHERE id = ${orderId} `, (err) => {
-    if (err) {
-      console.error(err);
-      callback(err);
-    } else {
-      console.log(`Deleted successfully`);
-      callback(null);
     }
   });
 }

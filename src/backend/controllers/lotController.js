@@ -42,7 +42,7 @@ exports.addComponentLot = async (req, res) => {
   );
 };
 
-//calling of fn todelete lot
+//calling of fn to delete lot(either product lot or component lot)
 exports.deletLot = (req, res) => {
   const { Lotid } = req.body;
   Lot.deleteLot(Lotid, (err, result) => {

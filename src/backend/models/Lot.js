@@ -4,6 +4,8 @@ const updateProductInStockValue = require("../businessLogic/updateProdInStock");
 const Finance = require("./financial");
 const Vendor = require("./Vendor");
 const Component = require("../models/component");
+// const e = require("cors");
+// const { getVendorIdFromLotId } = require("./Vendor");
 
 class Lot {
   static getCost(lotid) {
@@ -164,7 +166,7 @@ class Lot {
         await Vendor.changeVendoerOwedMoney(0, lotid, -rem);
       } else if (componentID !== null || componentID !== undefined) {
         //step2- decrease component number of units(get no of units )
-        const noOfUnits = await Component.getNoOfUnits(componentID);
+        const noOfUnits = await Component.getNoOfUnits(component_id);
         const newNumberOfUnits = noOfUnits - quantity;
         Component.updateComponentNumberOfUnits(componentID, newNumberOfUnits);
         await Vendor.changeVendoerOwedMoney(1, lotid, -rem);
@@ -229,68 +231,76 @@ class Lot {
     });
   };
 
-  //function to get isComponent of certain lot
-  static async getIsComponent(lotId) {
-    return new Promise((res, rej) => {
-      const sql = `select is_component from Lots where  id=? `;
-      db.get(sql, lotId, function (err, row) {
-        if (err) {
-          console.log("error getting is component of the lot", lotId);
-          rej(err);
-        } else {
-          console.log(row);
-          res(row.is_component);
-        }
-      });
-    });
-  }
-
   //function to install payment of certain lot(update remaining payment)
 
-  static async installLot(lotId) {
-    return new Promise(async (res, rej) => {
-      db.serialize(async () => {
-        try {
-          db.run("begin", () => {
-            console.log("i started the lot installment");
-          });
-          const remainingPayment = await Lot.getRemainingPayment(lotId);
+  static async installLot(lotId, callback) {
+    try {
+      const remainingPayment = await Lot.getRemainingPayment(lotId);
 
-          const installQuan = remainingPayment;
-          const updatedRemainingPayment = remainingPayment - installQuan;
-          await Lot.SetRemainingPayment(lotId, updatedRemainingPayment);
+      const installQuan = remainingPayment;
+      const updatedRemainingPayment = remainingPayment - installQuan;
+      await Lot.SetRemainingPayment(lotId, updatedRemainingPayment);
 
-          //change product Vendor owed money if the lot is product
-          //
-          const isComp = await Lot.getIsComponent(lotId);
-          if (!isComp) {
-            const vendorId = await Vendor.getVendorIdFromLotId(0, lotId);
-            const owedMoney = await Vendor.getOwedMoneyOfvendor(vendorId);
-            await Vendor.changeVendoerOwedMoney(0, lotId, -owedMoney);
-          } else {
-            const vendorId = await Vendor.getVendorIdFromLotId(1, lotId);
-            const owedMoney = await Vendor.getOwedMoneyOfvendor(vendorId);
-            await Vendor.changeVendoerOwedMoney(1, lotId, -owedMoney);
+      //change product Vendor owed money if the lot is product
+
+      const vendorId = await Vendor.getVendorIdFromLotId(0, lotId);
+
+      const owedMoney = await Vendor.getOwedMoneyOfvendor(vendorId);
+
+      await new Promise((resolve, reject) => {
+        db.run(
+          "UPDATE Vendors SET owedmoney = ? WHERE id = ?",
+          [owedMoney - installQuan, vendorId],
+          (err) => {
+            if (err) {
+              console.error("Failed to update vendor owed money:", err);
+              reject(err);
+            } else {
+              console.log("Vendor owed money successfully updated");
+              resolve();
+            }
           }
-
-          await Finance.updatemyDebt(-installQuan);
-          await Finance.changeCashVlaue(-installQuan);
-          db.run("commit", () => {
-            console.log("i commited the lot installment");
-          });
-          res({
-            message: "Lot installed successfully",
-            lot_id: lotId,
-          });
-        } catch (err) {
-          db.run("rollback", () => {
-            console.log("i rolled back in installing lot");
-          });
-          console.log("error installing lot", err);
-          rej(err);
-        }
+        );
       });
-    });
+      Vendor.changeVendoerOwedMoney();
+      await new Promise((resolve, reject) => {
+        db.run(
+          `UPDATE Financial SET debt = debt - ${installQuan} WHERE id =${1} `,
+          (err) => {
+            if (err) {
+              console.error("Failed to update vendor owed money:", err);
+              reject(err);
+            } else {
+              console.log("Vendor owed money successfully updated");
+              resolve();
+            }
+          }
+        );
+      });
+      await new Promise((resolve, reject) => {
+        db.run(
+          `UPDATE Financial SET cash = cash - ${installQuan} WHERE id =${1} `,
+          (err) => {
+            if (err) {
+              console.error("Failed to update vendor owed money:", err);
+              reject(err);
+            } else {
+              console.log("Vendor owed money successfully updated");
+              resolve();
+            }
+          }
+        );
+      });
+
+      callback(null, {
+        message: "Lot installed successfully",
+        lot_id: lotId,
+      });
+    } catch (error) {
+      console.error(error);
+      callback(error);
+      throw error;
+    }
   }
 
   // Function to delete lot row

@@ -1,32 +1,23 @@
+const Order = require("../models/order");
+const Sandwich_Component = require("../models/sandwich_component");
 const Component = require("../models/component");
 const db = require("../models/db");
-const Order = require("../models/order");
 
-const Sandwich_Component = require("../models/sandwich_component");
-const addsandwichOrder = async (
-  price,
-  payment_method,
-  customer_id,
-  order_date,
-  sandwich_id
-) => {
+//remove the sandwich order from the orders table , get component ids of the sandwich ,
+// get no of units and mapping values , update component no of units
+const deleteSandwichOrder = async (orderId) => {
   try {
     db.serialize(async () => {
-      //step1- insert sandwich into the orders table
-      await Order.insertSandwichOrder(
-        price,
-        payment_method,
-        customer_id,
-        order_date,
-        sandwich_id
-      );
+      db.run("begin");
+      //step1-get sandwich id of certain order
+      const sandwich_id = await Order.getSandwichIdFromOrderId(orderId);
 
       //step2- get components ids of certain sandwich
       const componentIds = await Sandwich_Component.getComponentIds(
         sandwich_id
       );
 
-      //step3- for every component get numberOfUnits and mapping value & updateCompNoOfUnits
+      //step3- get no of units and mapping values
       await Promise.all(
         componentIds.map(async (comp) => {
           const number_of_units = await Component.getNoOfUnits(comp);
@@ -42,9 +33,20 @@ const addsandwichOrder = async (
           console.log("added sandwich successfully");
         })
       );
+
+      //step5- delete sandwich from orders table
+      Order.deleteOrderRow(orderId, function (err) {
+        if (err) {
+          console.log("failed to delete order row", err);
+          throw err;
+        }
+      });
+      db.run("commit");
     });
   } catch (err) {
-    console.log("failed to add sandwich", err);
+    db.run("rollback");
+    console.log("failed to delete sandwich order", err);
+    throw err;
   }
 };
-module.exports = addsandwichOrder;
+module.exports = deleteSandwichOrder;
