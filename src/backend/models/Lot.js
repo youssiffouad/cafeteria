@@ -166,7 +166,7 @@ class Lot {
         await Vendor.changeVendoerOwedMoney(0, lotid, -rem);
       } else if (componentID !== null || componentID !== undefined) {
         //step2- decrease component number of units(get no of units )
-        const noOfUnits = await Component.getNoOfUnits(component_id);
+        const noOfUnits = await Component.getNoOfUnits(componentID);
         const newNumberOfUnits = noOfUnits - quantity;
         Component.updateComponentNumberOfUnits(componentID, newNumberOfUnits);
         await Vendor.changeVendoerOwedMoney(1, lotid, -rem);

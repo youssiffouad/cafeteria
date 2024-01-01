@@ -1,7 +1,8 @@
+const addsandwichOrder = require("../businessLogic/addsandwichOrder");
 const Order = require("../models/order");
-
-// Function to add a new order
-exports.addOrder = (req, res) => {
+const deleteSandwichOrder = require("../businessLogic/deleteSandwichOrder");
+// Function to add a new order(ordinary product order)
+exports.addProductOrder = (req, res) => {
   const {
     customer_id,
     order_date,
@@ -29,6 +30,28 @@ exports.addOrder = (req, res) => {
   );
 };
 
+//function to add sandwich order
+exports.addSanadwichOrder = async (req, res) => {
+  try {
+    const {
+      customer_id,
+      order_date,
+      sandwich_id,
+      totalOrderCost,
+      payment_method,
+    } = req.body;
+    await addsandwichOrder(
+      totalOrderCost,
+      payment_method,
+      customer_id,
+      order_date,
+      sandwich_id
+    );
+  } catch (err) {
+    console.error("failed to add sandwich order:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 // Function to view all orders
 exports.viewOrders = (req, res) => {
   Order.viewOrders((err, orders) => {
@@ -99,8 +122,8 @@ exports.filterOrderCustandDate = (req, res) => {
   );
 };
 
-//function to delete certain order
-exports.deleteOrder = (req, res) => {
+//function to delete certain Product order
+exports.deleteProductOrder = (req, res) => {
   const { orderId } = req.body;
   Order.deleteOrder(orderId, (err, result) => {
     if (err) {
@@ -113,6 +136,17 @@ exports.deleteOrder = (req, res) => {
       // Perform any necessary actions after deleting the order
     }
   });
+};
+
+//function to delete certain sadwich Order
+exports.deleteSandwichOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    await deleteSandwichOrder(orderId);
+    res.status(200).json({ message: "order deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "failed to delete sandwich order" });
+  }
 };
 
 // Add other order-related controller methods here

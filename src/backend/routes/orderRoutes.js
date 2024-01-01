@@ -2,13 +2,15 @@ const express = require("express");
 const router = express.Router();
 const orderController = require("../controllers/orderController");
 
-router.post("/add", orderController.addOrder);
+router.post("/addProductOrder", orderController.addProductOrder);
+router.post("/addSandwichOrder", orderController.addSanadwichOrder);
 
 router.get("/view", orderController.viewOrders);
 router.get("/viewWithItem", orderController.viewOrderswithItem);
 router.post("/filterdate", orderController.filterOrdersDate);
 router.post("/filtercust", orderController.filterOrderCust);
 router.post("/filtercustand date", orderController.filterOrderCustandDate);
-router.post("/delete", orderController.deleteOrder);
+router.post("/deleteProductOrder", orderController.deleteProductOrder);
+router.post("/deleteSandwichOrder", orderController.deleteSandwichOrder);
 
 module.exports = router;

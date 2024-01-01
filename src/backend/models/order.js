@@ -147,23 +147,22 @@ class Order {
 
           db.run("BEGIN TRANSACTION");
           let orderId;
-          if (!sandwich_id) {
-            orderId = await Order.insertBasicOrder(
-              customer_id,
-              order_date,
-              totalOrderCost,
-              payment_method
-            );
-          } else {
-            let result = await Order.insertSandwichOrder(
-              totalOrderCost,
-              payment_method,
-              customer_id,
-              order_date,
-              sandwich_id
-            );
-            orderId = result.order_id;
-          }
+
+          orderId = await Order.insertBasicOrder(
+            customer_id,
+            order_date,
+            totalOrderCost,
+            payment_method
+          );
+
+          let result = await Order.insertSandwichOrder(
+            totalOrderCost,
+            payment_method,
+            customer_id,
+            order_date,
+            sandwich_id
+          );
+          orderId = result.order_id;
 
           if (payment_method === "cash")
             await handleCashPayment(totalOrderCost);
@@ -266,7 +265,7 @@ class Order {
         else if (payment_method === "soldprod")
           await handleSoldProdPayment(1, orderId, orderItems);
 
-        deleteOrderRow(orderId, (err) => {
+        Order.deleteOrderRow(orderId, (err) => {
           if (err) {
             throw err;
           } else {
@@ -505,7 +504,7 @@ async function handleSoldProdPayment(IncOrDec, orderId, orderItems) {
       });
     } else if (IncOrDec === 1) {
       changeProductQuantity(1, orderItems, () => {
-        deleteOrderRow(orderId, (err) => {
+        Order.deleteOrderRow(orderId, (err) => {
           if (err) {
             rej(err);
           } else {
