@@ -75,35 +75,35 @@ class Sandwich {
   // Add a new sandwich
   static async addSandwich(name, componentsList, sellingPrice) {
     try {
-      await dbPromise.runAsync("BEGIN TRANSACTION");
+      db.serialize(async () => {
+        db.run("BEGIN TRANSACTION");
 
-      try {
         let cost = Sandwich.calculateCost(componentsList);
         const sql = `INSERT INTO Sandwiches (name, cost, selling_price) VALUES (?, ?, ?)`;
         const params = [name, cost, sellingPrice];
-
-        const result = await new Promise((res, rej) => {
-          dbPromise.run(sql, params, function (err) {
-            if (err) rej(err);
-            else res(this);
-          });
+        let result;
+        db.run(sql, params, (err) => {
+          if (err) {
+            console.log("error inserting new sandwich into sandwiches table");
+            throw err;
+          } else {
+            result = this;
+          }
         });
 
         console.log(result);
         const sandwichId = result.lastID;
         await Sandwich.performMapping(sandwichId, componentsList);
 
-        await dbPromise.runAsync("COMMIT");
+        db.run("commit");
 
         return {
           message: "Sandwich added successfully",
           sandwich_id: sandwichId,
         };
-      } catch (err) {
-        await dbPromise.runAsync("ROLLBACK");
-        throw err;
-      }
+      });
     } catch (err) {
+      db.run("rollback");
       console.error("Error in transaction:", err);
       throw err;
     }

@@ -10,6 +10,8 @@ const custRoutes = require("./routes/customerRoutes");
 const rankRoutes = require("./routes/RankRoutes");
 const financialRoutes = require("./routes/financeRouutes");
 const userRoutes = require("./routes/userRoutes");
+const sandwichroutes = require("./routes/sandwichRoutes");
+const componentsroutes = require("./routes/componentRoute");
 app.use(express.json());
 app.use(cors());
 
@@ -23,6 +25,8 @@ app.use("/customers", custRoutes);
 app.use("/ranks", rankRoutes);
 app.use("/finance", financialRoutes);
 app.use("/users", userRoutes);
+app.use("/sandwiches", sandwichroutes);
+app.use("/components", componentsroutes);
 
 const port = 3060;
 app.listen(port, () => {
