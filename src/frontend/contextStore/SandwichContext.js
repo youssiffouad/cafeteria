@@ -4,6 +4,7 @@ export const SandwichCtx = createContext({
   componentsList: [],
   compName: "",
   compMapping: "",
+  addSandwich: () => {},
   modifyComponets: (comp) => {},
   ChangeName: (name) => {},
   Changemapping: (mapping) => {},
@@ -16,6 +17,24 @@ export const SandwichProvider = (props) => {
   const [compName, setcompName] = useState("");
   const [compMapping, setcompMapping] = useState("");
   const [cost, setcost] = useState(0);
+
+  const addSandwich = async () => {
+    const sandwichData = {
+      name: compMapping,
+      componentsList,
+      sellingPrice: cost,
+    };
+    const response = await fetch(
+      "http://localhost:${serverport}/sandwiches/addSandwich",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(sandwichData),
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+  };
   const ChangeName = (name) => {
     console.log(`i change the name`);
     setcompName(name);
@@ -50,6 +69,7 @@ export const SandwichProvider = (props) => {
         ChangeName,
         cost,
         calculateCost,
+        addSandwich,
       }}
     >
       {props.children}

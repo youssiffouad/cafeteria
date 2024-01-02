@@ -3,11 +3,15 @@ import ComponentsInSandwiches from "./ComponentsInsandwiches";
 import { SandwichCtx } from "../../contextStore/SandwichContext";
 
 const SandwichForm = () => {
-  const { componentsList, cost } = useContext(SandwichCtx);
+  const { componentsList, cost, addSandwich } = useContext(SandwichCtx);
   return (
     <div className="container mb-5 add-container" dir="rtl">
       <h5 className="add-heading"> اضافة ساندوتش جديد</h5>
-      <form>
+      <form
+        onSubmit={() => {
+          addSandwich();
+        }}
+      >
         <label className="label">
           الاسم
           <input className={` form-control input`} type="text" />
