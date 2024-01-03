@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import ProductWhole from "./wholeProduct";
 import AddNewConstituent from "../constituents/addnewCostituent";
+import { ConstituentProvider } from "../../contextStore/constituentContext";
 
 const ProdChoice = () => {
   const [toggle, setoggle] = useState(true);
@@ -19,7 +20,13 @@ const ProdChoice = () => {
       >
         {toggle ? "  اظهار المنتجات" : " اظهار المكونات"}
       </button>
-      {toggle ? <AddNewConstituent /> : <ProductWhole />}
+      {toggle ? (
+        <ConstituentProvider>
+          <AddNewConstituent />
+        </ConstituentProvider>
+      ) : (
+        <ProductWhole />
+      )}
     </>
   );
 };
