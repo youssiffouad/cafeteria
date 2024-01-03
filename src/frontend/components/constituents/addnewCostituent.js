@@ -8,6 +8,7 @@ const AddNewConstituent = () => {
     ConstituentCtx.validateField("constituentName", "name", constituentName);
     ConstituentCtx.validateField("noOfUnits", "number", noOfUnits);
     ConstituentCtx.validateField("priceOfUnit", "number", priceOfUnit);
+    ConstituentCtx.addConstituent();
   };
 
   return (
@@ -25,34 +26,89 @@ const AddNewConstituent = () => {
           submissionHandler(formdata);
         }}
       >
-        <label className="label">
-          الاسم
-          <input
-            className={` form-control input`}
-            name="constituentName"
-            type="text"
-            value={ConstituentCtx.formState.constituentName.value}
-          />
-        </label>
-        <label className="label">
-          {" "}
-          سعر الشراء للوحدة
-          <input
-            className={` form-control input`}
-            name="priceOfUnit"
-            type="number"
-            value={ConstituentCtx.formState.priceOfUnit.value}
-          />
-        </label>
-        <label className="label">
-          الكمية
-          <input
-            className={` form-control input`}
-            name="noOfUnits"
-            type="number"
-            value={ConstituentCtx.formState.noOfUnits.value}
-          />
-        </label>
+        <div className="row">
+          <div className="col">
+            <label className="label">
+              الاسم
+              <input
+                className={`form-control input ${
+                  !ConstituentCtx.formState.constituentName.valid &&
+                  "is-invalid"
+                }`}
+                name="constituentName"
+                type="text"
+                value={ConstituentCtx.formState.constituentName.value}
+                onChange={(event) => {
+                  ConstituentCtx.handleInputChange(event);
+                  ConstituentCtx.validateField(
+                    event.target.name,
+                    "name",
+                    event.target.value
+                  );
+                }}
+              />
+            </label>
+            {!ConstituentCtx.formState.constituentName.valid && (
+              <p className="text-danger">
+                {ConstituentCtx.getErrorMsg("constituentName")}
+              </p>
+            )}
+          </div>
+          <div className="col">
+            <label className="label">
+              {" "}
+              سعر الشراء للوحدة
+              <input
+                className={`form-control input ${
+                  !ConstituentCtx.formState.priceOfUnit.valid && "is-invalid"
+                }`}
+                name="priceOfUnit"
+                type="number"
+                value={ConstituentCtx.formState.priceOfUnit.value}
+                onChange={(event) => {
+                  ConstituentCtx.handleInputChange(event);
+                  ConstituentCtx.validateField(
+                    event.target.name,
+                    "number",
+                    event.target.value
+                  );
+                }}
+              />
+            </label>
+            {!ConstituentCtx.formState.priceOfUnit.valid && (
+              <p className="text-danger">
+                {ConstituentCtx.getErrorMsg("priceOfUnit")}
+              </p>
+            )}
+          </div>
+          <div className="col">
+            <label className="label">
+              الكمية
+              <input
+                className={`form-control input ${
+                  !ConstituentCtx.formState.noOfUnits.valid && "is-invalid"
+                }`}
+                name="noOfUnits"
+                type="number"
+                value={ConstituentCtx.formState.noOfUnits.value}
+                onChange={(event) => {
+                  ConstituentCtx.handleInputChange(event);
+                  ConstituentCtx.validateField(
+                    event.target.name,
+                    "number",
+                    event.target.value
+                  );
+                }}
+              />
+            </label>
+            {!ConstituentCtx.formState.noOfUnits.valid && (
+              <p className="text-danger">
+                {ConstituentCtx.getErrorMsg("noOfUnits")}
+              </p>
+            )}
+          </div>
+        </div>
+
         <br />
         <button className="btn btn-primary" type="submit">
           اضافة المكون

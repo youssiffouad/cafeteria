@@ -33,46 +33,75 @@ class Component {
     componentsList,
     vendor_id
   ) {
-    try {
-      db.serialize(async () => {
-        db.run("BEGIN");
-        let sql;
-        let params;
-        if (componentsList) {
-          let cost = Component.calculateCost(componentsList);
-          sql = `INSERT INTO Components (name,number_of_units, price_per_unit,vendor_id,isNested) VALUES (?, ?, ?,?,?)`;
-          params = [name, numberOfUnits, cost, vendor_id, 1];
-        } else {
-          sql = `INSERT INTO Components (name, number_of_units, price_per_unit,vendor_id,isNested) VALUES (?, ?,?, ?,?)`;
-          params = [name, numberOfUnits, pricePerUnit, vendor_id, 0];
-        }
+    return new Promise(async (resolve, reject) => {
+      try {
+        db.serialize(async () => {
+          await new Promise((res, rej) => {
+            db.run("BEGIN", function (err) {
+              if (err) {
+                db.run("ROLLBACK");
+                console.error("Error beginning transaction:", err);
+                reject(err);
+              } else {
+                res();
+              }
+            });
+          });
 
-        const result = await new Promise((res, rej) => {
-          db.run(sql, params, function (err) {
-            if (err) {
-              rej(err);
-              console.log("ya raby 3la rl errrrrrrorrrrrrrr", err);
-            } else res(this);
+          let sql;
+          let params;
+
+          if (componentsList) {
+            console.log("here is the components list", componentsList);
+            let cost = Component.calculateCost(componentsList);
+            sql = `INSERT INTO Components (name,number_of_units, price_per_unit,vendor_id,isNested) VALUES (?, ?, ?,?,?)`;
+            params = [name, numberOfUnits, cost, vendor_id, 1];
+          } else {
+            sql = `INSERT INTO Components (name, number_of_units, price_per_unit,vendor_id,isNested) VALUES (?, ?,?, ?,?)`;
+            params = [name, numberOfUnits, pricePerUnit, vendor_id, 0];
+          }
+
+          const result = await new Promise((res, rej) => {
+            db.run(sql, params, function (err) {
+              if (err) {
+                db.run("ROLLBACK");
+                console.error("Error in transaction:", err);
+                rej(err);
+              } else {
+                res({ lastID: this.lastID });
+              }
+            });
+          });
+
+          console.log(result);
+          const componentId = result.lastID;
+          if (componentsList)
+            await Component.performMapping(componentId, componentsList);
+
+          await new Promise((res, rej) => {
+            db.run("COMMIT", function (err) {
+              if (err) {
+                db.run("ROLLBACK");
+                console.error("Error committing transaction:", err);
+                rej(err);
+              } else {
+                res();
+              }
+            });
+          });
+
+          console.log("before return");
+          resolve({
+            message: "Component added successfully",
+            component_id: componentId,
           });
         });
-
-        console.log(result);
-        const componentId = result.lastID;
-        if (componentsList)
-          await Component.performMapping(componentId, componentsList);
-
-        db.run("COMMIT");
-
-        return {
-          message: "Component added successfully",
-          component_id: componentId,
-        };
-      });
-    } catch (err) {
-      db.run("ROLLBACK");
-      console.error("Error in transaction:", err);
-      throw err;
-    }
+      } catch (err) {
+        db.run("ROLLBACK");
+        console.error("Error in transaction:", err);
+        reject(err);
+      }
+    });
   }
 
   //perform mapping between the composed component and its constituents components on adding new nested component

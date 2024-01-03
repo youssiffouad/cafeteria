@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import serverport from "../backendconfiguration";
 
 export const SandwichCtx = createContext({
   componentsList: [],
@@ -25,7 +26,7 @@ export const SandwichProvider = (props) => {
       sellingPrice: cost,
     };
     const response = await fetch(
-      "http://localhost:${serverport}/sandwiches/addSandwich",
+      `http://localhost:${serverport}/sandwiches/addSandwich`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -3,12 +3,15 @@ const Component = require("../models/component");
 // Add a new component
 exports.addComponent = async (req, res) => {
   try {
+    console.log("here is the request body sent to the server", req.body);
     const { name, numberOfUnits, pricePerUnit } = req.body;
+
     const result = await Component.addComponent(
       name,
       numberOfUnits,
       pricePerUnit
     );
+    console.log("here is the result", result);
     res.status(200).json(result);
   } catch (error) {
     console.error(error);

@@ -3,5 +3,6 @@ const router = express.Router();
 const componentController = require("../controllers/componentController");
 
 router.post("/addcomponent", componentController.addComponent);
+router.all("/viewcomponent", componentController.viewComponents);
 router.post("/deletecomponent", componentController.deleteComponent);
 module.exports = router;

@@ -8,6 +8,7 @@ const ComponentsInSandwiches = () => {
       <form>
         <label className="label">
           اختر مكون
+          {/* instead of this static list, we will have a dynamic one fetched from the constituents in thedatabase */}
           <select
             className={` form-control input`}
             onChange={(event) => {
