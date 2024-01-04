@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
+import useFormValidation from "../Hooks/use_fromvalidation";
 
 export const SandwichCtx = createContext({
   componentsList: [],
@@ -7,23 +8,53 @@ export const SandwichCtx = createContext({
   compMapping: "",
   addSandwich: () => {},
   modifyComponets: (comp) => {},
-  ChangeName: (name) => {},
+  ChangeCompName: (name) => {},
   Changemapping: (mapping) => {},
   calculateCost: () => {},
   cost: "",
+  formState: {},
+  handleInputChange: (event) => {},
+  validateField: (fieldName, fieldType, fieldValue) => {},
+  getErrorMsg: (fieldName) => {},
+  changePricePerUnit: (ppu) => {},
+  changeComponent_id: (compid) => {},
+  SandwichesList: [],
 });
 
 export const SandwichProvider = (props) => {
+  let name = { value: "", valid: true };
+  let selling_price = { value: "", valid: true };
+
+  const { formState, handleInputChange, validateField, getErrorMsg } =
+    useFormValidation({ name, selling_price });
+  const [price_per_unit, setprice_per_unit] = useState("");
+  const [SandwichesList, setSandwichesList] = useState([]);
   const [componentsList, setComponents] = useState([]);
   const [compName, setcompName] = useState("");
   const [compMapping, setcompMapping] = useState("");
+  const [compid, setcompid] = useState("");
   const [cost, setcost] = useState(0);
 
+  //function to  fetch sandwiches
+  const fetchSandwiches = async () => {
+    const response = await fetch(
+      `http://localhost:${serverport}/sandwiches/viewSandwiches`
+    );
+    const data = await response.json();
+    console.log("here is the data of sandwiches", data);
+    setSandwichesList(data);
+  };
+  //useEffect to fetch sandwiches automaticallly on loading hte page
+  useEffect(() => {
+    fetchSandwiches();
+  }, []);
+  //function to add new sandwich
   const addSandwich = async () => {
     const sandwichData = {
-      name: compMapping,
+      name: formState.name.value,
       componentsList,
-      sellingPrice: cost,
+      sellingPrice: formState.selling_price.value,
+      cost,
     };
     const response = await fetch(
       `http://localhost:${serverport}/sandwiches/addSandwich`,
@@ -34,30 +65,44 @@ export const SandwichProvider = (props) => {
       }
     );
     const data = await response.json();
-    console.log(data);
+    console.log("here is the repsonse from adding new sandwich", data);
   };
-  const ChangeName = (name) => {
+  const ChangeCompName = (name) => {
     console.log(`i change the name`);
     setcompName(name);
   };
   const Changemapping = (mapping) => {
     setcompMapping(mapping);
   };
+  const changeComponent_id = (compid) => {
+    setcompid(compid);
+  };
+  const changePricePerUnit = (ppu) => {
+    console.log("i changed the price per unit");
+    setprice_per_unit(ppu);
+  };
   const modifyComponets = () => {
     setComponents((prev) => [
       ...prev,
-      { name: compName, mapping: parseInt(compMapping) },
+      {
+        name: compName,
+        mapping_value: parseFloat(compMapping),
+        component_id: compid,
+        price_per_unit,
+      },
     ]);
   };
   const calculateCost = useEffect(() => {
     console.log(componentsList);
     const totalCost = componentsList.reduce((prev, curr) => {
-      console.log(curr);
-      console.log(curr.mapping);
-      return prev + parseInt(curr.mapping);
+      const share = price_per_unit / parseInt(curr.mapping_value);
+      console.log("here is the current", curr);
+      console.log("here is the current mapping", curr.mapping_value);
+      console.log("here is the share", share);
+      return prev + parseFloat(share);
     }, 0);
     setcost(totalCost);
-    console.log(totalCost);
+    console.log("here is the total cost", totalCost);
   }, [componentsList]);
   return (
     <SandwichCtx.Provider
@@ -67,10 +112,17 @@ export const SandwichProvider = (props) => {
         compName,
         compMapping,
         Changemapping,
-        ChangeName,
+        ChangeCompName,
+        changePricePerUnit,
         cost,
         calculateCost,
         addSandwich,
+        formState,
+        handleInputChange,
+        validateField,
+        getErrorMsg,
+        changeComponent_id,
+        SandwichesList,
       }}
     >
       {props.children}

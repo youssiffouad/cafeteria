@@ -8,7 +8,6 @@ const testViewSandwichesComponents = async () => {
 const testAddSandwich = async (name, complist, sellingprice) => {
   const response = await Sandwich.addSandwich(name, complist, sellingprice);
   console.log("here is the result of adding", response);
-  testViewSandwichesComponents();
 };
 
 const testCalculateCost = (complist) => {
@@ -19,5 +18,12 @@ const testViewSandwiches = async () => {
   const result = await Sandwich.viewSandwiches();
   console.log("here is hte sandwiches", result);
 };
-// testViewSandwichesComponents();
+testAddSandwich(
+  "sand1",
+  [
+    { mapping_value: 20, component_id: 1, price_per_unit: 40 },
+    { mapping_value: 40, component_id: 2, price_per_unit: 80 },
+  ],
+  10
+);
 testViewSandwiches();

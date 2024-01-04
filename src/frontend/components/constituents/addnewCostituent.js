@@ -5,10 +5,14 @@ const AddNewConstituent = () => {
   const ConstituentCtx = useContext(ConstituentContext);
   const submissionHandler = (formdata) => {
     const { constituentName, noOfUnits, priceOfUnit } = formdata;
-    ConstituentCtx.validateField("constituentName", "name", constituentName);
-    ConstituentCtx.validateField("noOfUnits", "number", noOfUnits);
-    ConstituentCtx.validateField("priceOfUnit", "number", priceOfUnit);
-    ConstituentCtx.addConstituent();
+    let c1 = ConstituentCtx.validateField(
+      "constituentName",
+      "name",
+      constituentName
+    );
+    let c2 = ConstituentCtx.validateField("noOfUnits", "number", noOfUnits);
+    let c3 = ConstituentCtx.validateField("priceOfUnit", "number", priceOfUnit);
+    if (c1 && c2 && c3) ConstituentCtx.addConstituent();
   };
 
   return (

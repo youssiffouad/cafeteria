@@ -1,30 +1,54 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { ConstituentContext } from "../../contextStore/constituentContext";
 import { SandwichCtx } from "../../contextStore/SandwichContext";
 
 const ComponentsInSandwiches = () => {
   const sandwichCtx = useContext(SandwichCtx);
+
+  const { constituentsList } = useContext(ConstituentContext);
   return (
     <>
       <form>
         <label className="label">
           اختر مكون
-          {/* instead of this static list, we will have a dynamic one fetched from the constituents in thedatabase */}
+          {/* instead of this static list, we will have a dynamic one fetched from the constituents in the database */}
           <select
-            className={` form-control input`}
+            className={`form-control input`}
             onChange={(event) => {
-              sandwichCtx.ChangeName(event.target.value);
+              const selectedConstituentId =
+                event.target.options[event.target.selectedIndex].getAttribute(
+                  "data-id"
+                );
+
+              const selectedConstituent = constituentsList.find(
+                (ele) => selectedConstituentId == ele.id
+              );
+              const selectedConstituentName = event.target.value;
+              console.log(selectedConstituent);
+
+              if (selectedConstituentId) {
+                console.log("Selected ID:", selectedConstituentId);
+                console.log("Selected Name:", selectedConstituentName);
+
+                sandwichCtx.ChangeCompName(selectedConstituentName);
+                sandwichCtx.changePricePerUnit(
+                  selectedConstituent.price_per_unit
+                );
+                sandwichCtx.changeComponent_id(selectedConstituentId);
+              }
             }}
             value={sandwichCtx.compName}
           >
-            <option key={1} value={"فول"}>
-              فول
-            </option>
-            <option key={2} value={"طعمية"}>
-              طعمية
-            </option>
-            <option key={3} value={"سلطة"}>
-              سلطة
-            </option>
+            <option value={""}>اختر المكون</option>
+            {constituentsList.map((constituent) => (
+              <option
+                key={constituent.id}
+                value={constituent.name}
+                data-id={constituent.id}
+              >
+                {constituent.name}
+              </option>
+            ))}
           </select>
         </label>
         <label className="label">

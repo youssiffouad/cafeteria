@@ -1,3 +1,4 @@
+const { resolve } = require("bluebird");
 const db = require("./db");
 const Sandwich_Component = require("./sandwich_component");
 const dbPromise = require("bluebird").promisifyAll(db); // Or any other promise library
@@ -74,39 +75,64 @@ class Sandwich {
 
   // Add a new sandwich
   static async addSandwich(name, componentsList, sellingPrice) {
-    try {
-      db.serialize(async () => {
-        db.run("BEGIN TRANSACTION");
+    return new Promise((resolve, reject) => {
+      try {
+        db.serialize(async () => {
+          await new Promise((res, rej) => {
+            db.run("BEGIN TRANSACTION", function (err) {
+              if (err) {
+                rej(err);
+              } else {
+                res();
+              }
+            });
+          });
 
-        let cost = Sandwich.calculateCost(componentsList);
-        const sql = `INSERT INTO Sandwiches (name, cost, selling_price) VALUES (?, ?, ?)`;
-        const params = [name, cost, sellingPrice];
-        let result;
-        db.run(sql, params, (err) => {
-          if (err) {
-            console.log("error inserting new sandwich into sandwiches table");
-            throw err;
-          } else {
-            result = this;
-          }
+          let cost = await Sandwich.calculateCost(componentsList);
+          const sql = `INSERT INTO Sandwiches (name, cost, selling_price) VALUES (?, ?, ?)`;
+          const params = [name, cost, sellingPrice];
+          let sandwichId = await new Promise((res, rej) => {
+            db.run(sql, params, function (err) {
+              if (err) {
+                console.log(
+                  "error inserting new sandwich into sandwiches table"
+                );
+                db.run("rollback");
+                rej(err);
+              } else {
+                console.log(
+                  "here is the this of last id entered into sandwich table",
+                  this
+                );
+                res(this.lastID);
+              }
+            });
+          });
+
+          await Sandwich.performMapping(sandwichId, componentsList);
+
+          await new Promise((res, rej) => {
+            db.run("commit", function (err) {
+              if (err) {
+                db.run("rollback");
+                rej(err);
+              } else {
+                res();
+              }
+            });
+          });
+
+          resolve({
+            message: "Sandwich added successfully",
+            sandwich_id: sandwichId,
+          });
         });
-
-        console.log(result);
-        const sandwichId = result.lastID;
-        await Sandwich.performMapping(sandwichId, componentsList);
-
-        db.run("commit");
-
-        return {
-          message: "Sandwich added successfully",
-          sandwich_id: sandwichId,
-        };
-      });
-    } catch (err) {
-      db.run("rollback");
-      console.error("Error in transaction:", err);
-      throw err;
-    }
+      } catch (err) {
+        db.run("rollback");
+        console.error("Error in transaction:", err);
+        reject(err);
+      }
+    });
   }
 
   //perform mapping between the sadwich and its components on adding new sandwich
@@ -114,7 +140,12 @@ class Sandwich {
     try {
       return await Promise.all(
         componentsList.map(async (ele) => {
-          console.log(ele.component_id, sandwich_id, ele.mapping_value);
+          console.log(
+            "here are the elements of the compooents list",
+            ele.component_id,
+            sandwich_id,
+            ele.mapping_value
+          );
           return await Sandwich_Component.addSandwichComponent(
             ele.component_id,
             sandwich_id,
@@ -130,10 +161,12 @@ class Sandwich {
 
   //calculate sandwich cost
   static calculateCost = (componentsList) => {
+    console.log("here is the component list", componentsList);
     let cost = componentsList.reduce(
       (prev, curr) => prev + curr.price_per_unit / curr.mapping_value,
       0
     );
+    console.log("the cost equals", cost);
     return cost;
   };
 
