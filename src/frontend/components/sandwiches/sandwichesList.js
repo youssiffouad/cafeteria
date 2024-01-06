@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { SandwichCtx } from "../../contextStore/SandwichContext";
 const SandwichesList = () => {
   const sandwichesCtx = useContext(SandwichCtx);
+  console.log("here is the sandwichesList", sandwichesCtx.SandwichesList);
 
   return (
     <React.Fragment>
@@ -25,8 +26,9 @@ const SandwichesList = () => {
               <td>
                 {sandwich.sandwich_name} {sandwich.sandwich_id}
               </td>
-              <td>{sandwich.sandwich_selling_price}</td>
               <td>{sandwich.sandwich_cost}</td>
+              <td>{sandwich.sandwich_selling_price}</td>
+
               <td>
                 {sandwich.component_names}
                 {sandwich.mapping_values}

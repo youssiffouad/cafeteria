@@ -7,10 +7,9 @@ const NewVendorForm = () => {
   const vendorCtx = useContext(vendorContext);
   const submissionHandler = (formdata) => {
     const { name, phone } = formdata;
-    vendorCtx.validateField("name", "name", name);
-    vendorCtx.validateField("phone", "number", phone);
-
-    // vendorCtx.updatevendorlist();
+    const v1 = vendorCtx.validateField("name", "name", name);
+    const v2 = vendorCtx.validateField("phone", "number", phone);
+    if (v1 && v2) vendorCtx.updatevendorlist();
   };
 
   return (

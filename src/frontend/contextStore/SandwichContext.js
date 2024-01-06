@@ -48,14 +48,15 @@ export const SandwichProvider = (props) => {
   useEffect(() => {
     fetchSandwiches();
   }, []);
+
   //function to add new sandwich
   const addSandwich = async () => {
     const sandwichData = {
       name: formState.name.value,
       componentsList,
       sellingPrice: formState.selling_price.value,
-      cost,
     };
+    console.log("here is the sandwich data", sandwichData);
     const response = await fetch(
       `http://localhost:${serverport}/sandwiches/addSandwich`,
       {
@@ -65,12 +66,17 @@ export const SandwichProvider = (props) => {
       }
     );
     const data = await response.json();
+    await fetchSandwiches();
     console.log("here is the repsonse from adding new sandwich", data);
   };
+
+  //function to change component name
   const ChangeCompName = (name) => {
     console.log(`i change the name`);
     setcompName(name);
   };
+
+  //function to change mapping
   const Changemapping = (mapping) => {
     setcompMapping(mapping);
   };
@@ -93,9 +99,10 @@ export const SandwichProvider = (props) => {
     ]);
   };
   const calculateCost = useEffect(() => {
-    console.log(componentsList);
+    console.log("here is the test", componentsList);
     const totalCost = componentsList.reduce((prev, curr) => {
-      const share = price_per_unit / parseInt(curr.mapping_value);
+      const share = curr.price_per_unit / parseFloat(curr.mapping_value);
+      console.log("HERE IS THE PREV", prev);
       console.log("here is the current", curr);
       console.log("here is the current mapping", curr.mapping_value);
       console.log("here is the share", share);

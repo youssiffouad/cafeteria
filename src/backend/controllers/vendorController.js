@@ -3,6 +3,7 @@ const Vendor = require("../models/Vendor");
 //calling of vendor method to add new vendor
 exports.addVendor = (req, res) => {
   const { name, phone } = req.body;
+  console.log(name, phone, "from the add vendor in vendor controller");
   Vendor.addVendor(name, phone, (err, result) => {
     if (err) {
       res.status(500).json({ error: "Internal server error" });
@@ -21,8 +22,8 @@ exports.viewVendors = (req, res) => {
         .status(500)
         .json({ error: "Internal Server error faled to get vendors" });
     } else {
-      // console.log("here are the vendors");
-      // console.log(vendors);
+      console.log("here are the vendors from the controller");
+      console.log(vendors);
       res.status(200).json(vendors);
     }
   });

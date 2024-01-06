@@ -29,6 +29,7 @@ export const VendorProvider = (props) => {
     formState,
   } = useFormValidation({ name, phone });
 
+  //fetch vendor list
   const fetchVendors = () => {
     fetch(`http://localhost:${serverport}/vendors/view`)
       .then((response) => response.json())
@@ -45,33 +46,36 @@ export const VendorProvider = (props) => {
   }, []);
 
   //adding new vendor
-  const updatevendorlist = () => {
-    const vendorData = {
-      name,
-      phone,
-    };
+  const updatevendorlist = async () => {
+    try {
+      const vendorData = {
+        name: formState.name.value,
+        phone: formState.phone.value,
+      };
 
-    fetch(`http://localhost:${serverport}/vendors/add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(vendorData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        fetchVendors();
-        controlMsgContent(`successfully added new vendor`);
-        controlDisplay(true);
-        // Perform any necessary actions after adding the vendor
-      })
-      .catch((error) => {
-        controlMsgContent(`failed to add a new vendor ${error}`);
-        controlDisplay(true);
-        console.error("Failed to add vendor:", error);
-        // Handle error
-      });
+      const response = await fetch(
+        `http://localhost:${serverport}/vendors/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(vendorData),
+        }
+      );
+      const data = await response.json();
+
+      console.log(data);
+      fetchVendors();
+      controlMsgContent(`successfully added new vendor`);
+      controlDisplay(true);
+      // Perform any necessary actions after adding the vendor
+    } catch (error) {
+      controlMsgContent(`failed to add a new vendor ${error}`);
+      controlDisplay(true);
+      console.error("Failed to add vendor:", error);
+      // Handle error
+    }
 
     // Reset form fields
   };
