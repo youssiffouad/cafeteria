@@ -162,7 +162,7 @@ class Component {
           rej(err);
         } else {
           console.log(row.number_of_units);
-          res(row);
+          res(row.number_of_units);
         }
       });
     });

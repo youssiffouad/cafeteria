@@ -13,6 +13,7 @@ import { OrderItemContext } from "./Order/OrderItemContext";
 export const LotContext = createContext({
   lotList: [],
   updateLotList: () => {},
+  fetchLots: () => {},
   handleInputChange: (event) => {},
   validateField: (fieldName, fieldType, fieldValue) => {},
   getErrorMsg: (fieldName) => {},
@@ -48,16 +49,15 @@ export const LotProvider = (props) => {
     received_date,
   });
 
-  const fetchLots = () => {
-    fetch(`http://localhost:${serverport}/lots/view`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setLotList(data);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch products:", error);
-      });
+  const fetchLots = async () => {
+    try {
+      const response = await fetch(`http://localhost:${serverport}/lots/view`);
+      const data = await response.json();
+      setLotList(data);
+      console.log("here are the fetched lots from DB", data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    }
   };
   const handleDeleteLot = (Lotid) => {
     console.log(Lotid);
@@ -171,6 +171,7 @@ export const LotProvider = (props) => {
         handleDeleteLot,
         installLot,
         Msgcomponent,
+        fetchLots,
       }}
     >
       {props.children}
