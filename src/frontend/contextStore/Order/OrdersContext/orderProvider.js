@@ -20,6 +20,7 @@ export const OrderContext = createContext({
   updateT2resha: () => {},
   updateCashofToday: () => {},
   updatesoldprod: () => {},
+  updateSoldsandwiches: () => {},
   Msgcomponent: "",
   formState: {},
   errors: {},
@@ -141,6 +142,18 @@ export const OrderProvider = (props) => {
         controlDisplay(true);
       });
   };
+
+  //function to update or submit sandwiches sold
+  const updateSoldsandwiches = () => {
+    const soldSandwiches = {
+      customer_id: null,
+      payment_method: "soldprod",
+      order_date: orderDate,
+      totalOrderCost: orderItemCtx.totalOrderCost,
+    };
+  };
+
+  //function to update or submit products sold
   const updatesoldprod = async () => {
     const soldprod = {
       customer_id: null,

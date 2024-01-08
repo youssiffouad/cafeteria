@@ -10,11 +10,11 @@ const TotalOfToday = () => {
 
   const submissionHandler = (formdata) => {
     const { cat, prod, quantity, orderDate } = formdata;
-    quantityCtx.validateField("cat", "dropdown", cat);
-    quantityCtx.validateField("quantity", "dropdown", quantity);
-    quantityCtx.validateField("prod", "dropdown", prod);
-    soldprodCtx.validateField("orderDate", "dropdown", orderDate);
-    //  soldprodCtx.updatesoldprod();
+    const v1 = quantityCtx.validateField("cat", "dropdown", cat);
+    const v2 = quantityCtx.validateField("quantity", "dropdown", quantity);
+    const v3 = quantityCtx.validateField("prod", "dropdown", prod);
+    const v4 = soldprodCtx.validateField("orderDate", "dropdown", orderDate);
+    if (v1 && v2 && v3 && v4) soldprodCtx.updatesoldprod();
   };
   return (
     <>

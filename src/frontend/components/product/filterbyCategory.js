@@ -31,6 +31,7 @@ const FilterProdBYCat = (props) => {
   //fetch products of selected category
   const fetchProdOfSelectedCategory = async () => {
     try {
+      const requestBody = { catid: category.id };
       const response = await fetch(
         `http://localhost:${serverport}/products/filtercategory`,
         {
@@ -53,49 +54,44 @@ const FilterProdBYCat = (props) => {
   const fetchSandwiches = async () => {
     try {
       const response = await fetch(
-        `http://localhost:${serverport}/products/filtercategory`
+        `http://localhost:${serverport}/sandwiches/viewSandwiches`
       );
       const data = await response.json();
       console.log("here is the sandwiches data", data);
+      setProducts(data);
+      console.log("here is the data of sandwiches", data);
     } catch (err) {
       console.log("failed to fetch sandwiches", err);
     }
   };
 
-  // Change products on changing category
+  // Change products or fetch sandwiches on changing category
   useEffect(() => {
-    if (category.id !== "") {
-      console.log(category);
-      console.log(
-        `category id is not null and i will fetch products of that category`
-      );
-      const requestBody = { catid: category.id };
-      if (category.name === "sandwiches") {
-        fetch();
+    try {
+      if (category.id !== "") {
+        console.log(category);
+        console.log(
+          `category id is not null and i will fetch products of that category`
+        );
+
+        if (category.name === "sandwiches") {
+          fetchSandwiches();
+        } else {
+          fetchProdOfSelectedCategory();
+        }
       }
-      fetch(`http://localhost:${serverport}/products/filtercategory`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          setProducts(data);
-        })
-        .catch((error) => {
-          console.error("Failed to filter products:", error);
-        });
+    } catch (err) {
+      console.error("Failed to filter products:", err);
     }
   }, [category]);
 
   const catChangeHandler = (event) => {
     const selectedCategoryId = event.target.value;
+    console.log("here is the event target value", selectedCategoryId);
     const selectedCategory = categories.find((cat) => {
-      return cat.id === selectedCategoryId;
+      return cat.id == selectedCategoryId;
     });
+    console.log("here are al  the categories", categories);
 
     setCategory({ id: selectedCategoryId, name: selectedCategory?.name });
     console.log(selectedCategory);
@@ -163,8 +159,8 @@ const FilterProdBYCat = (props) => {
           >
             <option value="">اختر اسم المنتج</option>
             {products.map((prod) => (
-              <option key={prod.id} value={prod.id}>
-                {prod.name}
+              <option key={prod.id} value={prod.id || prod.sandwich_id}>
+                {prod.name || prod.sandwich_name}
               </option>
             ))}
           </select>
