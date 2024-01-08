@@ -24,22 +24,30 @@ exports.addOrdinaryLot = async (req, res) => {
 
 //controller to add new component lot
 exports.addComponentLot = async (req, res) => {
-  const {
-    quantity,
-    cost,
-    paidAmount,
-    received_date,
-    payment_method,
-    component_id,
-  } = req.body;
-  await addComponentLot(
-    quantity,
-    cost,
-    paidAmount,
-    received_date,
-    payment_method,
-    component_id
-  );
+  try {
+    const {
+      quantity,
+      cost,
+      paidAmount,
+      received_date,
+      payment_method,
+      component_id,
+    } = req.body;
+    const response = await addComponentLot(
+      quantity,
+      cost,
+      paidAmount,
+      received_date,
+      payment_method,
+      component_id
+    );
+    res.status(200).json(response);
+  } catch (err) {
+    console.log("failed to add new component lot", err);
+    res
+      .status(500)
+      .json({ error: "internal server error failed to add new component lot" });
+  }
 };
 
 //calling of fn to delete lot(either product lot or component lot)

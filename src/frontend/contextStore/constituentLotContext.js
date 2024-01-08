@@ -2,7 +2,7 @@ import useFormValidation from "../Hooks/use_fromvalidation";
 import usePopUp from "../Hooks/use_popup";
 import serverport from "../backendconfiguration";
 import { LotContext, LotProvider } from "./lotsContext";
-const { createContext, useEffect, useState, useContext } = require("react");
+const { createContext, useState, useContext } = require("react");
 
 export const ConstituentLotContext = createContext({
   formState: {},
@@ -12,6 +12,7 @@ export const ConstituentLotContext = createContext({
   submissionHandler: () => {},
   getPricePerUnit: (ppu) => {},
   Msgcomponent: "",
+  cost: "",
 });
 export const ConstituentLotProvider = (props) => {
   const constituentId = { value: "", valid: true };
@@ -36,15 +37,10 @@ export const ConstituentLotProvider = (props) => {
     setprice_per_unit(ppu);
   };
 
-  // //function to calculate cost
-  // const calculateCost = useEffect(() => {
-  //   cost = price_per_unit * formState.noOfUnits.value;
-  //   console.log("the cost equals", cost);
-  // }, [price_per_unit, formState]);
-
   //function to add new contituent lot
   const submissionHandler = async () => {
     try {
+      console.log("i called submission handler in the context");
       const lotdata = {
         quantity: formState.noOfUnits.value,
         cost,
@@ -53,7 +49,7 @@ export const ConstituentLotProvider = (props) => {
         payment_method: "cash",
         component_id: formState.constituentId.value,
       };
-      console.log("her eis hte lotdata", lotdata);
+      console.log("here is the  lotdata", lotdata);
       const response = await fetch(
         `http://localhost:${serverport}/lots/addcomponentLot`,
         {
@@ -64,13 +60,19 @@ export const ConstituentLotProvider = (props) => {
           body: JSON.stringify(lotdata),
         }
       );
+      console.log(
+        "here is the repsonse of adding new constituent lot",
+        response
+      );
       const data = await response.json();
+      console.log("here is the repsonse of adding new constituent lot", data);
       controlMsgContent("تم اضافة المشتريات الخاصة بالمكون بنجاح");
       console.log("here is the message conpoennt", Msgcomponent);
       controlDisplay(true);
       console.log("response from the adding new componet lot", data);
       fetchLots();
     } catch (err) {
+      console.log("there is an error", err);
       controlMsgContent("فشل اضافة المشتريات الخاصة بالمكون ");
       controlDisplay(true);
     }
@@ -85,6 +87,7 @@ export const ConstituentLotProvider = (props) => {
         submissionHandler,
         getPricePerUnit,
         Msgcomponent,
+        cost,
       }}
     >
       {props.children}

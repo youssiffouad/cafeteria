@@ -4,7 +4,7 @@ import AddNewLot from "./addnewlot";
 import LotList from "./LotsList";
 import FilterLots from "./filterLots";
 import { OrderItemProvider } from "../../contextStore/Order/OrderItemContext";
-const LotsWhole = () => {
+const LotsWholeProducts = () => {
   return (
     <OrderItemProvider>
       <LotProvider>
@@ -16,4 +16,4 @@ const LotsWhole = () => {
   );
 };
 
-export default LotsWhole;
+export default LotsWholeProducts;

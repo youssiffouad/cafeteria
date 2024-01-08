@@ -12,7 +12,7 @@ const addComponentLot = async (
   payment_method,
   component_id
 ) => {
-  return new Promise((res, rej) => {
+  return new Promise((resolve, reject) => {
     try {
       db.serialize(async () => {
         await new Promise((res, rej) => {
@@ -50,18 +50,21 @@ const addComponentLot = async (
         await Vendor.changeVendoerOwedMoney(1, lotID, rem); // Use lotID and rem variables
         await new Promise((res, rej) => {
           db.run("COMMIT", (err) => {
-            if (err) rej(err);
-            else res();
+            if (err) {
+              db.run("rollback");
+              rej(err);
+            } else res();
           });
         });
-        res({ message: "component lot added successfully", lotid: lotID });
+        console.log("i am gonna resolve with msgand lot  id", lotID);
+        resolve({ message: "component lot added successfully", lotid: lotID });
       });
     } catch (err) {
       db.run("rollback", () => {
         console.log("i rolled back adding component lot");
       });
       console.log("error while adding componetLot", err);
-      throw err;
+      reject(err);
     }
   });
 };

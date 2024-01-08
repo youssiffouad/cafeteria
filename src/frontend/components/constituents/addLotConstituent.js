@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { createPortal } from "react-dom";
 import { ConstituentContext } from "../../contextStore/constituentContext";
 import { ConstituentLotContext } from "../../contextStore/constituentLotContext";
-import usePopUp from "../../Hooks/use_popup";
 
 const AddLotConstituent = () => {
   const { constituentsList } = useContext(ConstituentContext);
@@ -44,6 +43,7 @@ const AddLotConstituent = () => {
 
             constituentId: LotConstitiuentCtx.formState.constituentId.value,
           };
+          console.log("i started submitting");
           submitAddingNewConstituentLot(formdata);
         }}
       >
@@ -113,6 +113,7 @@ const AddLotConstituent = () => {
               </p>
             )}
             <label className="label">التكلفة</label>
+            {LotConstitiuentCtx.cost}
           </div>
           <div className="col">
             <label className="label">

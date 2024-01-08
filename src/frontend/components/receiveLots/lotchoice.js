@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { ConstituentProvider } from "../../contextStore/constituentContext";
-import { ConstituentLotProvider } from "../../contextStore/constituentLotContext";
-import AddLotConstituent from "../constituents/addLotConstituent";
-import LotsWhole from "./wholeLots";
+
+import LotsWholeConstituent from "./wholeLotsConstituents";
+import LotsWholeProducts from "./wholeLotsProducts";
 const LotChoice = () => {
   const [toggle, setoggle] = useState(true);
   const toggleDisplay = () => {
@@ -19,16 +18,7 @@ const LotChoice = () => {
       >
         {toggle ? "  اضافة منتج" : " اضافة مكون"}
       </button>
-      {toggle ? (
-        <ConstituentProvider>
-          <ConstituentLotProvider>
-            {" "}
-            <AddLotConstituent />
-          </ConstituentLotProvider>
-        </ConstituentProvider>
-      ) : (
-        <LotsWhole />
-      )}
+      {toggle ? <LotsWholeConstituent /> : <LotsWholeProducts />}
     </>
   );
 };

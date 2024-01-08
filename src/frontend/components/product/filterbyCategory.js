@@ -28,12 +28,51 @@ const FilterProdBYCat = (props) => {
       });
   }, []);
 
+  //fetch products of selected category
+  const fetchProdOfSelectedCategory = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:${serverport}/products/filtercategory`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+      const data = await response.json();
+      console.log("here is hte products data", data);
+      setProducts(data);
+    } catch (err) {
+      console.log("failed to fetch products of certain category", err);
+    }
+  };
+
+  //fetch sandwiches of category sandwich
+  const fetchSandwiches = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:${serverport}/products/filtercategory`
+      );
+      const data = await response.json();
+      console.log("here is the sandwiches data", data);
+    } catch (err) {
+      console.log("failed to fetch sandwiches", err);
+    }
+  };
+
   // Change products on changing category
   useEffect(() => {
     if (category.id !== "") {
       console.log(category);
-      console.log(`a7a b2a`);
+      console.log(
+        `category id is not null and i will fetch products of that category`
+      );
       const requestBody = { catid: category.id };
+      if (category.name === "sandwiches") {
+        fetch();
+      }
       fetch(`http://localhost:${serverport}/products/filtercategory`, {
         method: "POST",
         headers: {

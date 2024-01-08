@@ -25,8 +25,8 @@ const LotList = () => {
         <tbody>
           {Lotctx.lotList.map((lot) => (
             <tr key={lot.id}>
-              <td>{lot.catname}</td>
-              <td>{lot.prodname}</td>
+              <td>{lot.catname || lot.lot_type}</td>
+              <td>{lot.prodname || lot.compname}</td>
               <td>{lot.quantity}</td>
               <td>{lot.cost}</td>
               <td className="d-flex justify-content-between align-items-center">

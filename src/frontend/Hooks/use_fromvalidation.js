@@ -82,6 +82,7 @@ const useFormValidation = (initialFormState) => {
   const numberFieldValidation = (fieldName, fieldValue) => {
     const notempty = nullCheckValidation(fieldName, fieldValue);
     const didgitsOnly = /^\d+$/.test(fieldValue); //using regular expressions
+
     return notempty && didgitsOnly;
   };
 
