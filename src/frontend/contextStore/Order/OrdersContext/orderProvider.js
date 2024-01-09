@@ -12,7 +12,7 @@ import useFormValidation from "../../../Hooks/use_fromvalidation";
 
 export const OrderContext = createContext({
   orders: [],
-  updateOrders: () => {},
+
   orderswithItem: [],
   payment_method: "",
   updatepayment_method: (pm) => {},
@@ -146,14 +146,15 @@ export const OrderProvider = (props) => {
   //function to update or submit sandwiches sold
   const updateSoldsandwiches = () => {
     const soldSandwiches = {
-      customer_id: null,
-      payment_method: "soldprod",
+      price : orderItemCtx.totalOrderCost,
+      payment_method : "soldprod",
+      customer_id :null,
       order_date: orderDate,
-      totalOrderCost: orderItemCtx.totalOrderCost,
+      sandwich_id: //to be filled from sandwichCtx
     };
   };
 
-  //function to update or submit products sold
+  //function to update  (submit) products sold
   const updatesoldprod = async () => {
     const soldprod = {
       customer_id: null,
@@ -177,32 +178,7 @@ export const OrderProvider = (props) => {
       controlDisplay(true);
     }
   };
-  const updateOrders = () => {
-    const orderData = {
-      customer_id: null,
-      payment_method,
-      order_date: orderDate,
-      totalOrderCost: orderItemCtx.totalOrderCost,
-      orderItems: orderItemCtx.orderitems,
-    };
-
-    addOrder(orderData)
-      .then(() => {
-        // Perform any necessary actions after adding the order
-
-        // Fetch orders again to update the list
-        fetchOrders()
-          .then((data) => {
-            setOrders(data);
-          })
-          .catch((error) => {
-            // Handle error
-          });
-      })
-      .catch((error) => {
-        // Handle error
-      });
-
+ 
     // Reset form fields
     resetField("customerId");
     resetField("rankid");
@@ -233,7 +209,7 @@ export const OrderProvider = (props) => {
       value={{
         orders,
         orderswithItem,
-        updateOrders,
+     
         fetchOrders,
         updateCashofToday,
         updateT2resha,

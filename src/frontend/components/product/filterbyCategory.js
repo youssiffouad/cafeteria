@@ -2,6 +2,7 @@ import { OrderItemContext } from "../../contextStore/Order/OrderItemContext";
 
 import React, { useState, useEffect, useContext } from "react";
 import serverport from "../../backendconfiguration";
+import { SandwichCtx } from "../../contextStore/SandwichContext";
 
 const FilterProdBYCat = (props) => {
   const [categories, setCategories] = useState([]);
@@ -15,6 +16,7 @@ const FilterProdBYCat = (props) => {
   // });
 
   const orderItemCtx = useContext(OrderItemContext);
+  const sandwichCtx = useContext(SandwichCtx);
 
   // Fetch all categories existing
   useEffect(() => {
@@ -118,6 +120,15 @@ const FilterProdBYCat = (props) => {
     // lotCtx.handleInputChange(event);
     // lotCtx.validateField(event.target.name, "dropdown", event.target.value);
   };
+  //function to handle change of selected sandwich if catid=1
+  const SandwichChaneHandler = (event) => {
+    sandwichCtx.handleInputChange(event);
+    sandwichCtx.validateField(
+      event.target.name,
+      "dropdown",
+      event.target.value
+    );
+  };
 
   return (
     <React.Fragment>
@@ -159,7 +170,10 @@ const FilterProdBYCat = (props) => {
           >
             <option value="">اختر اسم المنتج</option>
             {products.map((prod) => (
-              <option key={prod.id} value={prod.id || prod.sandwich_id}>
+              <option
+                key={prod.id || prod.sandwich_id}
+                value={prod.id || prod.sandwich_id}
+              >
                 {prod.name || prod.sandwich_name}
               </option>
             ))}
