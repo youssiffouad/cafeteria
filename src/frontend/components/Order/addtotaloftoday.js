@@ -14,7 +14,13 @@ const TotalOfToday = () => {
     const v2 = quantityCtx.validateField("quantity", "dropdown", quantity);
     const v3 = quantityCtx.validateField("prod", "dropdown", prod);
     const v4 = soldprodCtx.validateField("orderDate", "dropdown", orderDate);
-    if (v1 && v2 && v3 && v4) soldprodCtx.updatesoldprod();
+    if (v1 && v2 && v3 && v4) {
+      if (cat == 1) {
+        soldprodCtx.updateSoldsandwiches();
+      } else {
+        soldprodCtx.updatesoldprod();
+      }
+    }
   };
   return (
     <>

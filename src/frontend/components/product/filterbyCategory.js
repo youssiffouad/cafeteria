@@ -8,15 +8,14 @@ const FilterProdBYCat = (props) => {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState({ id: "", name: "" });
   const [products, setProducts] = useState([]);
-  // const [product, setProduct] = useState({
-  //   id: "",
-  //   name: "",
-  //   sellingprice: "",
-  //   buying_priceperitem: "",
-  // });
 
   const orderItemCtx = useContext(OrderItemContext);
-  const sandwichCtx = useContext(SandwichCtx);
+  const {
+    handleSellingPriceOfsandwich,
+    formStateFilterByCat,
+    VFFilterByCat,
+    HIGFilterByCat,
+  } = useContext(SandwichCtx);
 
   // Fetch all categories existing
   useEffect(() => {
@@ -108,8 +107,18 @@ const FilterProdBYCat = (props) => {
     // lotCtx.handleInputChange(event);
     // lotCtx.validateField(event.target.name, "dropdown", event.target.value);
   };
+  const DecisionChangeHandler = (event) => {
+    console.log("here is the sandwich", formStateFilterByCat);
+    console.log("here is the product", orderItemCtx.formState);
+    if (category.id == 1) {
+      SandwichChangeHandler(event);
+    } else {
+      ProdChangeHandler(event);
+    }
+  };
 
   const ProdChangeHandler = (event) => {
+    console.log("i callled the prod change jandler");
     orderItemCtx.handleInputChange(event);
     orderItemCtx.validateField(
       event.target.name,
@@ -121,13 +130,15 @@ const FilterProdBYCat = (props) => {
     // lotCtx.validateField(event.target.name, "dropdown", event.target.value);
   };
   //function to handle change of selected sandwich if catid=1
-  const SandwichChaneHandler = (event) => {
-    sandwichCtx.handleInputChange(event);
-    sandwichCtx.validateField(
-      event.target.name,
-      "dropdown",
-      event.target.value
-    );
+  const SandwichChangeHandler = (event) => {
+    console.log("i called the sandwich change handler", event.target);
+    HIGFilterByCat(event);
+    VFFilterByCat(event.target.name, "dropdown", event.target.value);
+    const selected_selling_price =
+      event.target.options[event.target.selectedIndex].getAttribute(
+        "sellingPrice"
+      );
+    handleSellingPriceOfsandwich(selected_selling_price);
   };
 
   return (
@@ -159,24 +170,31 @@ const FilterProdBYCat = (props) => {
 
       <div className="col">
         <label>
-          المنتج
+          {category.id == 1 ? "الساندوتش" : "المنتج"}
           <select
-            name="prod"
+            name={category.id == 1 ? "sandwichId" : "prod"}
             className={`form-control input ${
               !orderItemCtx.formState.prod.valid && "is-invalid"
             }`}
-            value={orderItemCtx.formState.prod.value}
-            onChange={ProdChangeHandler}
+            value={
+              category.id == 1
+                ? formStateFilterByCat.sandwichId.value
+                : orderItemCtx.formState.prod.value
+            }
+            onChange={DecisionChangeHandler}
           >
             <option value="">اختر اسم المنتج</option>
-            {products.map((prod) => (
-              <option
-                key={prod.id || prod.sandwich_id}
-                value={prod.id || prod.sandwich_id}
-              >
-                {prod.name || prod.sandwich_name}
-              </option>
-            ))}
+            {products.map((prod) => {
+              return (
+                <option
+                  key={prod.id || prod.sandwich_id}
+                  value={prod.id || prod.sandwich_id}
+                  sellingPrice={prod.sandwich_selling_price}
+                >
+                  {prod.name || prod.sandwich_name}
+                </option>
+              );
+            })}
           </select>
         </label>
         {!orderItemCtx.formState.cat.valid && (

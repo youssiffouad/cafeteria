@@ -19,21 +19,43 @@ export const SandwichCtx = createContext({
   changePricePerUnit: (ppu) => {},
   changeComponent_id: (compid) => {},
   SandwichesList: [],
+  formStateFilterByCat: {},
+  HIGFilterByCat: (event) => {},
+  VFFilterByCat: (fn, ft, fv) => {},
+  GEMSGFilterByCat: (fn) => {},
+  sandwich_selling_price: "",
+  handleSellingPriceOfsandwich: (sp) => {},
 });
 
 export const SandwichProvider = (props) => {
+  //the following two variables will be used while adding new sandwich
   let name = { value: "", valid: true };
   let selling_price = { value: "", valid: true };
 
+  //this variable is to handle the sandwich id we get while addinf new sandwichorder
+  let sandwichId = { value: "", valid: true };
+
+  //this is the form validation for adding new sandwich
   const { formState, handleInputChange, validateField, getErrorMsg } =
     useFormValidation({ name, selling_price });
+
+  //this is the from validation for filter by category
+  const {
+    formState: formStateFilterByCat,
+    handleInputChange: HIGFilterByCat,
+    validateField: VFFilterByCat,
+    getErrorMsg: GEMSGFilterByCat,
+  } = useFormValidation({ sandwichId });
   const [price_per_unit, setprice_per_unit] = useState("");
   const [SandwichesList, setSandwichesList] = useState([]);
   const [componentsList, setComponents] = useState([]);
   const [compName, setcompName] = useState("");
   const [compMapping, setcompMapping] = useState("");
   const [compid, setcompid] = useState("");
+  //this state is to store cost of a newly added sandwich
   const [cost, setcost] = useState(0);
+  //this state is to store the selling price of selected sandwich
+  const [sandwich_selling_price, setsandwich_selling_price] = useState("");
 
   //function to  fetch sandwiches
   const fetchSandwiches = async () => {
@@ -68,6 +90,10 @@ export const SandwichProvider = (props) => {
     const data = await response.json();
     await fetchSandwiches();
     console.log("here is the repsonse from adding new sandwich", data);
+  };
+  //function to handle change of  selling price on selecting certain sandwich
+  const handleSellingPriceOfsandwich = (sp) => {
+    setsandwich_selling_price(sp);
   };
 
   //function to change component name
@@ -130,6 +156,12 @@ export const SandwichProvider = (props) => {
         getErrorMsg,
         changeComponent_id,
         SandwichesList,
+        formStateFilterByCat,
+        HIGFilterByCat,
+        VFFilterByCat,
+        GEMSGFilterByCat,
+        sandwich_selling_price,
+        handleSellingPriceOfsandwich,
       }}
     >
       {props.children}

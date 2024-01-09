@@ -18,14 +18,17 @@ import ProdChoice from "./product/prodChoice";
 import LotChoice from "./receiveLots/lotchoice";
 
 import WholeSandwich from "./sandwiches/wholeSandwich";
+import { SandwichProvider } from "../contextStore/SandwichContext";
 
 const TotalOfTodayWithProviders = () => (
   <>
     <OrderItemProvider>
-      <OrderProvider>
-        <TotalOfToday />
-        <OrderWhole />
-      </OrderProvider>
+      <SandwichProvider>
+        <OrderProvider>
+          <TotalOfToday />
+          <OrderWhole />
+        </OrderProvider>
+      </SandwichProvider>
     </OrderItemProvider>
   </>
 );

@@ -28,14 +28,16 @@ export const fetchOrderswithItem = async () => {
 };
 export const addOrder = async (orderData) => {
   try {
-
-    const response = await fetch(`http://localhost:${serverport}/orders/add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderData),
-    });
+    const response = await fetch(
+      `http://localhost:${serverport}/orders/addProductOrder`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      }
+    );
     const data = await response.json();
     console.log(data);
   } catch (error) {

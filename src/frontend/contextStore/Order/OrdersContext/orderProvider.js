@@ -1,5 +1,6 @@
 // OrderProvider.js
 import React, { createContext, useContext, useEffect, useState } from "react";
+import serverport from "../../../backendconfiguration";
 import {
   fetchOrders,
   fetchOrderswithItem,
@@ -9,6 +10,7 @@ import {
 import { OrderItemContext } from "../OrderItemContext";
 import usePopUp from "../../../Hooks/use_popup";
 import useFormValidation from "../../../Hooks/use_fromvalidation";
+import { SandwichCtx } from "../../SandwichContext";
 
 export const OrderContext = createContext({
   orders: [],
@@ -27,6 +29,7 @@ export const OrderContext = createContext({
   handleInputChange: (event) => {},
   validateField: (fieldName, fieldType, fieldValue) => {},
   getErrorMsg: (fieldName) => {},
+  changeSandwichOrderCost: (c) => {},
 });
 
 export const OrderProvider = (props) => {
@@ -34,6 +37,12 @@ export const OrderProvider = (props) => {
   const [orderswithItem, setOrderswithItem] = useState([]);
 
   const [payment_method, setpayment_method] = useState("");
+
+  //this state is to store the cost of sandwich Order
+  const [sandwichOrderCost, setsandwichOrderCost] = useState("");
+
+  const { formStateFilterByCat, sandwich_selling_price } =
+    useContext(SandwichCtx);
 
   const cashtoday = { value: "", valid: true };
   const orderDate = { value: "", valid: true };
@@ -54,6 +63,13 @@ export const OrderProvider = (props) => {
     t2reshaperPerson,
     cashtoday,
   });
+
+  //function to handle change of sandwich order cost
+  const changeSandwichOrderCost = () => {
+    let sandOrderCost =
+      orderItemCtx.formState.quantity.value * sandwich_selling_price;
+    setsandwichOrderCost(sandOrderCost);
+  };
 
   const orderItemCtx = useContext(OrderItemContext);
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
@@ -80,6 +96,7 @@ export const OrderProvider = (props) => {
     fetchordersAndUpdateUI();
   }, []);
 
+  //function to update the t2resha order
   const updateT2resha = () => {
     const t2reshadata = {
       customer_id: customerId,
@@ -112,6 +129,8 @@ export const OrderProvider = (props) => {
     // setpayment_method("");
     // orderItemCtx.resetOrderItems();
   };
+
+  //function to update the cash order
   const updateCashofToday = () => {
     const cashdata = {
       customer_id: null,
@@ -143,15 +162,35 @@ export const OrderProvider = (props) => {
       });
   };
 
-  //function to update or submit sandwiches sold
-  const updateSoldsandwiches = () => {
-    const soldSandwiches = {
-      price : orderItemCtx.totalOrderCost,
-      payment_method : "soldprod",
-      customer_id :null,
-      order_date: orderDate,
-      sandwich_id: //to be filled from sandwichCtx
-    };
+  //function to update  (submit) sandwiches sold
+  const updateSoldsandwiches = async () => {
+    try {
+      const soldSandwiches = {
+        price: sandwichOrderCost,
+        payment_method: "soldprod",
+        customer_id: null,
+        order_date: orderDate,
+        sandwich_id: formStateFilterByCat.sandwichId.value, //to be filled from sandwichCtx
+      };
+      console.log("here is hte sold sandwiches", soldSandwiches);
+      const response = await fetch(
+        `http://localhost:${serverport}/orders/addSandwichOrder`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(soldSandwiches),
+        }
+      );
+      const data = await response.json();
+      console.log(
+        "here is the response from backend of adding new sandwich order",
+        data
+      );
+    } catch (err) {
+      console.log("error updatin gthe sandwiches orders", err);
+    }
   };
 
   //function to update  (submit) products sold
@@ -177,8 +216,7 @@ export const OrderProvider = (props) => {
       controlMsgContent(`failed to update sold products${error}`);
       controlDisplay(true);
     }
-  };
- 
+
     // Reset form fields
     resetField("customerId");
     resetField("rankid");
@@ -203,17 +241,17 @@ export const OrderProvider = (props) => {
   const updatepayment_method = (pm) => {
     setpayment_method(pm);
   };
-
   return (
     <OrderContext.Provider
       value={{
         orders,
         orderswithItem,
-     
+
         fetchOrders,
         updateCashofToday,
         updateT2resha,
         updatesoldprod,
+        updateSoldsandwiches,
         payment_method,
         updatepayment_method,
         deleteOrder: handleDeleteOrder,
@@ -223,6 +261,7 @@ export const OrderProvider = (props) => {
         handleInputChange,
         validateField,
         getErrorMsg,
+        changeSandwichOrderCost,
       }}
     >
       {props.children}
