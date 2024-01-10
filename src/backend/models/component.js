@@ -161,8 +161,18 @@ class Component {
           console.log("failed to get no of units of certain component", err);
           rej(err);
         } else {
-          console.log("here is the row", row);
-          res(row);
+          if (row) {
+            console.log(
+              `here is the number_of_units of component with id ${componentId} it is ${row.number_of_units}`
+            );
+            res(row.number_of_units);
+          } else {
+            const err = new Error(
+              ` the selected row (no of units) of component with id ${componentId} is undefined`
+            );
+            console.log(err);
+            rej(err);
+          }
         }
       });
     });
@@ -203,6 +213,10 @@ class Component {
 
       db.run(sql, params, function (err) {
         if (err) {
+          console.log(
+            `failed to update component no of units with component id ${componentId} where the
+            no of units equals ${newNumberOfUnits} ,${err}`
+          );
           reject(err);
         } else {
           resolve({

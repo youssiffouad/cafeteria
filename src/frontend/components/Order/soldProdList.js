@@ -37,9 +37,9 @@ const SoldProdList = () => {
             .map((order) => (
               <tr key={order.id}>
                 <td>{order.id}</td>
-                <td>{order.name}</td>
-                <td>{order.quantity}</td>
-                <td>{order.selling_price}</td>
+                <td>{order.item_name}</td>
+                <td>{order.order_quantity}</td>
+                <td>{order.item_selling_price}</td>
                 <td>{order.order_price}</td>
                 <td className="d-flex justify-content-between">
                   {order.order_date}

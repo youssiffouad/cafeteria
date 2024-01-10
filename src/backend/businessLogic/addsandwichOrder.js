@@ -50,11 +50,19 @@ const addsandwichOrder = async (
           console.log("added sandwich successfully");
         })
       );
+      await new Promise((res, rej) => {
+        db.run("commit", (err) => {
+          if (err) {
+            db.run("rollback");
+            rej(err);
+          } else res();
+        });
+      });
       resolve(response);
     } catch (err) {
       console.log("failed to add sandwich", err);
+      db.run("rollback");
       reject(err);
-      throw err;
     }
   });
 };

@@ -215,18 +215,26 @@ class Order {
     );
   }
 
-  // Function to view all orders with corresponding orderitem
+  // Function to view all orders with corresponding orderitem or corresponding sandwich
 
   static viewOrderswithItem(callback) {
     db.all(
       `
-      SELECT o.id, o.order_date,o.payment_method,p.name,p.selling_price,oi.quantity, o.price AS order_price
-      FROM Orders o
-       join Products p on p.id = oi.product_id
-       join OrderItems oi on oi.order_id=o.id
+      SELECT o.id, o.order_date, o.payment_method,
+      CASE WHEN o.is_sandwich = 1 THEN 'Sandwich' ELSE 'Product' END AS order_type,
+      COALESCE(s.name, p.name) AS item_name,
+      COALESCE(s.selling_price, p.selling_price) AS item_selling_price,
+      COALESCE(oi.quantity,(o.price / COALESCE(s.selling_price, 1))) AS order_quantity,
+      oi.quantity, o.price AS order_price
+FROM Orders o
+LEFT JOIN Sandwiches s ON o.sandwich_id = s.id
+LEFT JOIN OrderItems oi ON oi.order_id = o.id
+LEFT JOIN Products p ON oi.product_id = p.id
+
      `,
       (err, rows) => {
         if (err) {
+          console.log("failed to load order with items or sandwiches", err);
           callback(err);
         } else {
           callback(null, rows);

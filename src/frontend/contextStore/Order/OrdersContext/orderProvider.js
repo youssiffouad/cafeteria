@@ -92,7 +92,7 @@ export const OrderProvider = (props) => {
       setOrderswithItem(ordersWithItemData);
 
       console.log("Orders with items fetched");
-      console.log(ordersWithItemData);
+      console.log("i am in fetch order and update UI", ordersWithItemData);
       console.log(orderswithItem);
     } catch (error) {
       // Handle errors

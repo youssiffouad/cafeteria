@@ -42,7 +42,18 @@ class Sandwich_Component {
           console.log("failed to get the components of hte sandwich", err);
           rej(err);
         } else {
-          res(rows);
+          if (rows) {
+            const componentIDs = rows.map((row) => row.component_id);
+            console.log(
+              `i got the component ids of ${sandwichId} they are ${componentIDs}`
+            );
+            res(componentIDs);
+          } else {
+            const err = new Error(
+              `failed to select component ids of certain sandwich with id ${sandwichId}`
+            );
+            rej(err);
+          }
         }
       });
     });
@@ -55,11 +66,25 @@ class Sandwich_Component {
       const params = [component_id, sandwich_id];
       db.get(sql, params, function (err, row) {
         if (err) {
-          console.log(err);
+          console.log(
+            `failed to get mapping value of compoentn with id ${component_id}
+          and sandwich with id ${sandwich_id}`,
+            err
+          );
           rej(err);
         } else {
-          console.log(row);
-          res(row);
+          if (row) {
+            console.log(`here is the   mapping value of compoentn with id ${component_id}
+            and sandwich with id ${sandwich_id} it is ${row.mapping_value}`);
+            res(row.mapping_value);
+          } else {
+            const error = new Error(
+              `the selected row(mapping value) of sandwich with id ${sandwich_id} and component with id 
+              ${component_id} equals undefined`
+            );
+            console.log(error);
+            rej(error);
+          }
         }
       });
     });
