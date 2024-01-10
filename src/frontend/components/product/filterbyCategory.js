@@ -167,40 +167,65 @@ const FilterProdBYCat = (props) => {
           <p className="text-danger">{orderItemCtx.getErrorMsg("cat")}</p>
         )}
       </div>
-
-      <div className="col">
-        <label>
-          {category.id == 1 ? "الساندوتش" : "المنتج"}
-          <select
-            name={category.id == 1 ? "sandwichId" : "prod"}
-            className={`form-control input ${
-              !orderItemCtx.formState.prod.valid && "is-invalid"
-            }`}
-            value={
-              category.id == 1
-                ? formStateFilterByCat.sandwichId.value
-                : orderItemCtx.formState.prod.value
-            }
-            onChange={DecisionChangeHandler}
-          >
-            <option value="">اختر اسم المنتج</option>
-            {products.map((prod) => {
-              return (
-                <option
-                  key={prod.id || prod.sandwich_id}
-                  value={prod.id || prod.sandwich_id}
-                  sellingPrice={prod.sandwich_selling_price}
-                >
-                  {prod.name || prod.sandwich_name}
-                </option>
-              );
-            })}
-          </select>
-        </label>
-        {!orderItemCtx.formState.cat.valid && (
-          <p className="text-danger">{orderItemCtx.getErrorMsg("prod")}</p>
-        )}
-      </div>
+      {category.id == 1 ? (
+        <div className="col">
+          <label>
+            الساندوتش
+            <select
+              name="sandwichId"
+              className={`form-control input ${
+                !formStateFilterByCat.sandwichId.valid && "is-invalid"
+              }`}
+              value={formStateFilterByCat.sandwichId.value}
+              onChange={SandwichChangeHandler}
+            >
+              <option value="">اختر اسم الساندوتش</option>
+              {products.map((prod) => {
+                return (
+                  <option
+                    key={prod.sandwich_id}
+                    value={prod.sandwich_id}
+                    sellingPrice={prod.sandwich_selling_price}
+                  >
+                    {prod.sandwich_name}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+          {!formStateFilterByCat.sandwichIdزvalid && (
+            <p className="text-danger">
+              {orderItemCtx.getErrorMsg("sandwichId")}
+            </p>
+          )}
+        </div>
+      ) : (
+        <div className="col">
+          <label>
+            المنتج
+            <select
+              name={category.id == 1 ? "sandwichId" : "prod"}
+              className={`form-control input ${
+                !orderItemCtx.formState.prod.valid && "is-invalid"
+              }`}
+              value={orderItemCtx.formState.prod.value}
+              onChange={ProdChangeHandler}
+            >
+              <option value="">اختر اسم المنتج</option>
+              {products.map((prod) => {
+                return (
+                  <option key={prod.id} value={prod.id}>
+                    {prod.name}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+          {!orderItemCtx.formState.cat.valid && (
+            <p className="text-danger">{orderItemCtx.getErrorMsg("prod")}</p>
+          )}
+        </div>
+      )}
     </React.Fragment>
   );
 };

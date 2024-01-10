@@ -3,22 +3,39 @@ import FilterProdBYCat from "../product/filterbyCategory";
 import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
 import { OrderItemContext } from "../../contextStore/Order/OrderItemContext";
 import { createPortal } from "react-dom";
+import { SandwichCtx } from "../../contextStore/SandwichContext";
+import e from "cors";
 
 const TotalOfToday = () => {
   const quantityCtx = useContext(OrderItemContext);
   const soldprodCtx = useContext(OrderContext);
+  const sanwichCtx = useContext(SandwichCtx);
 
   const submissionHandler = (formdata) => {
-    const { cat, prod, quantity, orderDate } = formdata;
+    const { cat, prod, quantity, orderDate, sandwichId } = formdata;
     const v1 = quantityCtx.validateField("cat", "dropdown", cat);
     const v2 = quantityCtx.validateField("quantity", "dropdown", quantity);
-    const v3 = quantityCtx.validateField("prod", "dropdown", prod);
+    let v3;
+    if (cat == 1) {
+      v3 = sanwichCtx.VFFilterByCat("sandwichId", "dropdown", sandwichId);
+    } else {
+      v3 = quantityCtx.validateField("prod", "dropdown", prod);
+    }
     const v4 = soldprodCtx.validateField("orderDate", "dropdown", orderDate);
+    console.log(v1, v2, v3, v4);
     if (v1 && v2 && v3 && v4) {
       if (cat == 1) {
+        console.log(
+          "i am gonna submit a new sandwich order and her eis hte formdata",
+          formdata
+        );
         soldprodCtx.updateSoldsandwiches();
       } else {
         soldprodCtx.updatesoldprod();
+        console.log(
+          "i am gonna submit a new product order and her eis hte formdata",
+          formdata
+        );
       }
     }
   };
@@ -34,10 +51,13 @@ const TotalOfToday = () => {
           onSubmit={(event) => {
             const formdata = {
               cat: quantityCtx.formState.cat.value,
+              //either one of hte two sandwcih or product will be  used in validaiton
               prod: quantityCtx.formState.prod.value,
+              sandwichId: sanwichCtx.formStateFilterByCat.sandwichId.value,
               quantity: quantityCtx.formState.quantity.value,
               orderDate: soldprodCtx.formState.orderDate.value,
             };
+            console.log("here is the form data before submission", formdata);
             event.preventDefault();
             submissionHandler(formdata);
           }}

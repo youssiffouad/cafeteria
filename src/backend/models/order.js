@@ -108,7 +108,15 @@ class Order {
   ) => {
     return new Promise((res, rej) => {
       try {
-        const sql = `insert into Orders ( price ,payment_method ,customer_id , order_date ,is_sandwich, sandwich_id)`;
+        console.log(
+          "here are hte parameters i received",
+          price,
+          payment_method,
+          customer_id,
+          order_date,
+          sandwich_id
+        );
+        const sql = `insert into Orders ( price ,payment_method ,customer_id , order_date ,is_sandwich, sandwich_id) values (?,?,?,?,?,?)`;
         const params = [
           price,
           payment_method,
@@ -119,8 +127,15 @@ class Order {
         ];
         db.run(sql, params, function (err) {
           if (err) {
+            console.log(
+              "failure inserting sandwich order into orders table",
+              err
+            );
             rej(err);
           } else {
+            console.log(
+              "i succedded inserting sandwich order into orders table"
+            );
             const order_id = this.lastID;
             res({ message: "sandwich order added successfully", order_id });
           }

@@ -29,7 +29,7 @@ export const OrderContext = createContext({
   handleInputChange: (event) => {},
   validateField: (fieldName, fieldType, fieldValue) => {},
   getErrorMsg: (fieldName) => {},
-  changeSandwichOrderCost: (c) => {},
+  changeSandwichOrderCost: () => {},
 });
 
 export const OrderProvider = (props) => {
@@ -64,15 +64,24 @@ export const OrderProvider = (props) => {
     cashtoday,
   });
 
-  //function to handle change of sandwich order cost
-  const changeSandwichOrderCost = () => {
-    let sandOrderCost =
-      orderItemCtx.formState.quantity.value * sandwich_selling_price;
-    setsandwichOrderCost(sandOrderCost);
-  };
-
   const orderItemCtx = useContext(OrderItemContext);
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+
+  //function to handle change of sandwich order cost
+  const changeSandwichOrderCost = useEffect(() => {
+    console.log("i will change sandwich order cost nooooooooooow");
+    let sandOrderCost =
+      orderItemCtx.formState.quantity.value * sandwich_selling_price;
+    console.log(
+      "here is the sandwich order cost before setting state",
+      sandOrderCost
+    );
+    setsandwichOrderCost(sandOrderCost);
+  }, [orderItemCtx.formState.quantity.value]);
+  console.log(
+    "here is the sandwich order cost after setting state",
+    sandwichOrderCost
+  );
 
   const fetchordersAndUpdateUI = async () => {
     try {
@@ -121,13 +130,6 @@ export const OrderProvider = (props) => {
         controlMsgContent(`failed to  update T2resha`);
         controlDisplay(true);
       });
-
-    // Reset form fields
-    // setCustomerId("");
-    // setrankid("");
-    // setOrderDate("");
-    // setpayment_method("");
-    // orderItemCtx.resetOrderItems();
   };
 
   //function to update the cash order
@@ -169,10 +171,10 @@ export const OrderProvider = (props) => {
         price: sandwichOrderCost,
         payment_method: "soldprod",
         customer_id: null,
-        order_date: orderDate,
+        order_date: formState.orderDate.value,
         sandwich_id: formStateFilterByCat.sandwichId.value, //to be filled from sandwichCtx
       };
-      console.log("here is hte sold sandwiches", soldSandwiches);
+      console.log("here is hte sold sandwiches  order ", soldSandwiches);
       const response = await fetch(
         `http://localhost:${serverport}/orders/addSandwichOrder`,
         {

@@ -46,8 +46,13 @@ const useFormValidation = (initialFormState) => {
   };
 
   const nullCheckValidation = (fieldName, fieldValue) => {
+    console.log(
+      `i am in nullcheck validation for`,
+      fieldName,
+      "and the value is",
+      fieldValue
+    );
     if (isEmpty(fieldValue)) {
-      console.log(`i am in nullcheck validation`);
       console.log(fieldName);
       console.log(fieldValue);
       setErrors((prevErrors) => ({

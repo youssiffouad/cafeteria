@@ -33,20 +33,20 @@ exports.addProductOrder = (req, res) => {
 //function to add sandwich order
 exports.addSanadwichOrder = async (req, res) => {
   try {
-    const {
-      customer_id,
-      order_date,
-      sandwich_id,
-      totalOrderCost,
-      payment_method,
-    } = req.body;
-    await addsandwichOrder(
-      totalOrderCost,
+    const { customer_id, order_date, sandwich_id, price, payment_method } =
+      req.body;
+    console.log(
+      "here is what i got from front end to add new sandwich order",
+      req.body
+    );
+    const response = await addsandwichOrder(
+      price,
       payment_method,
       customer_id,
       order_date,
       sandwich_id
     );
+    res.status(200).json(response);
   } catch (err) {
     console.error("failed to add sandwich order:", err);
     res.status(500).json({ error: "Internal server error" });

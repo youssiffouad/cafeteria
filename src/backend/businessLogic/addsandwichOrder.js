@@ -1,3 +1,4 @@
+const { reject } = require("bluebird");
 const Component = require("../models/component");
 const db = require("../models/db");
 const Order = require("../models/order");
@@ -10,10 +11,17 @@ const addsandwichOrder = async (
   order_date,
   sandwich_id
 ) => {
-  try {
-    db.serialize(async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      db.serialize(async () => {});
+      await new Promise((res, rej) => {
+        db.run("begin", (err) => {
+          if (err) rej(err);
+          else res();
+        });
+      });
       //step1- insert sandwich into the orders table
-      await Order.insertSandwichOrder(
+      const response = await Order.insertSandwichOrder(
         price,
         payment_method,
         customer_id,
@@ -42,9 +50,12 @@ const addsandwichOrder = async (
           console.log("added sandwich successfully");
         })
       );
-    });
-  } catch (err) {
-    console.log("failed to add sandwich", err);
-  }
+      resolve(response);
+    } catch (err) {
+      console.log("failed to add sandwich", err);
+      reject(err);
+      throw err;
+    }
+  });
 };
 module.exports = addsandwichOrder;

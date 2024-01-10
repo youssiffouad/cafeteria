@@ -158,11 +158,11 @@ class Component {
       const sql = `select number_of_units from Components where id=?`;
       db.get(sql, [componentId], function (err, row) {
         if (err) {
-          console.log(err);
+          console.log("failed to get no of units of certain component", err);
           rej(err);
         } else {
-          console.log(row.number_of_units);
-          res(row.number_of_units);
+          console.log("here is the row", row);
+          res(row);
         }
       });
     });
