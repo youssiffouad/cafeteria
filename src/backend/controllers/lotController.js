@@ -4,22 +4,30 @@ const addComponentLot = require("../businessLogic/addComponentLot");
 
 //calling of function to add new ordinary(product)lot
 exports.addOrdinaryLot = async (req, res) => {
-  const {
-    productID,
-    quantity,
-    cost,
-    paidAmount,
-    received_date,
-    payment_method,
-  } = req.body;
-  await addOrdinaryLot(
-    productID,
-    quantity,
-    cost,
-    paidAmount,
-    received_date,
-    payment_method
-  );
+  try {
+    const {
+      productID,
+      quantity,
+      cost,
+      paidAmount,
+      received_date,
+      payment_method,
+    } = req.body;
+    const response = await addOrdinaryLot(
+      productID,
+      quantity,
+      cost,
+      paidAmount,
+      received_date,
+      payment_method
+    );
+    res.status(200).json(response);
+  } catch (err) {
+    console.log("failed to add new ordinary lot", err);
+    res
+      .status(500)
+      .json({ error: "internal server error failed to add ordinary lot" });
+  }
 };
 
 //controller to add new component lot

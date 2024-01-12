@@ -152,32 +152,31 @@ class Order {
     order_date,
     orderItems,
     payment_method,
-    totalOrderCost,
-    sandwich_id
+    totalOrderCost
   ) {
-    return new Promise((res, rej) => {
-      db.serialize(async () => {
-        try {
+    return new Promise((resolve, reject) => {
+      try {
+        db.serialize(async () => {
           db.run("PRAGMA foreign_keys=on");
 
-          db.run("BEGIN TRANSACTION");
-          let orderId;
+          await new Promise((res, rej) => {
+            db.run("BEGIN TRANSACTION", function (err) {
+              if (err) {
+                console.log("failed to begin transasction");
+                rej(err);
+              } else {
+                console.log("i started transaction");
+                res();
+              }
+            });
+          });
 
-          orderId = await Order.insertBasicOrder(
+          const orderId = await Order.insertBasicOrder(
             customer_id,
             order_date,
             totalOrderCost,
             payment_method
           );
-
-          let result = await Order.insertSandwichOrder(
-            totalOrderCost,
-            payment_method,
-            customer_id,
-            order_date,
-            sandwich_id
-          );
-          orderId = result.order_id;
 
           if (payment_method === "cash")
             await handleCashPayment(totalOrderCost);
@@ -185,14 +184,28 @@ class Order {
             await handleDebtPayment(customer_id, totalOrderCost);
           else if (payment_method === "soldprod")
             await handleSoldProdPayment(-1, orderId, orderItems);
-          db.run("commit");
-          res(orderId);
-        } catch (err) {
-          db.run("rollback");
-          console.log(err);
-          rej(err);
-        }
-      });
+          await new Promise((res, rej) => {
+            db.run("commit", function (err) {
+              if (err) {
+                db.run("rollback");
+                console.log("failed to commit");
+                rej(err);
+              } else {
+                console.log("i committed the transaction");
+                res();
+              }
+            });
+          });
+          resolve({
+            message: "successfully added the new product order",
+            orderId,
+          });
+        });
+      } catch (err) {
+        db.run("rollback");
+        console.log("failed to add product order", err);
+        reject(err);
+      }
     });
   }
 
@@ -409,6 +422,14 @@ module.exports = Order;
 
 // Function to change the quantity of each product in the Products table
 const changeProductQuantity = (IncOrDec, orderItems, callback) => {
+  if (orderItems.length === 0) {
+    const err = new Error("the order items array is sent empty");
+    callback(err);
+  }
+  if (!orderItems) {
+    const err = new Error("the order items array is undefined or null");
+    callback(err);
+  }
   orderItems.forEach((item, index) => {
     const { quantity, product_id } = item;
 

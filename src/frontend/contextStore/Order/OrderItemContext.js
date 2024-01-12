@@ -12,17 +12,22 @@ export const OrderItemContext = createContext({
   getErrorMsg: (fieldName) => {},
   errors: {},
   formState: {},
+  handleProdPriceChange: (pp) => {},
+  prodPrice: "",
 });
 
 export const OrderItemProvider = (props) => {
-  const cat = { id: "", name: "", value: "", valid: true };
-  const prod = { id: "", name: "", price: "", value: "", valid: true };
+  const cat = { value: "", valid: true };
+  const prod = { value: "", valid: true };
   const quantity = { value: "", valid: true };
   const { handleInputChange, validateField, getErrorMsg, errors, formState } =
     useFormValidation({ cat, prod, quantity });
 
-  // const [itemprice, setitemprice] = useState("");
+  const [prodPrice, setprodPrice] = useState("");
   const [orderitems, setorderitems] = useState([]);
+  const handleProdPriceChange = (pp) => {
+    setprodPrice(pp);
+  };
 
   const deleteItem = (id) => {
     const orderItems = [...orderitems];
@@ -36,7 +41,7 @@ export const OrderItemProvider = (props) => {
   };
 
   // Create a new variable to store the total order cost
-  const totalOrderCost = prod.price * quantity;
+  const totalOrderCost = prodPrice * formState.quantity.value;
 
   return (
     <OrderItemContext.Provider
@@ -52,6 +57,8 @@ export const OrderItemProvider = (props) => {
         getErrorMsg,
         errors,
         formState,
+        handleProdPriceChange,
+        prodPrice,
       }}
     >
       {props.children}

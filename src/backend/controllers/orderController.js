@@ -2,7 +2,7 @@ const addsandwichOrder = require("../businessLogic/addsandwichOrder");
 const Order = require("../models/order");
 const deleteSandwichOrder = require("../businessLogic/deleteSandwichOrder");
 // Function to add a new order(ordinary product order)
-exports.addProductOrder = (req, res) => {
+exports.addProductOrder = async (req, res) => {
   const {
     customer_id,
     order_date,
@@ -10,24 +10,21 @@ exports.addProductOrder = (req, res) => {
     totalOrderCost,
     payment_method,
   } = req.body;
-  console.log(payment_method);
-
-  Order.addOrder(
-    customer_id,
-    order_date,
-    orderItems,
-    payment_method,
-    totalOrderCost,
-    (err, result) => {
-      if (err) {
-        console.error("Failed to add order:", err);
-        res.status(500).json({ error: "Internal server error" });
-      } else {
-        console.log("Order added successfully:", result);
-        res.status(200).json(result);
-      }
-    }
-  );
+  console.log("hhere is the data i received from front end", req.body);
+  try {
+    const response = await Order.addOrder(
+      customer_id,
+      order_date,
+      orderItems,
+      payment_method,
+      totalOrderCost
+    );
+    console.log("the response i get in hte controller", response);
+    res.status(200).json(response);
+  } catch (err) {
+    console.log("failed to add a new product order", err);
+    res.status(500).json({ message: "internal server error", err });
+  }
 };
 
 //function to add sandwich order
@@ -142,8 +139,9 @@ exports.deleteProductOrder = (req, res) => {
 exports.deleteSandwichOrder = async (req, res) => {
   try {
     const { orderId } = req.body;
-    await deleteSandwichOrder(orderId);
-    res.status(200).json({ message: "order deleted successfully" });
+    const response = await deleteSandwichOrder(orderId);
+    console.log("her eis hte response from i get from hte model", response);
+    res.status(200).json(response);
   } catch (err) {
     res.status(500).json({ error: "failed to delete sandwich order" });
   }

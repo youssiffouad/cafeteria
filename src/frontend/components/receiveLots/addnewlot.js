@@ -16,13 +16,14 @@ const AddNewLot = () => {
 
   const submissionHandler = (formdata) => {
     const { prod, cat, quantity, paidAmount, cost, received_date } = formdata;
-    prodAndCatCtx.validateField("prod", "dropdown", prod);
-    prodAndCatCtx.validateField("cat", "dropdown", cat);
-    LotCtx.validateField("quantity", "number", quantity);
-    LotCtx.validateField("paidAmount", "number", paidAmount);
-    LotCtx.validateField("cost", "number", cost);
-    LotCtx.validateField("received_date", "number", received_date);
-    // LotCtx.updateLotList();
+    const v1 = prodAndCatCtx.validateField("prod", "dropdown", prod);
+    const v2 = prodAndCatCtx.validateField("cat", "dropdown", cat);
+    const v3 = LotCtx.validateField("quantity", "number", quantity);
+    const v4 = LotCtx.validateField("paidAmount", "number", paidAmount);
+    const v5 = LotCtx.validateField("cost", "number", cost);
+    const v6 = LotCtx.validateField("received_date", "date", received_date);
+    console.log(v1, v2, v3, v4, v5, v6);
+    if (v1 && v2 && v3 && v4 && v5 && v6) LotCtx.updateLotList();
   };
 
   return (

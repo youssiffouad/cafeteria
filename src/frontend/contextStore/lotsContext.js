@@ -123,9 +123,9 @@ export const LotProvider = (props) => {
       paidAmount: formState.paidAmount.value,
       received_date: formState.received_date.value,
     };
-    console.log(lotdata);
-    console.log(`the prod id is ${prodAndCatCtx.formState.prod.value}`);
-    fetch(`http://localhost:${serverport}/lots/add`, {
+    console.log("here is the lot data i will send to the backend", lotdata);
+
+    fetch(`http://localhost:${serverport}/lots/addordinaryLot`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -136,8 +136,6 @@ export const LotProvider = (props) => {
         if (!response.ok) {
           throw new Error("Failed to add lot");
         }
-        console.log(lotdata);
-
         // Perform any necessary actions after adding the lot
         fetchLots();
         controlMsgContent(`successfully added the new lot`);

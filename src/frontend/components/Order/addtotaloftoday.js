@@ -31,11 +31,11 @@ const TotalOfToday = () => {
         );
         soldprodCtx.updateSoldsandwiches();
       } else {
-        soldprodCtx.updatesoldprod();
         console.log(
           "i am gonna submit a new product order and her eis hte formdata",
           formdata
         );
+        soldprodCtx.updatesoldprod();
       }
     }
   };

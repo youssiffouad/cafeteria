@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
-import { OrderItemProvider } from "../../contextStore/Order/OrderItemContext";
 
 const SoldProdList = () => {
   const orderCtx = useContext(OrderContext);
@@ -46,7 +45,9 @@ const SoldProdList = () => {
                   <FontAwesomeIcon
                     className="me-0"
                     icon={faTrash}
-                    onClick={() => orderCtx.deleteOrder(order.id)} // Call handleDeleteOrder when the delete icon is clicked
+                    onClick={() =>
+                      orderCtx.deleteOrder(order.id, order.order_type)
+                    } // Call handleDeleteOrder when the delete icon is clicked
                     style={{ cursor: "pointer" }}
                   />
                 </td>

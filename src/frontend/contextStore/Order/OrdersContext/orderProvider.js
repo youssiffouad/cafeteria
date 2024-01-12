@@ -69,19 +69,11 @@ export const OrderProvider = (props) => {
 
   //function to handle change of sandwich order cost
   const changeSandwichOrderCost = useEffect(() => {
-    console.log("i will change sandwich order cost nooooooooooow");
     let sandOrderCost =
       orderItemCtx.formState.quantity.value * sandwich_selling_price;
-    console.log(
-      "here is the sandwich order cost before setting state",
-      sandOrderCost
-    );
+
     setsandwichOrderCost(sandOrderCost);
   }, [orderItemCtx.formState.quantity.value]);
-  console.log(
-    "here is the sandwich order cost after setting state",
-    sandwichOrderCost
-  );
 
   const fetchordersAndUpdateUI = async () => {
     try {
@@ -91,16 +83,12 @@ export const OrderProvider = (props) => {
       const ordersWithItemData = await fetchOrderswithItem();
       setOrderswithItem(ordersWithItemData);
 
-      console.log("Orders with items fetched");
       console.log("i am in fetch order and update UI", ordersWithItemData);
-      console.log(orderswithItem);
     } catch (error) {
       // Handle errors
     }
   };
-  useEffect(() => {
-    console.log("Updated Orders bta3 eluseeffects with items:", orderswithItem);
-  }, [orderswithItem]);
+
   useEffect(() => {
     fetchordersAndUpdateUI();
   }, []);
@@ -113,14 +101,12 @@ export const OrderProvider = (props) => {
       totalOrderCost: t2reshaperPerson,
       order_date: orderDate,
     };
-    console.log(t2reshadata);
 
     addOrder(t2reshadata)
       .then((result) => {
         return fetchOrders();
       })
       .then((data) => {
-        console.log(data);
         setOrders(data);
         controlMsgContent(`successfully updated T2resha`);
         controlDisplay(true);
@@ -140,7 +126,7 @@ export const OrderProvider = (props) => {
       order_date: orderDate,
       totalOrderCost: cashtoday,
     };
-    console.log(cashdata);
+
     addOrder(cashdata)
       .then((data) => {
         // Perform any necessary actions after adding the order
@@ -149,7 +135,7 @@ export const OrderProvider = (props) => {
         fetchOrders()
           .then((data) => {
             setOrders(data);
-            console.log(` iupdated the caash`);
+
             controlMsgContent(`successfully updated cash today`);
             controlDisplay(true);
           })
@@ -197,21 +183,26 @@ export const OrderProvider = (props) => {
 
   //function to update  (submit) products sold
   const updatesoldprod = async () => {
-    const soldprod = {
-      customer_id: null,
-      payment_method: "soldprod",
-      order_date: orderDate,
-      orderItems: orderItemCtx.orderitems,
-      totalOrderCost: orderItemCtx.totalOrderCost,
-    };
-
-    console.log(soldprod);
-
     try {
+      const soldprod = {
+        customer_id: null,
+        payment_method: "soldprod",
+        order_date: formState.orderDate.value,
+        orderItems: [
+          {
+            quantity: orderItemCtx.formState.quantity.value,
+            product_id: orderItemCtx.formState.prod.value,
+          },
+        ],
+        totalOrderCost: orderItemCtx.totalOrderCost,
+      };
+
+      console.log("here is the product that will be added", soldprod);
+
       // Wait for addOrder to complete
       await addOrder(soldprod);
       // Now, fetchOrderswithItem and update the state
-      fetchordersAndUpdateUI();
+      await fetchordersAndUpdateUI();
       controlMsgContent(`successfully updated sold products`);
       controlDisplay(true);
     } catch (error) {
@@ -220,18 +211,13 @@ export const OrderProvider = (props) => {
     }
 
     // Reset form fields
-    resetField("customerId");
-    resetField("rankid");
-    resetField("orderDate");
-    setpayment_method("");
-    orderItemCtx.resetOrderItems();
   };
 
-  const handleDeleteOrder = async (orderId) => {
+  const handleDeleteOrder = async (orderId, type) => {
     try {
-      await deleteOrder(orderId);
+      await deleteOrder(orderId, type);
       // Fetch orders again to update the list
-      fetchordersAndUpdateUI();
+      await fetchordersAndUpdateUI();
       controlMsgContent(`successfully deleted order`);
       controlDisplay(true);
     } catch (error) {

@@ -7,38 +7,28 @@ const useFormValidation = (initialFormState) => {
   });
   const [errors, setErrors] = useState({});
   const getErrorMsg = (fieldName) => {
-    console.log(fieldName);
-    console.log(errors);
     return errors[fieldName];
   };
 
   const resetErrors = (fieldName) => {
-    setErrors(
-      (prevErrors) => ({
-        ...prevErrors,
-        [fieldName]: "",
-      }),
-      console.log(errors)
-    );
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [fieldName]: "",
+    }));
   };
   const HandleAuthError = (fieldName, msg) => {
-    setErrors(
-      (prevErrors) => ({
-        ...prevErrors,
-        [fieldName]: msg,
-      }),
-      console.log(errors)
-    );
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [fieldName]: msg,
+    }));
   };
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log(name);
-    console.log(value);
+
     //modify only the value portion of the sent fieldname
     setFormState((prevstate) => {
       return { ...prevstate, [name]: { ...prevstate[name], value } };
     });
-    console.log(formState);
   };
 
   const isEmpty = (value) => {
@@ -53,8 +43,6 @@ const useFormValidation = (initialFormState) => {
       fieldValue
     );
     if (isEmpty(fieldValue)) {
-      console.log(fieldName);
-      console.log(fieldValue);
       setErrors((prevErrors) => ({
         ...prevErrors,
         [fieldName]: `${fieldName} cannot be empty`,
@@ -79,7 +67,6 @@ const useFormValidation = (initialFormState) => {
 
   const nameFieldValidation = (fieldName, fieldValue) => {
     const isValid = nullCheckValidation(fieldName, fieldValue);
-    console.log(fieldValue);
 
     return isValid;
   };
@@ -93,7 +80,6 @@ const useFormValidation = (initialFormState) => {
 
   const dropDownFieldValidation = (fieldName, fieldValue) => {
     const isValid = nullCheckValidation(fieldName, fieldValue);
-    console.log(fieldValue);
 
     return isValid;
   };
@@ -118,14 +104,12 @@ const useFormValidation = (initialFormState) => {
   };
 
   const resetField = (fieldName) => {
-    console.log("i called reset field", fieldName);
     setFormState((prev) => {
       return {
         ...prev,
         [fieldName]: { value: "", valid: true },
       };
     });
-    console.log("ya rab ba2a mn el ", fieldName, formState);
   };
 
   return {

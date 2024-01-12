@@ -17,20 +17,16 @@ const NewProductForm = () => {
 
   const submissionHandler = (formdata) => {
     const { prodName, vendorId, catid, sellingPrice, buying_price } = formdata;
-    console.log(` here is the product name :${prodName}`);
-    console.log(` here is the vendorId :${vendorId}`);
-    console.log(` here is the catid :${catid}`);
-    console.log(` here is the sellingPrice :${sellingPrice}`);
-    console.log(` here is the buying_price :${buying_price}`);
-    productsCtx.validateField("prodName", "name", prodName);
-    productsCtx.validateField("vendorId", "name", vendorId);
-    productsCtx.validateField("catid", "name", catid);
-    productsCtx.validateField("sellingPrice", "name", sellingPrice);
-    productsCtx.validateField("buying_price", "name", buying_price);
+
+    const v1 = productsCtx.validateField("prodName", "name", prodName);
+    const v2 = productsCtx.validateField("vendorId", "name", vendorId);
+    const v3 = productsCtx.validateField("catid", "name", catid);
+    const v4 = productsCtx.validateField("sellingPrice", "name", sellingPrice);
+    const v5 = productsCtx.validateField("buying_price", "name", buying_price);
 
     console.log(productsCtx.errors);
 
-    // productsCtx.updatecustlist();
+    if (v1 && v2 && v3 && v4 && v5) productsCtx.updateprodlist();
   };
 
   return (

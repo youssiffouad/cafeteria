@@ -6,7 +6,7 @@ import { SandwichCtx } from "../../contextStore/SandwichContext";
 
 const FilterProdBYCat = (props) => {
   const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState({ id: "", name: "" });
+
   const [products, setProducts] = useState([]);
 
   const orderItemCtx = useContext(OrderItemContext);
@@ -32,7 +32,7 @@ const FilterProdBYCat = (props) => {
   //fetch products of selected category
   const fetchProdOfSelectedCategory = async () => {
     try {
-      const requestBody = { catid: category.id };
+      const requestBody = { catid: orderItemCtx.formState.cat.value };
       const response = await fetch(
         `http://localhost:${serverport}/products/filtercategory`,
         {
@@ -69,13 +69,16 @@ const FilterProdBYCat = (props) => {
   // Change products or fetch sandwiches on changing category
   useEffect(() => {
     try {
-      if (category.id !== "") {
-        console.log(category);
+      if (orderItemCtx.formState.cat.value !== "") {
+        console.log(
+          "here is the selected category id",
+          orderItemCtx.formState.cat.value
+        );
         console.log(
           `category id is not null and i will fetch products of that category`
         );
 
-        if (category.name === "sandwiches") {
+        if (orderItemCtx.formState.cat.value === "1") {
           fetchSandwiches();
         } else {
           fetchProdOfSelectedCategory();
@@ -84,19 +87,13 @@ const FilterProdBYCat = (props) => {
     } catch (err) {
       console.error("Failed to filter products:", err);
     }
-  }, [category]);
+  }, [orderItemCtx.formState.cat.value]);
 
   const catChangeHandler = (event) => {
     const selectedCategoryId = event.target.value;
     console.log("here is the event target value", selectedCategoryId);
-    const selectedCategory = categories.find((cat) => {
-      return cat.id == selectedCategoryId;
-    });
-    console.log("here are al  the categories", categories);
 
-    setCategory({ id: selectedCategoryId, name: selectedCategory?.name });
-    console.log(selectedCategory);
-    console.log(category);
+    console.log("here are al  the categories", categories);
 
     orderItemCtx.handleInputChange(event);
     orderItemCtx.validateField(
@@ -104,17 +101,6 @@ const FilterProdBYCat = (props) => {
       "dropdown",
       event.target.value
     );
-    // lotCtx.handleInputChange(event);
-    // lotCtx.validateField(event.target.name, "dropdown", event.target.value);
-  };
-  const DecisionChangeHandler = (event) => {
-    console.log("here is the sandwich", formStateFilterByCat);
-    console.log("here is the product", orderItemCtx.formState);
-    if (category.id == 1) {
-      SandwichChangeHandler(event);
-    } else {
-      ProdChangeHandler(event);
-    }
   };
 
   const ProdChangeHandler = (event) => {
@@ -125,9 +111,11 @@ const FilterProdBYCat = (props) => {
       "dropdown",
       event.target.value
     );
-
-    // lotCtx.handleInputChange(event);
-    // lotCtx.validateField(event.target.name, "dropdown", event.target.value);
+    const prodSellingPrice =
+      event.target.options[event.target.selectedIndex].getAttribute(
+        "sellingprice"
+      );
+    orderItemCtx.handleProdPriceChange(prodSellingPrice);
   };
   //function to handle change of selected sandwich if catid=1
   const SandwichChangeHandler = (event) => {
@@ -136,7 +124,7 @@ const FilterProdBYCat = (props) => {
     VFFilterByCat(event.target.name, "dropdown", event.target.value);
     const selected_selling_price =
       event.target.options[event.target.selectedIndex].getAttribute(
-        "sellingPrice"
+        "sellingprice"
       );
     handleSellingPriceOfsandwich(selected_selling_price);
   };
@@ -167,7 +155,7 @@ const FilterProdBYCat = (props) => {
           <p className="text-danger">{orderItemCtx.getErrorMsg("cat")}</p>
         )}
       </div>
-      {category.id == 1 ? (
+      {orderItemCtx.formState.cat.value == 1 ? (
         <div className="col">
           <label>
             الساندوتش
@@ -185,7 +173,7 @@ const FilterProdBYCat = (props) => {
                   <option
                     key={prod.sandwich_id}
                     value={prod.sandwich_id}
-                    sellingPrice={prod.sandwich_selling_price}
+                    sellingprice={prod.sandwich_selling_price}
                   >
                     {prod.sandwich_name}
                   </option>
@@ -193,7 +181,7 @@ const FilterProdBYCat = (props) => {
               })}
             </select>
           </label>
-          {!formStateFilterByCat.sandwichIdزvalid && (
+          {!formStateFilterByCat.sandwichId.valid && (
             <p className="text-danger">
               {orderItemCtx.getErrorMsg("sandwichId")}
             </p>
@@ -204,7 +192,7 @@ const FilterProdBYCat = (props) => {
           <label>
             المنتج
             <select
-              name={category.id == 1 ? "sandwichId" : "prod"}
+              name="prod"
               className={`form-control input ${
                 !orderItemCtx.formState.prod.valid && "is-invalid"
               }`}
@@ -214,7 +202,11 @@ const FilterProdBYCat = (props) => {
               <option value="">اختر اسم المنتج</option>
               {products.map((prod) => {
                 return (
-                  <option key={prod.id} value={prod.id}>
+                  <option
+                    key={prod.id}
+                    value={prod.id}
+                    sellingprice={prod.selling_price}
+                  >
                     {prod.name}
                   </option>
                 );

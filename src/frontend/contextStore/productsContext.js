@@ -80,10 +80,10 @@ export const ProductProvider = (props) => {
   const updateprodlist = () => {
     const productData = {
       name: formState.prodName.value,
-      vendor_id: vendorId,
-      catid,
-      selling_price: sellingPrice,
-      buying_price,
+      vendor_id: formState.vendorId.value,
+      catid: formState.catid.value,
+      selling_price: formState.sellingPrice.value,
+      buying_price: formState.buying_price.value,
       quantity: 0,
     };
 
