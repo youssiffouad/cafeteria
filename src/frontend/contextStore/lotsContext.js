@@ -59,32 +59,33 @@ export const LotProvider = (props) => {
       console.error("Failed to fetch products:", error);
     }
   };
-  const handleDeleteLot = (Lotid) => {
-    console.log(Lotid);
-    const lotid = { Lotid };
-    fetch(`http://localhost:${serverport}/lots/delete`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(lotid),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to delete lot");
+  const handleDeleteLot = async (Lotid) => {
+    try {
+      console.log("here is the lotid that i will delete", Lotid);
+      const lotid = { Lotid };
+      const response = await fetch(
+        `http://localhost:${serverport}/lots/deleteProductLot`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(lotid),
         }
+      );
+      if (!response.ok) {
+        throw new Error("failed  to delete product lot");
+      } else {
         fetchLots();
-        controlMsgContent(`successfully deleted the lot`);
+        controlMsgContent(`successfully deleted the product lot`);
         controlDisplay(true);
-
-        // Perform any necessary actions after adding the lot
-      })
-      .catch((error) => {
-        console.error(error);
-        controlMsgContent(`failed to delete the lot :${error}`);
-        controlDisplay(true);
-        // Handle error
-      });
+      }
+    } catch (err) {
+      console.error(err);
+      controlMsgContent(`failed to delete the lot :${err}`);
+      controlDisplay(true);
+      // Handle error
+    }
   };
 
   const installLot = (lot_id) => {

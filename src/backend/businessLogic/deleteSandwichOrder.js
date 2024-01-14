@@ -44,16 +44,10 @@ const deleteSandwichOrder = async (orderId) => {
               comp,
               newNumberOfUnits
             );
-            console.log("added sandwich successfully");
           })
         );
         //step5- delete sandwich from orders table
-        Order.deleteOrderRow(orderId, function (err) {
-          if (err) {
-            console.log("failed to delete order row", err);
-            throw err;
-          }
-        });
+        await Order.deleteOrderRow(orderId);
         await new Promise((res, rej) => {
           db.run("commit", (err) => {
             if (err) {
@@ -62,9 +56,11 @@ const deleteSandwichOrder = async (orderId) => {
               rej(err);
             } else {
               console.log("successfully committed the transcation");
+              res();
             }
           });
         });
+        console.log("before resolving");
         resolve({ message: "sandwich order deleted successfully", orderId });
       });
     } catch (err) {

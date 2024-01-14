@@ -18,7 +18,7 @@ export const OrderContext = createContext({
   orderswithItem: [],
   payment_method: "",
   updatepayment_method: (pm) => {},
-  deleteOrder: (o) => {},
+  deleteOrder: (o, t) => {},
   updateT2resha: () => {},
   updateCashofToday: () => {},
   updatesoldprod: () => {},
@@ -176,8 +176,13 @@ export const OrderProvider = (props) => {
         "here is the response from backend of adding new sandwich order",
         data
       );
+      await fetchordersAndUpdateUI();
+      controlMsgContent(`successfully updated sold sandwiches`);
+      controlDisplay(true);
     } catch (err) {
       console.log("error updatin gthe sandwiches orders", err);
+      controlMsgContent(`successfully updated sold sandwiches`);
+      controlDisplay(true);
     }
   };
 

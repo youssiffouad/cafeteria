@@ -8,7 +8,7 @@ router.post("/addordinaryLot", lotController.addOrdinaryLot);
 router.post("/addcomponentLot", lotController.addComponentLot);
 router.post("/filterdate", lotController.viewFilterDateLots);
 router.post("/install", lotController.installLot);
-router.post("/delete", lotController.deletLot);
+router.post("/deleteProductLot", lotController.deleteProductLot);
 router.get("/view", lotController.viewLots);
 
 // Add other lot-related routes here

@@ -279,44 +279,68 @@ LEFT JOIN Products p ON oi.product_id = p.id
     );
   }
 
-  static deleteOrder(orderId) {
-    db.serialize(async () => {
+  //function to delete Product order
+  static async deleteOrder(orderId) {
+    return new Promise((resolve, reject) => {
       try {
-        db.run("BEGIN TRANSACTION");
-
-        let customer_id = await Order.getCustomerID(orderId);
-
-        // Retrieve order items
-        let orderItems = await Order.getOrderItems(orderId);
-
-        // Retrieve payment method
-        let payment_method = await Order.getPaymentMethod(orderId);
-
-        // Retrieve total order cost
-        let totalOrderCost = await Order.getTotalOrderCost(orderId);
-        // Determine payment handler based on payment method
-        if (payment_method === "cash") await handleCashPayment(-totalOrderCost);
-        else if (payment_method === "debt")
-          await handleDebtPayment(customer_id, -totalOrderCost);
-        else if (payment_method === "soldprod")
-          await handleSoldProdPayment(1, orderId, orderItems);
-
-        Order.deleteOrderRow(orderId, (err) => {
-          if (err) {
-            throw err;
-          } else {
-            db.run("COMMIT");
-            console.log({
-              message: "Order deleted successfully",
-              order_id: orderId,
+        db.serialize(async () => {
+          await new Promise((res, rej) => {
+            db.run("BEGIN TRANSACTION", function (err) {
+              if (err) {
+                console.log("failed to begin transaction of deleting order");
+                rej(err);
+              } else {
+                console.log("started  transaction of deleting order");
+                res();
+              }
             });
-          }
+          });
+
+          let customer_id = await Order.getCustomerID(orderId);
+
+          // Retrieve order items
+          let orderItems = await Order.getOrderItems(orderId);
+
+          // Retrieve payment method
+          let payment_method = await Order.getPaymentMethod(orderId);
+
+          // Retrieve total order cost
+          let totalOrderCost = await Order.getTotalOrderCost(orderId);
+          // Determine payment handler based on payment method
+          if (payment_method === "cash")
+            await handleCashPayment(-totalOrderCost);
+          else if (payment_method === "debt")
+            await handleDebtPayment(customer_id, -totalOrderCost);
+          else if (payment_method === "soldprod")
+            await handleSoldProdPayment(1, orderId, orderItems);
+
+          await Order.deleteOrderRow(orderId);
+          await new Promise((res, rej) => {
+            db.run("commit", function (err) {
+              if (err) {
+                db.run("rollback");
+                console.log(
+                  "failed to commit transaction of deleting product order",
+                  err
+                );
+                rej(err);
+              } else {
+                console.log(
+                  "i committed successfully of deleting product order"
+                );
+                res();
+              }
+            });
+          });
+          resolve({
+            meassage: "successfully deleted the product order",
+            orderId,
+          });
         });
-        db.run("commit");
       } catch (err) {
         db.run("rollback");
-        console.log("failed to delte order");
-        throw err;
+        console.log("failed to delete product order", err);
+        reject(err);
       }
     });
   }
@@ -403,15 +427,17 @@ LEFT JOIN Products p ON oi.product_id = p.id
   }
 
   // Function to delete order row
-  static deleteOrderRow(orderId, callback) {
-    db.run(`DELETE FROM Orders WHERE id = ${orderId} `, (err) => {
-      if (err) {
-        console.error(err);
-        callback(err);
-      } else {
-        console.log(`Deleted successfully`);
-        callback(null);
-      }
+  static async deleteOrderRow(orderId) {
+    return new Promise((res, rej) => {
+      db.run(`DELETE FROM Orders WHERE id = ${orderId} `, (err) => {
+        if (err) {
+          console.error("error while deleting order row", err);
+          rej(err);
+        } else {
+          console.log(`Deleted successfully the order row`);
+          res();
+        }
+      });
     });
   }
 
@@ -547,14 +573,10 @@ async function handleSoldProdPayment(IncOrDec, orderId, orderItems) {
         });
       });
     } else if (IncOrDec === 1) {
-      changeProductQuantity(1, orderItems, () => {
-        Order.deleteOrderRow(orderId, (err) => {
-          if (err) {
-            rej(err);
-          } else {
-            res();
-          }
-        });
+      changeProductQuantity(1, orderItems, (err) => {
+        if (err) {
+          rej(err);
+        } else res();
       });
     }
   });

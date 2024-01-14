@@ -120,19 +120,15 @@ exports.filterOrderCustandDate = (req, res) => {
 };
 
 //function to delete certain Product order
-exports.deleteProductOrder = (req, res) => {
-  const { orderId } = req.body;
-  Order.deleteOrder(orderId, (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ error: "failed to deelte order" });
-      // Handle error
-    } else {
-      console.log(result);
-      res.status(200).json(result);
-      // Perform any necessary actions after deleting the order
-    }
-  });
+exports.deleteProductOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const result = await Order.deleteOrder(orderId);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log("failed to delete product order", err);
+    result.status(500).json(err);
+  }
 };
 
 //function to delete certain sadwich Order

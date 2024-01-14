@@ -59,15 +59,17 @@ exports.addComponentLot = async (req, res) => {
 };
 
 //calling of fn to delete lot(either product lot or component lot)
-exports.deletLot = (req, res) => {
-  const { Lotid } = req.body;
-  Lot.deleteLot(Lotid, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: "Internal server error" });
-    } else {
-      res.status(200).json(result);
-    }
-  });
+exports.deleteProductLot = async (req, res) => {
+  try {
+    const { Lotid } = req.body;
+    const result = await Lot.deleteProductLot(Lotid);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log("failed to delete product lot ", err);
+    res
+      .status(500)
+      .json({ error: "internal server error failed to delete product lot" });
+  }
 };
 
 //calling of function to view all lots in certain interval
