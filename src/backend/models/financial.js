@@ -38,27 +38,26 @@ class Finance {
 
   //function to change cash value
   static changeCashVlaue = async (amountAdded) => {
-    try {
-      await new Promise((resolve, reject) => {
-        db.run(
-          `
-    UPDATE Financial
-    SET cash = cash + ${amountAdded}
-    WHERE id = 1;
-  `,
-          (err) => {
-            if (err) {
-              console.error(err);
-              reject(err);
-            } else {
-              resolve(null);
-            }
-          }
+    await new Promise((res, rej) => {
+      if (typeof amountAdded !== "number" || isNaN(amountAdded)) {
+        const err = new Error(
+          "the argument sent to change cash is not a number"
         );
-      });
-    } catch (err) {
-      console.error(err);
-    }
+        console.log(err);
+        rej(err);
+      } else {
+        const sql = "update Financial set cash = cash + ? where id=1";
+        db.run(sql, amountAdded, function (err) {
+          if (err) {
+            console.log("failed to change cash value", err);
+            rej(err);
+          } else {
+            console.log("successfully changd the csh value");
+            res();
+          }
+        });
+      }
+    });
   };
 
   //function to reset all financial data

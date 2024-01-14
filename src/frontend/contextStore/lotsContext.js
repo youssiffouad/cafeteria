@@ -19,7 +19,7 @@ export const LotContext = createContext({
   getErrorMsg: (fieldName) => {},
   errors: {},
   formState: {},
-  handleDeleteLot: (L) => {},
+  handleDeleteLot: (L, type) => {},
   installLot: (lotid) => {},
   Msgcomponent: "",
 });
@@ -59,26 +59,51 @@ export const LotProvider = (props) => {
       console.error("Failed to fetch products:", error);
     }
   };
-  const handleDeleteLot = async (Lotid) => {
+  const handleDeleteLot = async (Lotid, type) => {
     try {
-      console.log("here is the lotid that i will delete", Lotid);
-      const lotid = { Lotid };
-      const response = await fetch(
-        `http://localhost:${serverport}/lots/deleteProductLot`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(lotid),
+      if (type === "Product") {
+        console.log("here is the Product lotid that i will delete", Lotid);
+        const lotid = { Lotid };
+        const response = await fetch(
+          `http://localhost:${serverport}/lots/deleteProductLot`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(lotid),
+          }
+        );
+        if (!response.ok) {
+          throw new Error("failed  to delete product lot");
+        } else {
+          console.log(" here is the response from backend", response);
+          await fetchLots();
+          controlMsgContent(`successfully deleted the product lot`);
+          controlDisplay(true);
         }
-      );
-      if (!response.ok) {
-        throw new Error("failed  to delete product lot");
-      } else {
-        fetchLots();
-        controlMsgContent(`successfully deleted the product lot`);
-        controlDisplay(true);
+      } else if (type === "Component") {
+        console.log("here is the Component lotid that i will delete", Lotid);
+        const lotid = { Lotid };
+        const response = await fetch(
+          `http://localhost:${serverport}/lots/deleteComponentLot`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(lotid),
+          }
+        );
+        if (!response.ok) {
+          throw new Error("failed  to delete product lot");
+        } else {
+          const data = await response.json();
+          console.log(" here is the response from backend", data);
+          await fetchLots();
+          controlMsgContent(`successfully deleted the Component lot`);
+          controlDisplay(true);
+        }
       }
     } catch (err) {
       console.error(err);

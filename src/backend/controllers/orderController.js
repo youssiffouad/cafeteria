@@ -127,7 +127,7 @@ exports.deleteProductOrder = async (req, res) => {
     res.status(200).json(result);
   } catch (err) {
     console.log("failed to delete product order", err);
-    result.status(500).json(err);
+    res.status(500).json(err);
   }
 };
 

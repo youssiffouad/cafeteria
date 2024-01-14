@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
 import { LotContext } from "../../contextStore/lotsContext";
+
+import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 const LotList = () => {
@@ -7,6 +9,10 @@ const LotList = () => {
 
   return (
     <React.Fragment>
+      {createPortal(
+        <Lotctx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
       <h2 className="text-center">بيانات المشتريات</h2>
       <table
         className="table table-striped table-bordered table-hover myResponsiveTable"
@@ -51,7 +57,7 @@ const LotList = () => {
                   {" "}
                   <FontAwesomeIcon
                     icon={faTrash}
-                    onClick={() => Lotctx.handleDeleteLot(lot.id)} // Call handleDeleteOrder when the delete icon is clicked
+                    onClick={() => Lotctx.handleDeleteLot(lot.id, lot.lot_type)} // Call handleDeleteOrder when the delete icon is clicked
                     style={{ cursor: "pointer" }}
                   />
                 </span>
