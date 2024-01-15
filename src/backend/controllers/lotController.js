@@ -2,6 +2,7 @@ const Lot = require("../models/Lot");
 const addOrdinaryLot = require("../businessLogic/addOrdinaryLot");
 const addComponentLot = require("../businessLogic/addComponentLot");
 const deleteComponentLot = require("../businessLogic/deleteComponentLot");
+const deleteProductLot = require("../businessLogic/deleteProductLot");
 
 //calling of function to add new ordinary(product)lot
 exports.addOrdinaryLot = async (req, res) => {
@@ -74,7 +75,17 @@ exports.deleteComponentLot = async (req, res) => {
 };
 
 //calling of fn to delete lot(either product lot or component lot)
-exports.deleteProductLot = async (req, res) => {};
+exports.deleteProductLot = async (req, res) => {
+  try {
+    const { Lotid } = req.body;
+    const result = await deleteProductLot(Lotid);
+    console.log("the result i got from model is ", result);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log("failed to delete Product lot", err);
+    res.status(500).json(err);
+  }
+};
 
 //calling of function to view all lots in certain interval
 exports.viewFilterDateLots = (req, res) => {

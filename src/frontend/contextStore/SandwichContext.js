@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import serverport from "../backendconfiguration";
 import useFormValidation from "../Hooks/use_fromvalidation";
+import usePopUp from "../Hooks/use_popup";
 
 export const SandwichCtx = createContext({
   componentsList: [],
@@ -25,6 +26,8 @@ export const SandwichCtx = createContext({
   GEMSGFilterByCat: (fn) => {},
   sandwich_selling_price: "",
   handleSellingPriceOfsandwich: (sp) => {},
+  Msgcomponent: <></>,
+  deleteSandwich: (sid) => {},
 });
 
 export const SandwichProvider = (props) => {
@@ -36,8 +39,14 @@ export const SandwichProvider = (props) => {
   let sandwichId = { value: "", valid: true };
 
   //this is the form validation for adding new sandwich
-  const { formState, handleInputChange, validateField, getErrorMsg } =
-    useFormValidation({ name, selling_price });
+  const {
+    formState,
+    handleInputChange,
+    validateField,
+    getErrorMsg,
+    resetField,
+  } = useFormValidation({ name, selling_price });
+  const { controlDisplay, controlMsgContent, Msgcomponent } = usePopUp();
 
   //this is the from validation for filter by category
   const {
@@ -71,26 +80,77 @@ export const SandwichProvider = (props) => {
     fetchSandwiches();
   }, []);
 
+  //function to delete certain Sandwich
+  const deleteSandwich = async (id) => {
+    try {
+      const sandID = { id };
+      const response = await fetch(
+        `http://localhost:${serverport}/sandwiches/deleteSandwich`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(sandID),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to delete sandwich. Status: ${
+            response.status
+          } ${response.json()}`
+        );
+      }
+      const data = await response.json();
+      console.log(data);
+      controlDisplay(true);
+      controlMsgContent("تم ازالة الساندوتش بنجاح");
+      await fetchSandwiches();
+    } catch (err) {
+      console.log("failed to delete sandwich", err);
+      controlDisplay(true);
+      controlMsgContent("فشل ازالة الساندوتش ");
+    }
+  };
+  //function to reset states of hte form after adding new Sandwich
+  const resetStates = () => {
+    resetField("name");
+    resetField("selling_price");
+    setcost("");
+    setcompName("");
+    setcompMapping("");
+    setcompid("");
+    setComponents([]);
+  };
+
   //function to add new sandwich
   const addSandwich = async () => {
-    const sandwichData = {
-      name: formState.name.value,
-      componentsList,
-      sellingPrice: formState.selling_price.value,
-    };
-    console.log("here is the sandwich data", sandwichData);
-    const response = await fetch(
-      `http://localhost:${serverport}/sandwiches/addSandwich`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sandwichData),
-      }
-    );
-    const data = await response.json();
-    await fetchSandwiches();
-    console.log("here is the repsonse from adding new sandwich", data);
+    try {
+      const sandwichData = {
+        name: formState.name.value,
+        componentsList,
+        sellingPrice: formState.selling_price.value,
+      };
+      console.log("here is the sandwich data", sandwichData);
+      const response = await fetch(
+        `http://localhost:${serverport}/sandwiches/addSandwich`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(sandwichData),
+        }
+      );
+      const data = await response.json();
+      await fetchSandwiches();
+      controlMsgContent("تم اضافة الساندوتش بنجاح");
+      controlDisplay(true);
+      resetStates();
+      console.log("here is the repsonse from adding new sandwich", data);
+    } catch (err) {
+      console.log("failed to add new Sandwich", err);
+      controlDisplay(true);
+      controlMsgContent("فشل اضافة ساندوتش جديد");
+    }
   };
+
   //function to handle change of  selling price on selecting certain sandwich
   const handleSellingPriceOfsandwich = (sp) => {
     setsandwich_selling_price(sp);
@@ -162,6 +222,8 @@ export const SandwichProvider = (props) => {
         GEMSGFilterByCat,
         sandwich_selling_price,
         handleSellingPriceOfsandwich,
+        Msgcomponent,
+        deleteSandwich,
       }}
     >
       {props.children}

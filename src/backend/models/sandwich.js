@@ -1,7 +1,5 @@
-const { resolve } = require("bluebird");
 const db = require("./db");
 const Sandwich_Component = require("./sandwich_component");
-const dbPromise = require("bluebird").promisifyAll(db); // Or any other promise library
 
 class Sandwich {
   // Add a new sandwich
@@ -13,13 +11,17 @@ class Sandwich {
             db.run("BEGIN TRANSACTION", function (err) {
               if (err) {
                 rej(err);
+                console.log("failed to start hte txn of adding new sandwich");
               } else {
+                console.log(
+                  "successfully started the txn of adding new sandwich"
+                );
                 res();
               }
             });
           });
 
-          let cost = await Sandwich.calculateCost(componentsList);
+          let cost = Sandwich.calculateCost(componentsList);
           const sql = `INSERT INTO Sandwiches (name, cost, selling_price) VALUES (?, ?, ?)`;
           const params = [name, cost, sellingPrice];
           let sandwichId = await new Promise((res, rej) => {
@@ -110,8 +112,7 @@ class Sandwich {
       s.cost AS sandwich_cost,
       s.selling_price AS sandwich_selling_price,
       GROUP_CONCAT(c.id) AS component_ids,
-      GROUP_CONCAT(c.name) AS component_names,
-      GROUP_CONCAT(sc.mapping_value) AS mapping_values
+     GROUP_CONCAT(c.name || ':' || sc.mapping_value) AS components_with_mapping
     FROM Sandwiches s
     JOIN Sandwich_Component sc ON s.id = sc.sandwich_id
     JOIN Components c ON sc.component_id = c.id
@@ -200,20 +201,66 @@ class Sandwich {
   // Delete sandwich by ID
   static deleteSandwich(sandwichId) {
     return new Promise((resolve, reject) => {
-      const sql = `DELETE FROM Sandwiches WHERE id = ?`;
-      const params = [sandwichId];
-
-      db.run(sql, params, function (err) {
-        if (err) {
+      try {
+        if (sandwichId === undefined || sandwichId === null) {
+          const err = new Error("the sent id is null ot undefined");
           reject(err);
-        } else {
-          Sandwich_Component.deleteAllComponents(sandwichId);
+        }
+        db.serialize(async () => {
+          await new Promise((res, rej) => {
+            db.run("begin", (err) => {
+              if (err) {
+                console.log("failed to start txn of deleting Sandwich");
+                rej(err);
+              } else {
+                console.log(
+                  "successfully started the txn of deleting sandwich"
+                );
+                res();
+              }
+            });
+          });
+
+          const sql = `DELETE FROM Sandwiches WHERE id = ?`;
+          const params = [sandwichId];
+
+          await new Promise((res, rej) => {
+            db.run(sql, params, function (err) {
+              if (err) {
+                console.log("failed to delete Sandwich row", sandwichId);
+                db.run("rollback");
+                rej(err);
+              } else {
+                console.log("successfully deleted the sandwich row");
+                res();
+              }
+            });
+          });
+
+          await Sandwich_Component.deleteAllComponents(sandwichId);
+
+          await new Promise((res, rej) => {
+            db.run("commit", (err) => {
+              if (err) {
+                console.log("failed to commit txn of deleting Sandwich");
+                db.run("rollback");
+                rej(err);
+              } else {
+                console.log("successfully committed deletion of Sandwich");
+                res();
+              }
+            });
+          });
+
           resolve({
             message: "Sandwich deleted successfully",
             sandwich_id: sandwichId,
           });
-        }
-      });
+        });
+      } catch (err) {
+        console.error("Error in deleteSandwich:", err);
+        reject(err);
+      }
     });
   }
 }

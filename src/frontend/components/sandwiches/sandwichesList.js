@@ -1,6 +1,9 @@
 import React, { useContext } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { SandwichCtx } from "../../contextStore/SandwichContext";
+import { formatNo } from "../../Hooks/formatno";
 const SandwichesList = () => {
   const sandwichesCtx = useContext(SandwichCtx);
   console.log("here is the sandwichesList", sandwichesCtx.SandwichesList);
@@ -26,12 +29,33 @@ const SandwichesList = () => {
               <td>
                 {sandwich.sandwich_name} {sandwich.sandwich_id}
               </td>
-              <td>{sandwich.sandwich_cost}</td>
+              <td>{formatNo(sandwich.sandwich_cost)}</td>
               <td>{sandwich.sandwich_selling_price}</td>
 
               <td>
-                {sandwich.component_names}
-                {sandwich.mapping_values}
+                <span>
+                  {sandwich.components_with_mapping
+                    .split(",")
+                    .map((element, index) => (
+                      <React.Fragment key={index}>
+                        {index > 0 && <br />}
+                        {element}
+                      </React.Fragment>
+                    ))}
+                </span>
+                <span>
+                  {" "}
+                  <span className="me-4">
+                    {" "}
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      onClick={() =>
+                        sandwichesCtx.deleteSandwich(sandwich.sandwich_id)
+                      } // Call handleDeleteOrder when the delete icon is clicked
+                      style={{ cursor: "pointer" }}
+                    />
+                  </span>
+                </span>
               </td>
             </tr>
           ))}

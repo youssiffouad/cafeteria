@@ -1,10 +1,7 @@
 const db = require("./db");
-const Product = require("./Product");
-const updateProductInStockValue = require("../businessLogic/updateProdInStock");
-const Finance = require("./financial");
+
 const Vendor = require("./Vendor");
-const Component = require("../models/component");
-const { resolve, reject } = require("bluebird");
+
 // const e = require("cors");
 // const { getVendorIdFromLotId } = require("./Vendor");
 
@@ -152,72 +149,7 @@ class Lot {
       });
     });
   }
-  //function to delete product lot
-  static async deleteProductLot(lotid) {
-    return new Promise((resolve, reject) => {
-      try {
-        db.serialize(async () => {
-          await new Promise((res, rej) => {
-            db.run("begin", function (err) {
-              if (err) {
-                console.log("failed to start txn of deleting product lot", err);
-                rej(err);
-              } else {
-                console.log(
-                  "succesfully started the txn of deleting product lot"
-                );
-                res();
-              }
-            });
-          });
-          const productID = await Lot.getProductId(lotid);
-          const componentID = await Lot.getComponentId(lotid);
-          const quantity = await Lot.getQuantity(lotid);
-          const rem = await Lot.getRemainingPayment(lotid);
-          const cost = await Lot.getCost(lotid);
-          const paidAmount = cost - rem;
-          if (productID !== null || productID !== undefined) {
-            await Product.updateProductQuantity(productID, -quantity);
-            await updateProductInStockValue(productID, -quantity);
-            await Vendor.changeVendoerOwedMoney(0, lotid, -rem);
-          } else if (componentID !== null || componentID !== undefined) {
-            //step2- decrease component number of units(get no of units )
-            const noOfUnits = await Component.getNoOfUnits(componentID);
-            const newNumberOfUnits = noOfUnits - quantity;
-            Component.updateComponentNumberOfUnits(
-              componentID,
-              newNumberOfUnits
-            );
-            await Vendor.changeVendoerOwedMoney(1, lotid, -rem);
-          }
-          await Finance.changeCashVlaue(paidAmount);
-          await Lot.removeLotRow(lotid);
-          await new Promise((res, rej) => {
-            db.run("commit", (err) => {
-              if (err) {
-                console.log(
-                  "failed to commit txn of deleting product lot",
-                  err
-                );
-                db.run("rollback");
-                rej(err);
-              } else {
-                console.log(
-                  "succesfully committed the txn of deleting product lot"
-                );
-                res();
-              }
-            });
-          });
-          resolve({ message: "product lot deleted successfully", lotid });
-        });
-      } catch (err) {
-        console.log("error while deleting product lot", err);
-        db.run("rollback");
-        reject(err);
-      }
-    });
-  }
+
   //function to view all lots in certain interval with product name
   static viewFilterDateLots = (startdate, enddate, callback) => {
     db.all(

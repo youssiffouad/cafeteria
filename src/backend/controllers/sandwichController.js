@@ -1,3 +1,4 @@
+const { ERROR } = require("sqlite3");
 const Sandwich = require("../models/sandwich");
 
 // Add a new sandwich
@@ -80,6 +81,8 @@ exports.updateSandwichSellingPrice = async (req, res) => {
 exports.deleteSandwich = async (req, res) => {
   try {
     const { id } = req.body;
+    console.log("her eis the sand id i got", id);
+
     const result = await Sandwich.deleteSandwich(id);
     res.status(200).json(result);
   } catch (error) {

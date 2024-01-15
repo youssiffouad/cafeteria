@@ -2,12 +2,21 @@ import { useContext } from "react";
 import ComponentsInSandwiches from "./ComponentsInsandwiches";
 import { SandwichCtx } from "../../contextStore/SandwichContext";
 import { ConstituentProvider } from "../../contextStore/constituentContext";
+import { createPortal } from "react-dom";
+import { formatNo } from "../../Hooks/formatno";
 
 const SandwichForm = () => {
-  const { componentsList, cost, addSandwich, handleInputChange, formState } =
-    useContext(SandwichCtx);
+  const {
+    componentsList,
+    cost,
+    addSandwich,
+    handleInputChange,
+    formState,
+    Msgcomponent,
+  } = useContext(SandwichCtx);
   return (
     <div className="container mb-5 add-container" dir="rtl">
+      {createPortal(<Msgcomponent />, document.getElementById("popup-portal"))}
       <h5 className="add-heading"> اضافة ساندوتش جديد</h5>
       <form
         onSubmit={(e) => {
@@ -41,7 +50,7 @@ const SandwichForm = () => {
             }}
           />
         </label>
-        <label className="label">التكلفة{cost}</label>
+        <label className="label">التكلفة{formatNo(cost)}</label>
         <ConstituentProvider>
           <ComponentsInSandwiches />
         </ConstituentProvider>
@@ -50,7 +59,8 @@ const SandwichForm = () => {
         <ul>
           {componentsList.map((comp) => (
             <li>
-              {comp.name} and {comp.mapping_value}
+              يصنع عدد 1 وحدة من{comp.name} عدد{comp.mapping_value} من
+              الساندوتشات
             </li>
           ))}
         </ul>
