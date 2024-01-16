@@ -224,6 +224,7 @@ class Sandwich {
           const sql = `DELETE FROM Sandwiches WHERE id = ?`;
           const params = [sandwichId];
 
+          await Sandwich_Component.deleteAllComponents(sandwichId);
           await new Promise((res, rej) => {
             db.run(sql, params, function (err) {
               if (err) {
@@ -236,8 +237,6 @@ class Sandwich {
               }
             });
           });
-
-          await Sandwich_Component.deleteAllComponents(sandwichId);
 
           await new Promise((res, rej) => {
             db.run("commit", (err) => {
