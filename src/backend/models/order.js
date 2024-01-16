@@ -146,68 +146,6 @@ class Order {
       }
     });
   };
-  // Main function to add an order
-  static async addOrder(
-    customer_id,
-    order_date,
-    orderItems,
-    payment_method,
-    totalOrderCost
-  ) {
-    return new Promise((resolve, reject) => {
-      try {
-        db.serialize(async () => {
-          db.run("PRAGMA foreign_keys=on");
-
-          await new Promise((res, rej) => {
-            db.run("BEGIN TRANSACTION", function (err) {
-              if (err) {
-                console.log("failed to begin transasction");
-                rej(err);
-              } else {
-                console.log("i started transaction");
-                res();
-              }
-            });
-          });
-
-          const orderId = await Order.insertBasicOrder(
-            customer_id,
-            order_date,
-            totalOrderCost,
-            payment_method
-          );
-
-          if (payment_method === "cash")
-            await handleCashPayment(totalOrderCost);
-          else if (payment_method === "debt")
-            await handleDebtPayment(customer_id, totalOrderCost);
-          else if (payment_method === "soldprod")
-            await handleSoldProdPayment(-1, orderId, orderItems);
-          await new Promise((res, rej) => {
-            db.run("commit", function (err) {
-              if (err) {
-                db.run("rollback");
-                console.log("failed to commit");
-                rej(err);
-              } else {
-                console.log("i committed the transaction");
-                res();
-              }
-            });
-          });
-          resolve({
-            message: "successfully added the new product order",
-            orderId,
-          });
-        });
-      } catch (err) {
-        db.run("rollback");
-        console.log("failed to add product order", err);
-        reject(err);
-      }
-    });
-  }
 
   // Function to view all orders without corresponding orderitem
 
@@ -277,72 +215,6 @@ LEFT JOIN Products p ON oi.product_id = p.id
         }
       }
     );
-  }
-
-  //function to delete Product order
-  static async deleteOrder(orderId) {
-    return new Promise((resolve, reject) => {
-      try {
-        db.serialize(async () => {
-          await new Promise((res, rej) => {
-            db.run("BEGIN TRANSACTION", function (err) {
-              if (err) {
-                console.log("failed to begin transaction of deleting order");
-                rej(err);
-              } else {
-                console.log("started  transaction of deleting order");
-                res();
-              }
-            });
-          });
-
-          let customer_id = await Order.getCustomerID(orderId);
-
-          // Retrieve order items
-          let orderItems = await Order.getOrderItems(orderId);
-
-          // Retrieve payment method
-          let payment_method = await Order.getPaymentMethod(orderId);
-
-          // Retrieve total order cost
-          let totalOrderCost = await Order.getTotalOrderCost(orderId);
-          // Determine payment handler based on payment method
-          if (payment_method === "cash")
-            await handleCashPayment(-totalOrderCost);
-          else if (payment_method === "debt")
-            await handleDebtPayment(customer_id, -totalOrderCost);
-          else if (payment_method === "soldprod")
-            await handleSoldProdPayment(1, orderId, orderItems);
-
-          await Order.deleteOrderRow(orderId);
-          await new Promise((res, rej) => {
-            db.run("commit", function (err) {
-              if (err) {
-                db.run("rollback");
-                console.log(
-                  "failed to commit transaction of deleting product order",
-                  err
-                );
-                rej(err);
-              } else {
-                console.log(
-                  "i committed successfully of deleting product order"
-                );
-                res();
-              }
-            });
-          });
-          resolve({
-            meassage: "successfully deleted the product order",
-            orderId,
-          });
-        });
-      } catch (err) {
-        db.run("rollback");
-        console.log("failed to delete product order", err);
-        reject(err);
-      }
-    });
   }
 
   // Function to filter orders by customer_id
@@ -420,6 +292,7 @@ LEFT JOIN Products p ON oi.product_id = p.id
           rej(err);
         } else {
           const orderId = this.lastID;
+          console.log("successfully inserted the order row ");
           res(orderId);
         }
       });
@@ -438,6 +311,28 @@ LEFT JOIN Products p ON oi.product_id = p.id
           res();
         }
       });
+    });
+  }
+
+  static async handleSoldProdPayment(IncOrDec, orderId, orderItems) {
+    return new Promise((res, rej) => {
+      if (IncOrDec === -1) {
+        changeProductQuantity(-1, orderItems, () => {
+          insertOrderItems(orderId, orderItems, (err) => {
+            if (err) {
+              rej(err);
+            } else {
+              res();
+            }
+          });
+        });
+      } else if (IncOrDec === 1) {
+        changeProductQuantity(1, orderItems, (err) => {
+          if (err) {
+            rej(err);
+          } else res();
+        });
+      }
     });
   }
 
@@ -523,64 +418,7 @@ function insertOrderItems(orderId, orderItems, callback) {
   });
 }
 
-// Function to handle cash payment method
-async function handleCashPayment(totalOrderCost) {
-  return new Promise((res, rej) => {
-    db.run(
-      ` UPDATE Financial SET cash = cash + ${totalOrderCost} WHERE id = 1;`,
-      function (err) {
-        if (err) {
-          rej(err);
-        } else {
-          res();
-        }
-      }
-    );
-  });
-}
-
-// Function to handle debt payment method
-async function handleDebtPayment(customer_id, totalOrderCost) {
-  return new Promise((res, rej) => {
-    db.run(
-      `
-    UPDATE Financial
-    SET owed = owed + ${totalOrderCost}
-    WHERE id = 1;
-  `,
-      function (err) {
-        if (err) {
-          rej(err);
-        } else {
-          res();
-        }
-      }
-    );
-  });
-}
-
 // Function to handle soldprod payment method
-async function handleSoldProdPayment(IncOrDec, orderId, orderItems) {
-  return new Promise((res, rej) => {
-    if (IncOrDec === -1) {
-      changeProductQuantity(-1, orderItems, () => {
-        insertOrderItems(orderId, orderItems, (err) => {
-          if (err) {
-            rej(err);
-          } else {
-            res();
-          }
-        });
-      });
-    } else if (IncOrDec === 1) {
-      changeProductQuantity(1, orderItems, (err) => {
-        if (err) {
-          rej(err);
-        } else res();
-      });
-    }
-  });
-}
 
 // Function to update productsInStockValue in the Financial table
 function updateProductInStockValue(IncOrDec, productID, quantity, callback) {

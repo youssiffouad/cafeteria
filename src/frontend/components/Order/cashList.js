@@ -38,7 +38,7 @@ const CashList = () => {
                   <FontAwesomeIcon
                     className="me-0"
                     icon={faTrash}
-                    onClick={() => orderCtx.deleteOrder(order.id)} // Call handleDeleteOrder when the delete icon is clicked
+                    onClick={() => orderCtx.deleteOrder(order.id, "Product")} // Call handleDeleteOrder when the delete icon is clicked
                     style={{ cursor: "pointer" }}
                   />
                 </td>

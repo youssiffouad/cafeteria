@@ -36,6 +36,22 @@ class Finance {
     });
   }
 
+  //function to update my owed value
+  static changeOwedValue = async (addedvalue) => {
+    return new Promise((res, rej) => {
+      const sql = "update Financial set owed = owed + ? ";
+      db.run(sql, addedvalue, function (err) {
+        if (err) {
+          console.log("failed to upfate financial owed value", err);
+          rej(err);
+        } else {
+          console.log("successfully updated owed money ");
+          res({ message: "owed money updated successfully" });
+        }
+      });
+    });
+  };
+
   //function to change cash value
   static changeCashVlaue = async (amountAdded) => {
     await new Promise((res, rej) => {

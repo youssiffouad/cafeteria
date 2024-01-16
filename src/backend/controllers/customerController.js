@@ -16,6 +16,17 @@ exports.addCustomer = (req, res) => {
   });
 };
 
+exports.deleteCustomer = async (req, res) => {
+  try {
+    const { custId } = req.body;
+    const response = await Customer.deleteCustomer(custId);
+    res.status(200).json(response);
+  } catch (err) {
+    console.log("failed to delete customer", err);
+    res.status(500).json(err);
+  }
+};
+
 //calling of fn to view all customers with their ranks
 exports.viewAll = (req, res) => {
   Customer.viewAll((err, custrecords) => {

@@ -5,6 +5,7 @@ const CustomerController = require("../controllers/customerController");
 router.post("/add", CustomerController.addCustomer);
 router.post("/filterbyrank", CustomerController.filterbyRank);
 router.post("/installdebt", CustomerController.installCustDebt);
+router.post("/deleteCustomer", CustomerController.deleteCustomer);
 router.get("/view", CustomerController.viewAll);
 
 module.exports = router;

@@ -7,10 +7,7 @@ import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvid
 
 const SoldProdList = () => {
   const orderCtx = useContext(OrderContext);
-  console.log(
-    `orderswithItems from the soldProdList :`,
-    orderCtx.orderswithItem
-  );
+
   return (
     <>
       <h2 className="text-center">عرض المبيعات </h2>

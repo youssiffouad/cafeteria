@@ -1,6 +1,8 @@
 const addsandwichOrder = require("../businessLogic/addsandwichOrder");
 const Order = require("../models/order");
 const deleteSandwichOrder = require("../businessLogic/deleteSandwichOrder");
+const addProductOrder = require("../businessLogic/addProductOrder");
+const deleteProductOrder = require("../businessLogic/deleteProductOrder");
 // Function to add a new order(ordinary product order)
 exports.addProductOrder = async (req, res) => {
   const {
@@ -12,7 +14,7 @@ exports.addProductOrder = async (req, res) => {
   } = req.body;
   console.log("hhere is the data i received from front end", req.body);
   try {
-    const response = await Order.addOrder(
+    const response = await addProductOrder(
       customer_id,
       order_date,
       orderItems,
@@ -123,7 +125,7 @@ exports.filterOrderCustandDate = (req, res) => {
 exports.deleteProductOrder = async (req, res) => {
   try {
     const { orderId } = req.body;
-    const result = await Order.deleteOrder(orderId);
+    const result = await deleteProductOrder(orderId);
     res.status(200).json(result);
   } catch (err) {
     console.log("failed to delete product order", err);

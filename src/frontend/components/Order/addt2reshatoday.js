@@ -8,19 +8,19 @@ const T2reshaOfToday = () => {
 
   useEffect(() => {
     console.log(t2reshaCtx.errors);
-    console.log(t2reshaCtx.getErrorMsg("customerName"));
-    console.log(t2reshaCtx.getErrorMsg("customerRank"));
   }, [t2reshaCtx.errors]);
   const submissionHandler = (formdata) => {
     const { orderDate, t2reshaperPerson, customerId, rankid } = formdata;
-    t2reshaCtx.validateField("orderDate", "date", orderDate);
-    t2reshaCtx.validateField("t2reshaperPerson", "date", t2reshaperPerson);
-    t2reshaCtx.validateField("rankid", "dropdown", rankid);
-    t2reshaCtx.validateField("customerId", "dropdown", customerId);
+    const v1 = t2reshaCtx.validateField("orderDate", "date", orderDate);
+    const v2 = t2reshaCtx.validateField(
+      "t2reshaperPerson",
+      "date",
+      t2reshaperPerson
+    );
+    const v3 = t2reshaCtx.validateField("rankid", "dropdown", rankid);
+    const v4 = t2reshaCtx.validateField("customerId", "dropdown", customerId);
 
-    console.log(t2reshaCtx.errors);
-
-    // t2reshaCtx.updateT2resha();
+    if (v1 && v2 && v3 && v4) t2reshaCtx.updateT2resha();
   };
 
   return (

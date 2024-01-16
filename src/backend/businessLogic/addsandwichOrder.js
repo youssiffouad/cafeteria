@@ -1,4 +1,3 @@
-const { reject } = require("bluebird");
 const Component = require("../models/component");
 const db = require("../models/db");
 const Order = require("../models/order");

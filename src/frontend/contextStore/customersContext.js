@@ -14,6 +14,7 @@ export const CustomerContext = createContext({
   Msgcomponent: "",
   formState: {},
   errors: {},
+  deleteCustomer: (cid) => {},
 });
 
 export const CustomerProvider = (props) => {
@@ -91,6 +92,31 @@ export const CustomerProvider = (props) => {
       });
   };
 
+  //function to delete certain customer
+  const deleteCustomer = async (custId) => {
+    try {
+      const payload = { custId };
+      const response = await fetch(
+        `http://localhost:${serverport}/customers/deleteCustomer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("internal server error failed to delete");
+      }
+      console.log("here is the response", response);
+      viewCustomers();
+      controlDisplay(true);
+      controlMsgContent("تم ازالة المستهلك بنجاح");
+    } catch (err) {
+      console.log(err);
+      controlDisplay(true);
+      controlMsgContent("تم ازالة المستهلك بنجاح");
+    }
+  };
   return (
     <CustomerContext.Provider
       value={{
@@ -104,6 +130,7 @@ export const CustomerProvider = (props) => {
         resetField,
         getErrorMsg,
         errors,
+        deleteCustomer,
       }}
     >
       {props.children}

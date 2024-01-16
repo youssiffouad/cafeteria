@@ -94,60 +94,61 @@ export const OrderProvider = (props) => {
   }, []);
 
   //function to update the t2resha order
-  const updateT2resha = () => {
-    const t2reshadata = {
-      customer_id: customerId,
-      payment_method: "debt",
-      totalOrderCost: t2reshaperPerson,
-      order_date: orderDate,
-    };
+  const updateT2resha = async () => {
+    try {
+      const t2reshadata = {
+        customer_id: formState.customerId.value,
+        payment_method: "debt",
+        totalOrderCost: formState.t2reshaperPerson.value,
+        order_date: formState.orderDate.value,
+      };
 
-    addOrder(t2reshadata)
-      .then((result) => {
-        return fetchOrders();
-      })
-      .then((data) => {
-        setOrders(data);
-        controlMsgContent(`successfully updated T2resha`);
-        controlDisplay(true);
-      })
-      .catch((error) => {
-        // Handle error
-        controlMsgContent(`failed to  update T2resha`);
-        controlDisplay(true);
-      });
+      const response = await addOrder(t2reshadata);
+      console.log("here is the response", response);
+
+      const data = await fetchOrders();
+
+      setOrders(data);
+      controlMsgContent(`successfully updated T2resha`);
+      controlDisplay(true);
+      resetField("t2reshaperPerson");
+      resetField("orderDate");
+      resetField("customerId");
+    } catch (err) {
+      controlMsgContent(`failed to  update T2resha`);
+      controlDisplay(true);
+    }
   };
 
   //function to update the cash order
-  const updateCashofToday = () => {
-    const cashdata = {
-      customer_id: null,
-      payment_method: "cash",
-      order_date: orderDate,
-      totalOrderCost: cashtoday,
-    };
+  const updateCashofToday = async () => {
+    try {
+      const cashdata = {
+        customer_id: null,
+        payment_method: "cash",
+        order_date: formState.orderDate.value,
+        totalOrderCost: formState.cashtoday.value,
+      };
 
-    addOrder(cashdata)
-      .then((data) => {
-        // Perform any necessary actions after adding the order
+      const response = await addOrder(cashdata);
+      console.log("here is the response i got from the backend", response);
 
-        // Fetch orders again to update the list
-        fetchOrders()
-          .then((data) => {
-            setOrders(data);
+      // Fetch orders again to update the list
+      const data = await fetchOrders();
 
-            controlMsgContent(`successfully updated cash today`);
-            controlDisplay(true);
-          })
-          .catch((error) => {
-            // Handle error
-          });
-      })
-      .catch((error) => {
-        // Handle error
-        controlMsgContent(`failed to update cash today : ${error}`);
-        controlDisplay(true);
-      });
+      setOrders(data);
+      console.log("here is the orders", orders);
+      console.log("here is the orders with items", orderswithItem);
+      console.log("here is the data fetched", data);
+
+      controlMsgContent(`successfully updated cash today`);
+      controlDisplay(true);
+      resetField("orderDate");
+      resetField("cashtoday");
+    } catch (error) {
+      controlMsgContent(`failed to update cash today : ${error}`);
+      controlDisplay(true);
+    }
   };
 
   //function to update  (submit) sandwiches sold

@@ -7,22 +7,14 @@ const CashOfToday = () => {
 
   useEffect(() => {
     console.log(cashCtx.errors);
-    console.log(cashCtx.validateField());
-    console.log(cashCtx.getErrorMsg("cashtoday"));
-    console.log(cashCtx.getErrorMsg("orderDate"));
   }, [cashCtx.errors]);
 
   const submissionHandler = (formdata) => {
     const { cashtoday, orderDate } = formdata;
-    console.log(` here is the customer name :${cashtoday}`);
 
-    console.log(` here is the rank name :${orderDate}`);
-    cashCtx.validateField("cashtoday", "name", cashtoday);
-    cashCtx.validateField("orderDate", "name", orderDate);
-
-    console.log(cashCtx.errors);
-
-    //  cashCtx.updateCashofToday();
+    const v1 = cashCtx.validateField("cashtoday", "name", cashtoday);
+    const v2 = cashCtx.validateField("orderDate", "name", orderDate);
+    if (v1 && v2) cashCtx.updateCashofToday();
   };
   return (
     <>

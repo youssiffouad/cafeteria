@@ -26,6 +26,22 @@ class Customer {
     );
   }
 
+  //function to delete certain customer
+  static deleteCustomer = async (customerid) => {
+    return new Promise((res, rej) => {
+      const sql = "delete from Customers where id= ?";
+      db.run(sql, customerid, function (err) {
+        if (err) {
+          console.log("an error occured while deletin the customer");
+          rej(err);
+        } else {
+          console.log("succssfully deelted hte customer");
+          res({ message: "succssfully deelted hte customer", customerid });
+        }
+      });
+    });
+  };
+
   //fn to view all customers with  their ranks
   static viewAll(callback) {
     db.all(
@@ -92,6 +108,24 @@ class Customer {
       );
     });
   }
+
+  //function to update debt of certain customer
+  static changeDebtOfCustomer = async (custid, addedValue) => {
+    return new Promise((res, rej) => {
+      console.log("here is the added vlaue to cust debt ", addedValue);
+      const sql = "update Customers set debt =debt + ? where id =?";
+      const params = [addedValue, custid];
+      db.run(sql, params, function (err) {
+        if (err) {
+          console.log("failed to update debt of customer", err);
+          rej(err);
+        } else {
+          console.log("successfully updateed the debt of hte customer");
+          res({ message: "successfully updateed the debt of hte customer" });
+        }
+      });
+    });
+  };
 }
 
 module.exports = Customer;
