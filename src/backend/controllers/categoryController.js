@@ -15,6 +15,19 @@ exports.addCategory = (req, res) => {
   });
 };
 
+// Controller function to delete a category by ID
+exports.deleteCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.body; // Assuming the category ID is passed as a URL parameter
+
+    const result = await Category.deleteCategory(categoryId);
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 //calling of function to view all categories
 exports.viewCategories = (req, res) => {
   Category.viewCategories((err, catrgories) => {

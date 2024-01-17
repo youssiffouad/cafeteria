@@ -13,6 +13,7 @@ export const CategoriesContext = createContext({
   getErrorMsg: (FieldName) => {},
   errors: {},
   handleInputChange: (event) => {},
+  deleteCategory: (catid) => {},
 });
 
 export const CategoriesProvider = (props) => {
@@ -79,19 +80,43 @@ export const CategoriesProvider = (props) => {
     resetField("categoryName");
   };
 
+  //function to delete certain category
+  const deleteCategory = async (categoryId) => {
+    try {
+      const payload = { categoryId };
+      const response = await fetch(
+        `http://localhost:${serverport}/Categories/delete`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      console.log("here is the response i received", response);
+      if (!response.ok) {
+        throw new Error("failed to delete category internal server error");
+      }
+      await fetchCategories();
+      controlDisplay(true);
+      controlMsgContent("تم ازالة التصنيف بنجاح");
+    } catch (err) {
+      controlDisplay(true);
+      controlMsgContent("فشل ازالة التصنيف");
+    }
+  };
+
   return (
     <CategoriesContext.Provider
       value={{
         Categorieslist,
         updateCategorieslist,
-
         formState,
-
         validateField,
         getErrorMsg,
         errors,
         Msgcomponent,
         handleInputChange,
+        deleteCategory,
       }}
     >
       {props.children}

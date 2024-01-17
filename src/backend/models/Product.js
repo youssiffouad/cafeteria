@@ -28,6 +28,38 @@ class Product {
       }
     );
   }
+
+  //function to delete certain Product
+  static deleteProduct = async (prod_id) => {
+    return new Promise((res, rej) => {
+      const sql = "delete from Products where id = ?";
+      db.run(sql, prod_id, function (err) {
+        if (err) {
+          console.log("failed to delte Product with certain id", prod_id);
+          rej(err);
+        } else {
+          console.log("successfully deleted the  product with id", prod_id);
+          res({ message: "successfully deleted the  product" });
+        }
+      });
+    });
+  };
+
+  //function to delete all Products of certain categories
+  static deleteAllProdOfCertainCategory = async (catid) => {
+    return new Promise((res, rej) => {
+      const sql = "delete from Products where category_id =?";
+      db.run(sql, [catid], function (err) {
+        if (err) {
+          console.log("failed to delete all products of certain category");
+          rej(err);
+        } else {
+          console.log("successfully deleted all Products of category", catid);
+          res({ message: "successfully deleted all Products of category" });
+        }
+      });
+    });
+  };
   //function to view all products with vendor details
   static viewProducts(callback) {
     db.all(
