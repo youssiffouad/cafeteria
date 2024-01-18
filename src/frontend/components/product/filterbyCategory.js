@@ -143,12 +143,15 @@ const FilterProdBYCat = (props) => {
             onChange={catChangeHandler}
           >
             <option value="">اختر التصنيف</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-                {cat.id}
-              </option>
-            ))}
+            {categories.map((cat) => {
+              if (!(props.hideSandwiches && cat.id === 1)) {
+                return (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                );
+              }
+            })}
           </select>
         </label>
         {!orderItemCtx.formState.cat.valid && (

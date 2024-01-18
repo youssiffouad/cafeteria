@@ -50,7 +50,7 @@ const AddNewLot = () => {
         }}
       >
         <div className="row">
-          <FilterProdBYCat />
+          <FilterProdBYCat hideSandwiches={true} />
           <div className="col">
             <label className="label">
               الكمية:

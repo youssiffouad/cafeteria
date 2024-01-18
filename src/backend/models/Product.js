@@ -108,7 +108,55 @@ class Product {
       });
     });
   }
+  //function to get buying price of certain product
+  static getBuyingPrice(productID) {
+    return new Promise((res, rej) => {
+      const sql = `SELECT buying_price FROM Products WHERE id = ?`;
+      db.get(sql, productID, function (err, row) {
+        if (err) {
+          console.log(`failed to get buying price of${productID}`, err);
+          rej(err);
+        } else {
+          console.log(`successfully got the buying price ${row.buying_price}`);
+          res(row.buying_price);
+        }
+      });
+    });
+  }
 
+  //function to update selling price of product
+  static updateSellingPrice = async (selling_price, productId) => {
+    return new Promise((res, rej) => {
+      const sql = "update Products set selling_price =? where id =? ";
+      const params = [selling_price, productId];
+      db.run(sql, params, function (err) {
+        if (err) {
+          console.log("failed to update seeling price of the product");
+          rej(err);
+        } else {
+          console.log("successfully updated selling price of the product");
+          res();
+        }
+      });
+    });
+  };
+
+  //function to update Product Buying Price
+  static updateBuyingPrice = async (buying_price, productId) => {
+    return new Promise((res, rej) => {
+      const sql = "update Products set buying_price =? where id =? ";
+      const params = [buying_price, productId];
+      db.run(sql, params, function (err) {
+        if (err) {
+          console.log("failed to update buying price of product");
+          rej(err);
+        } else {
+          console.log("successfully updated buying price of product");
+          res();
+        }
+      });
+    });
+  };
   // Function to update product quantity in the Products table
   static async updateProductQuantity(productID, quantity) {
     await new Promise((resolve, reject) => {

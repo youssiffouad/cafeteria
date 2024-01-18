@@ -117,10 +117,13 @@ exports.viewLots = (req, res) => {
 
 //calling of fn to insatll payment of certain lot
 exports.installLot = async (req, res) => {
-  const { lot_id } = req.body;
-  console.log(
-    `yalahahahahahahahahahahwywywywywywywywywhahahahaywywywywywywywhahahawyywywywywyw${lot_id}`
-  );
-  await Lot.installLot(lot_id);
+  try {
+    const { lot_id } = req.body;
+
+    const result = await Lot.installLot(lot_id);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 // Add other lot-related controller methods here

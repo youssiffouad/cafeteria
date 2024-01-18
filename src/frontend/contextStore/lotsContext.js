@@ -112,67 +112,93 @@ export const LotProvider = (props) => {
       // Handle error
     }
   };
-
-  const installLot = (lot_id) => {
-    const lotid = { lot_id };
-    console.log(lotid);
-    console.log(` i callled after the press`);
-    fetch(`http://localhost:${serverport}/lots/install`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(lotid),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to install lot");
+  //function to handle instaling of lot(دفع المبلغ المتبقي)
+  const installLot = async (lot_id) => {
+    try {
+      const lotid = { lot_id };
+      console.log(lotid);
+      console.log(` i callled after the press`);
+      const response = await fetch(
+        `http://localhost:${serverport}/lots/install`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(lotid),
         }
-        fetchLots();
-        alert("Lot installed successfully");
+      );
 
-        // Perform any necessary actions after adding the lot
-      })
-      .catch((error) => {
-        console.error(error);
-        alert(error.message);
-        // Handle error
-      });
+      if (!response.ok) {
+        throw new Error("Failed to install lot");
+      }
+      fetchLots();
+      controlDisplay(true);
+      controlMsgContent(" تم  دفع المبلع المتبقي بنجاح");
+
+      // Perform any necessary actions after adding the lot
+    } catch (error) {
+      console.error(error);
+      controlDisplay(true);
+      controlMsgContent("فشل  دفع المبلع المتبقي");
+    }
+  };
+  //function to reset states of form of adding new lot
+  const resetState = () => {
+    prodAndCatCtx.resetField("prod");
+    prodAndCatCtx.resetField("cat");
+    resetField("quantity");
+    resetField("cost");
+    resetField("paidAmount");
+    resetField("received_date");
   };
 
-  const updateLotList = () => {
-    const lotdata = {
-      productID: prodAndCatCtx.formState.prod.value,
-      catid: prodAndCatCtx.formState.cat.value,
-      quantity: formState.quantity.value,
-      cost: formState.cost.value,
-      paidAmount: formState.paidAmount.value,
-      received_date: formState.received_date.value,
-    };
-    console.log("here is the lot data i will send to the backend", lotdata);
+  //function that handles adding new lot
+  const updateLotList = async () => {
+    try {
+      const lotdata = {
+        productID: prodAndCatCtx.formState.prod.value,
+        catid: prodAndCatCtx.formState.cat.value,
+        quantity: formState.quantity.value,
+        cost: formState.cost.value,
+        paidAmount: formState.paidAmount.value,
+        received_date: formState.received_date.value,
+      };
+      console.log("here is the lot data i will send to the backend", lotdata);
 
-    fetch(`http://localhost:${serverport}/lots/addordinaryLot`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(lotdata),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to add lot");
+      const response = await fetch(
+        `http://localhost:${serverport}/lots/addordinaryLot`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(lotdata),
         }
-        // Perform any necessary actions after adding the lot
-        fetchLots();
-        controlMsgContent(`successfully added the new lot`);
-        controlDisplay(true);
-      })
-      .catch((error) => {
-        console.error(error);
-        controlMsgContent(`failed to add the new lot : ${error}`);
-        controlDisplay(true);
-        // Handle error
-      });
+      );
+      const data = await response.json();
+      console.log("here is the response i got on adding a new lot", data);
+
+      if (!response.ok) {
+        throw new Error("Failed to add lot");
+      }
+      fetchLots();
+      controlDisplay(true);
+      if (data.BuyingPriceChange) {
+        const newSellingPrice = formState.cost.value / formState.quantity.value;
+        controlMsgContent(
+          `تم اضافة المشتريات بنجاح و تغيير سعر المنتج الي ${newSellingPrice}`
+        );
+      } else {
+        controlMsgContent(`تم اضافة المشتريات بنجاح  `);
+      }
+      resetState();
+    } catch (error) {
+      console.error(error);
+      controlMsgContent(`failed to add the new lot : ${error}`);
+      controlDisplay(true);
+      // Handle error
+    }
     // Reset form fields
   };
 

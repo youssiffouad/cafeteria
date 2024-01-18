@@ -37,7 +37,23 @@ const addOrdinaryLot = async (
           received_date,
           payment_method
         );
-
+        //step2- update product buying price if not suitable to the lot cost
+        //------(a)get product Buying price
+        const oldProdBuyingPrice = await Product.getBuyingPrice(productID);
+        //-----(b)compare prod Buying price to the lot cost divivded by its number of items
+        let newBuyingPrice = cost / quantity;
+        console.log(
+          "here is the prod Buying price",
+          oldProdBuyingPrice,
+          "and the cost of lot per no of unit",
+          newBuyingPrice
+        );
+        let BuyingPriceChange = false;
+        if (oldProdBuyingPrice !== newBuyingPrice) {
+          //------(c)update the prod Buying price
+          BuyingPriceChange = true;
+          await Product.updateBuyingPrice(newBuyingPrice, productID);
+        }
         //step2- update product, finance and vendors
         await Product.updateProductQuantity(productID, quantity);
         await updateProductInStockValue(productID, quantity);
@@ -56,7 +72,11 @@ const addOrdinaryLot = async (
             }
           });
         });
-        resolve({ message: "succesfully added an ordinary lot", lotID });
+        resolve({
+          message: "succesfully added an ordinary lot",
+          BuyingPriceChange,
+          lotID,
+        });
       });
     } catch (err) {
       console.log("failed to add ordinary lot", err);

@@ -14,14 +14,21 @@ export const OrderItemContext = createContext({
   formState: {},
   handleProdPriceChange: (pp) => {},
   prodPrice: "",
+  resetField: (fn) => {},
 });
 
 export const OrderItemProvider = (props) => {
   const cat = { value: "", valid: true };
   const prod = { value: "", valid: true };
   const quantity = { value: "", valid: true };
-  const { handleInputChange, validateField, getErrorMsg, errors, formState } =
-    useFormValidation({ cat, prod, quantity });
+  const {
+    handleInputChange,
+    validateField,
+    getErrorMsg,
+    errors,
+    formState,
+    resetField,
+  } = useFormValidation({ cat, prod, quantity });
 
   const [prodPrice, setprodPrice] = useState("");
   const [orderitems, setorderitems] = useState([]);
@@ -59,6 +66,7 @@ export const OrderItemProvider = (props) => {
         formState,
         handleProdPriceChange,
         prodPrice,
+        resetField,
       }}
     >
       {props.children}
