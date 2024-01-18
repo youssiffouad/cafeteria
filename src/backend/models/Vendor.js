@@ -40,46 +40,38 @@ class Vendor {
       const sql = `SELECT owedmoney FROM Vendors WHERE id = ?`;
       db.get(sql, vendorId, function (err, row) {
         if (err) {
+          console.log("failed to get owed money of the vendor");
           rej(err);
         } else {
-          res(row.owed_money);
+          res(row.owedmoney);
         }
       });
     });
   };
 
-  //fn to change vendor owedmoney (it should take a paramter to determine
-  // wether it is product lot or component lot)---> 0 for product,,,,, 1 for component
-  //type 0---->product,,,,,1------>component
-  //lotid-------> i sthe lotid
-  //remaining paymetn is added to the current owed money
-  static changeVendoerOwedMoney = async (type, lotid, remainingPayment) => {
-    try {
-      console.log("before getting hte wrong one");
-      const vendorid = await Vendor.getVendorIdFromLotId(type, lotid);
-      console.log("after getting hte wrong one");
-      console.log(`the vendorid is ${vendorid}`);
+  //fn to change vendor owedmoney
 
-      db.run(
-        `UPDATE Vendors SET owedmoney =owedmoney+ ${remainingPayment} WHERE id = ${vendorid}`,
-        (err) => {
+  //installQuantity is added to the current owed money
+  //vendor id is the id of which whose owed money will change
+  static changeVendoerOwedMoney = async (newValue, vendorid) => {
+    try {
+      await new Promise((res, rej) => {
+        const sql = `UPDATE Vendors SET owedmoney =owedmoney+ ? WHERE id = ?`;
+        const params = [newValue, vendorid];
+        db.run(sql, params, (err) => {
           if (err) {
-            console.error(err);
-            // db.run("ROLLBACK");
+            console.error("failed to change vendor owed money", err);
+            rej(err);
           } else {
-            console.log(`the remaining payment equals ${remainingPayment}`);
-            console.log(`the vendorid is ${vendorid}`);
-            finance.updatemyDebt(remainingPayment, (err) => {
-              if (err) {
-                console.error(err);
-              }
-            });
+            res();
           }
-        }
-      );
-    } catch (error) {
-      console.error("a problem exists", error);
-      throw error;
+        });
+      });
+      console.log(`the new vendor owed money value ${newValue}`);
+      console.log(`the vendorid is ${vendorid}`);
+    } catch (err) {
+      console.log("i caught the error while changing vendor oqed money", err);
+      throw err;
     }
   };
 

@@ -54,12 +54,13 @@ const addOrdinaryLot = async (
           BuyingPriceChange = true;
           await Product.updateBuyingPrice(newBuyingPrice, productID);
         }
-        //step2- update product, finance and vendors
+        //step3- update product, finance and vendors
         await Product.updateProductQuantity(productID, quantity);
         await updateProductInStockValue(productID, quantity);
         await Finance.changeCashVlaue(-paidAmount);
         await Finance.updatemyDebt(cost - paidAmount);
-        await Vendor.changeVendoerOwedMoney(0, lotID, rem); // Use lotID and rem variables
+        const vendor_id = await Vendor.getVendorIdFromLotId(0, lotID);
+        await Vendor.changeVendoerOwedMoney(cost - paidAmount, vendor_id); // Use lotID and rem variables
         await new Promise((res, rej) => {
           db.run("COMMIT", function (err) {
             if (err) {

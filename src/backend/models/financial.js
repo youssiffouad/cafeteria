@@ -132,7 +132,7 @@ class Finance {
           console.error(err);
           rej(err);
         } else {
-          console.log(`my debt updated successfully`);
+          console.log(`my debt updated successfully added`, addedDebt);
           res(null);
         }
       });

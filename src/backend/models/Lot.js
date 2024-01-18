@@ -31,6 +31,7 @@ class Lot {
             rej(err);
           } else {
             const remaining_payment = row ? row.remaining_payment : null;
+            console.log("here is the remaoning payment", remaining_payment);
             res(remaining_payment);
           }
         }
@@ -189,10 +190,15 @@ class Lot {
   static SetRemainingPayment = async (lotid, newValue) => {
     return new Promise((res, rej) => {
       const sql = `UPDATE Lots SET remaining_payment = ? WHERE id = ?`;
-      const params = [lotid, newValue];
+      const params = [newValue, lotid];
       db.run(sql, params, function (err) {
-        if (err) rej(err);
-        else res();
+        if (err) {
+          console.log("failed to det remaining payment");
+          rej(err);
+        } else {
+          console.log("successfully set the remaining payment equal", newValue);
+          res();
+        }
       });
     });
   };
@@ -220,6 +226,11 @@ class Lot {
 
           const installQuan = remainingPayment;
           const updatedRemainingPayment = remainingPayment - installQuan;
+          console.log("remaining payemnt equal", remainingPayment);
+          console.log(
+            "updatedRemainingPayment payemnt equal",
+            updatedRemainingPayment
+          );
           await Lot.SetRemainingPayment(lotId, updatedRemainingPayment);
 
           //change product Vendor owed money if the lot is product
@@ -227,9 +238,13 @@ class Lot {
           const vendorId = await Vendor.getVendorIdFromLotId(0, lotId);
 
           const owedMoney = await Vendor.getOwedMoneyOfvendor(vendorId);
-          await Vendor.changeVendoerOwedMoney(0, lotId, remainingPayment);
+          console.log("owedMoney payemnt equal", owedMoney);
+          await Vendor.changeVendoerOwedMoney(
+            owedMoney - installQuan,
+            vendorId
+          );
           await Finance.updatemyDebt(-installQuan);
-          await Finance.changeCashVlaue(installQuan);
+          await Finance.changeCashVlaue(-installQuan);
           await new Promise((res, rej) => {
             db.run("commit", function (err) {
               if (err) {
@@ -256,16 +271,6 @@ class Lot {
         reject(err);
       }
     });
-    try {
-      callback(null, {
-        message: "Lot installed successfully",
-        lot_id: lotId,
-      });
-    } catch (error) {
-      console.error(error);
-      callback(error);
-      throw error;
-    }
   }
 
   // Function to delete lot row
