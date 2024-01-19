@@ -47,7 +47,8 @@ const addComponentLot = async (
 
         await Finance.changeCashVlaue(-paidAmount);
         await Finance.updatemyDebt(cost - paidAmount);
-        await Vendor.changeVendoerOwedMoney(1, lotID, rem); // Use lotID and rem variables
+        const vendorid = Vendor.getVendorIdFromLotId(1, lotID);
+        await Vendor.changeVendoerOwedMoney(rem, vendorid); // Use lotID and rem variables
         await new Promise((res, rej) => {
           db.run("COMMIT", (err) => {
             if (err) {

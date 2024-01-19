@@ -35,9 +35,12 @@ const deleteProductLot = async (lotid) => {
         //5- decrease product in stock value
         await updateProductInStockValue(productID, -quantity);
         //6-decrease vendor owed money
-        await Vendor.changeVendoerOwedMoney(0, lotid, -rem);
-        //7- increase cash value
+        //-----(a)-get vendor id from lotid
+        const vendor_id = await Vendor.getVendorIdFromLotId(0, lotid);
+        await Vendor.changeVendoerOwedMoney(-rem, vendor_id);
+        //7- increase cash value and decrease debt value
         await Finance.changeCashVlaue(paidAmount);
+        await Finance.updatemyDebt(paidAmount - cost);
         //8- delete the lot row from the lots table
         await Lot.removeLotRow(lotid);
         await new Promise((res, rej) => {

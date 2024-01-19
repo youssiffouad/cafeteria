@@ -14,6 +14,7 @@ export const ProductContext = createContext({
   vendors: [],
   categories: [],
   Msgcomponent: "",
+  deleteProduct: (prod_id) => {},
 });
 
 export const ProductProvider = (props) => {
@@ -44,6 +45,29 @@ export const ProductProvider = (props) => {
     buying_price,
   });
 
+  //function to delete certian product
+  const deleteProduct = async (prod_id) => {
+    try {
+      const payload = { prod_id };
+      const response = await fetch(
+        `http://localhost:${serverport}/products/delete`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      const data = await response.json();
+      fetchProducts();
+      controlDisplay(true);
+      controlMsgContent("تم ازالة المنتج بنجاح");
+    } catch (err) {
+      controlDisplay(true);
+      controlMsgContent("فشل ازالة المنتج ");
+    }
+  };
+
+  //function to fetch the products from hte database
   const fetchProducts = () => {
     fetch(`http://localhost:${serverport}/products/view`)
       .then((response) => response.json())
@@ -77,6 +101,15 @@ export const ProductProvider = (props) => {
       });
   }, []);
 
+  //function to reset all fields
+  const resetFields = () => {
+    resetField("prodName");
+    resetField("vendorId");
+    resetField("catid");
+    resetField("sellingPrice");
+    resetField("buying_price");
+  };
+  //function to update products list (adding new product)
   const updateprodlist = () => {
     const productData = {
       name: formState.prodName.value,
@@ -99,22 +132,18 @@ export const ProductProvider = (props) => {
         console.log(data);
         // Perform any necessary actions after adding the product
         fetchProducts();
-        controlMsgContent(`successfully adde new Product`);
+        controlMsgContent(`تم اضافة منتج جديد بنجاح`);
         controlDisplay(true);
       })
       .catch((error) => {
-        console.error("Failed to add product:", error);
+        console.error("فشل اضافة منتج جديد", error);
         controlMsgContent(`failed to add new Product`);
         controlDisplay(true);
         // Handle error
       });
 
     // Reset form fields
-    resetField("prodName");
-    resetField("vendorId");
-    resetField("sellingPrice");
-
-    resetField("quantity");
+    resetFields();
   };
 
   return (
@@ -127,7 +156,7 @@ export const ProductProvider = (props) => {
         getErrorMsg,
         handleInputChange,
         validateField,
-
+        deleteProduct,
         vendors,
         categories,
         Msgcomponent,

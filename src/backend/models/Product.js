@@ -1,4 +1,6 @@
+const deleteLotsOfProduct = require("../businessLogic/deleteAllLotsOfCertainProduct");
 const db = require("./db");
+const Lot = require("./Lot");
 
 class Product {
   //function to add new product
@@ -29,9 +31,10 @@ class Product {
     );
   }
 
-  //function to delete certain Product
+  //function to delete certain Product(u have to delete its lots also)
   static deleteProduct = async (prod_id) => {
-    return new Promise((res, rej) => {
+    return new Promise(async (res, rej) => {
+      await deleteLotsOfProduct(prod_id);
       const sql = "delete from Products where id = ?";
       db.run(sql, prod_id, function (err) {
         if (err) {

@@ -39,7 +39,7 @@ class Lot {
     });
   }
   //function to get component id of certain lot
-  static getComponentId(lotId) {
+  static async getComponentId(lotId) {
     return new Promise((res, rej) => {
       const sql = `select component_id from Lots where id = ?`;
 
@@ -73,7 +73,7 @@ class Lot {
     });
   }
 
-  static getQuantity(lotid) {
+  static async getQuantity(lotid) {
     return new Promise((res, rej) => {
       db.get(`SELECT quantity FROM Lots WHERE id = ${lotid}`, (err, row) => {
         if (err) {
@@ -272,6 +272,26 @@ class Lot {
       }
     });
   }
+
+  //function to get lots of certain product
+  static getLotsOfProduct = async (prodid) => {
+    try {
+      return new Promise((res, rej) => {
+        const sql = "select id from Lots where product_id =?";
+        db.all(sql, prodid, (err, rows) => {
+          if (err) {
+            console.log("failed to get lot ids of certain product");
+            rej(err);
+          } else {
+            console.log("successfully got hte lot ids of certain product");
+            res(rows);
+          }
+        });
+      });
+    } catch (err) {
+      throw err;
+    }
+  };
 
   // Function to delete lot row
   static removeLotRow(lotid) {

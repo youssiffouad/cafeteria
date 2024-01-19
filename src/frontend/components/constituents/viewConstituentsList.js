@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { ConstituentContext } from "../../contextStore/constituentContext";
+import { formatNo } from "../../Hooks/formatno";
 const ConstituentList = () => {
   const constituentCtx = useContext(ConstituentContext);
 
@@ -24,7 +25,7 @@ const ConstituentList = () => {
             <tr key={constituent.id}>
               <td>{constituent.name}</td>
               <td>{constituent.price_per_unit}</td>
-              <td>{constituent.number_of_units}</td>
+              <td>{formatNo(constituent.number_of_units)}</td>
             </tr>
           ))}
         </tbody>

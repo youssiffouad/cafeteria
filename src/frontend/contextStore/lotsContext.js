@@ -79,7 +79,7 @@ export const LotProvider = (props) => {
         } else {
           console.log(" here is the response from backend", response);
           await fetchLots();
-          controlMsgContent(`successfully deleted the product lot`);
+          controlMsgContent(`تم ازالة مشتريات المنتج بنجاح`);
           controlDisplay(true);
         }
       } else if (type === "Component") {
@@ -101,13 +101,13 @@ export const LotProvider = (props) => {
           const data = await response.json();
           console.log(" here is the response from backend", data);
           await fetchLots();
-          controlMsgContent(`successfully deleted the Component lot`);
+          controlMsgContent(`تم ازالة مشتريات المكون بنجاح`);
           controlDisplay(true);
         }
       }
     } catch (err) {
       console.error(err);
-      controlMsgContent(`failed to delete the lot :${err}`);
+      controlMsgContent(`فشل ازالة المشتريات  :${err}`);
       controlDisplay(true);
       // Handle error
     }

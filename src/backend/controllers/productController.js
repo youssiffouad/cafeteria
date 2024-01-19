@@ -1,3 +1,6 @@
+const {
+  deleteProduct,
+} = require("../businessLogic/deleteAllLotsOfCertainProduct");
 const Product = require("../models/Product");
 
 //calling of function to add new product
@@ -20,7 +23,16 @@ exports.addProduct = (req, res) => {
     }
   );
 };
-
+//calling of fn ot delete product
+exports.deleteProduct = async (req, res) => {
+  const { prod_id } = req.body;
+  try {
+    const result = await deleteProduct(prod_id);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: "failed to dete certain product" });
+  }
+};
 //calling of funstion to view all products
 exports.viewProducts = (req, res) => {
   Product.viewProducts((err, products) => {

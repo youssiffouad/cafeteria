@@ -1,7 +1,10 @@
 import React, { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { ProductContext } from "../../contextStore/productsContext";
+import { formatNo } from "../../Hooks/formatno";
 const ProductList = () => {
   const prodCtx = useContext(ProductContext);
 
@@ -33,9 +36,20 @@ const ProductList = () => {
               <td>{product.catname}</td>
 
               <td>{product.selling_price}</td>
-              <td>{product.buying_price}</td>
+              <td>{formatNo(product.buying_price)}</td>
               <td>{product.quantity}</td>
-              <td>{product.quantity * product.selling_price}</td>
+              <td>
+                {product.quantity * product.selling_price}
+
+                <FontAwesomeIcon
+                  className="me-4"
+                  icon={faTrash}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    prodCtx.deleteProduct(product.id);
+                  }}
+                />
+              </td>
             </tr>
           ))}
         </tbody>

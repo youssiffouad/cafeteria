@@ -53,11 +53,11 @@ class Vendor {
 
   //installQuantity is added to the current owed money
   //vendor id is the id of which whose owed money will change
-  static changeVendoerOwedMoney = async (newValue, vendorid) => {
+  static changeVendoerOwedMoney = async (addedValue, vendorid) => {
     try {
       await new Promise((res, rej) => {
-        const sql = `UPDATE Vendors SET owedmoney =owedmoney+ ? WHERE id = ?`;
-        const params = [newValue, vendorid];
+        const sql = `UPDATE Vendors SET owedmoney= owedmoney +  ? WHERE id = ?`;
+        const params = [addedValue, vendorid];
         db.run(sql, params, (err) => {
           if (err) {
             console.error("failed to change vendor owed money", err);
@@ -67,7 +67,7 @@ class Vendor {
           }
         });
       });
-      console.log(`the new vendor owed money value ${newValue}`);
+      console.log(`the new vendor owed money value ${addedValue}`);
       console.log(`the vendorid is ${vendorid}`);
     } catch (err) {
       console.log("i caught the error while changing vendor oqed money", err);

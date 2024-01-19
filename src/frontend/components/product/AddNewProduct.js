@@ -8,11 +8,6 @@ const NewProductForm = () => {
 
   useEffect(() => {
     console.log(productsCtx.errors);
-    console.log(productsCtx.getErrorMsg("prodName"));
-    console.log(productsCtx.getErrorMsg("vendorId"));
-    console.log(productsCtx.getErrorMsg("catid"));
-    console.log(productsCtx.getErrorMsg("sellingPrice"));
-    console.log(productsCtx.getErrorMsg("buying_price"));
   }, [productsCtx.errors]);
 
   const submissionHandler = (formdata) => {
@@ -128,11 +123,14 @@ const NewProductForm = () => {
                 }}
               >
                 <option value="">Select Category</option>
-                {productsCtx.categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
+                {productsCtx.categories.map((category) => {
+                  if (category.id !== 1)
+                    return (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    );
+                })}
               </select>
               {!productsCtx.formState.catid.valid && (
                 <p className="text-danger">
@@ -147,7 +145,7 @@ const NewProductForm = () => {
               <input
                 type="text"
                 name="sellingPrice"
-                value={productsCtx.sellingPrice}
+                value={productsCtx.formState.sellingPrice.value}
                 className={`form-control input ${
                   !productsCtx.formState.sellingPrice.valid && "is-invalid"
                 }`}
@@ -173,7 +171,7 @@ const NewProductForm = () => {
               <input
                 type="text"
                 name="buying_price"
-                value={productsCtx.buying_price}
+                value={productsCtx.formState.buying_price.value}
                 className={`form-control input ${
                   !productsCtx.formState.buying_price.valid && "is-invalid"
                 }`}
