@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import EditPriceOfConstituent from "./editPriceOfConstituent";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { ConstituentContext } from "../../contextStore/constituentContext";
@@ -24,7 +25,13 @@ const ConstituentList = () => {
           {constituentCtx.constituentsList.map((constituent) => (
             <tr key={constituent.id}>
               <td>{constituent.name}</td>
-              <td>{constituent.price_per_unit}</td>
+              <td>
+                <EditPriceOfConstituent
+                  price={constituent.price_per_unit}
+                  id={constituent.id}
+                  fetchConstituents={constituentCtx.viewConstituents}
+                />
+              </td>
               <td>{formatNo(constituent.number_of_units)}</td>
             </tr>
           ))}

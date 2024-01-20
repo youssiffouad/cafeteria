@@ -31,6 +31,7 @@ export const ConstituentProvider = (props) => {
     );
     const data = await response.json();
     setconstituentsList(data);
+    console.log("i will call view constituents");
   };
   //fetcing all current constituents as soon as the page loads
   useEffect(() => {

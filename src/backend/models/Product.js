@@ -31,23 +31,6 @@ class Product {
     );
   }
 
-  //function to delete certain Product(u have to delete its lots also)
-  static deleteProduct = async (prod_id) => {
-    return new Promise(async (res, rej) => {
-      await deleteLotsOfProduct(prod_id);
-      const sql = "delete from Products where id = ?";
-      db.run(sql, prod_id, function (err) {
-        if (err) {
-          console.log("failed to delte Product with certain id", prod_id);
-          rej(err);
-        } else {
-          console.log("successfully deleted the  product with id", prod_id);
-          res({ message: "successfully deleted the  product" });
-        }
-      });
-    });
-  };
-
   //function to delete all Products of certain categories
   static deleteAllProdOfCertainCategory = async (catid) => {
     return new Promise((res, rej) => {
