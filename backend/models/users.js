@@ -48,6 +48,7 @@ class Users {
     }
   }
 
+  //fn to authenticate user
   static async authenticateUser(name, password) {
     // Check if username exists
     try {
@@ -92,6 +93,33 @@ class Users {
       });
     } catch (error) {
       console.error(error);
+      throw error;
+    }
+  }
+
+  //fn to change password
+  static async changePassword(userId, newPassword) {
+    try {
+      return new Promise((res, rej) => {
+        db.run(
+          `UPDATE Users SET password = ? WHERE id = ?`,
+          [newPassword, userId],
+          function (err) {
+            if (err) {
+              console.error(err);
+              rej(err);
+            } else {
+              if (this.changes > 0) {
+                res({ message: "Password changed successfully" });
+              } else {
+                rej({ message: "User not found or password unchanged" });
+              }
+            }
+          }
+        );
+      });
+    } catch (error) {
+      console.error("error in changing password", error);
       throw error;
     }
   }
