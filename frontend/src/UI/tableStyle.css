@@ -1,0 +1,14 @@
+.tableTitlefont {
+  font-family: "Tajawal";
+  font-size: 45px;
+}
+.tableHeadfont {
+  font-family: "Tajawal";
+  font-size: 18px;
+}
+.inputValue {
+  font-family: "Tajawal";
+  font-weight: 600;
+  font-size: 17px;
+  color: rgb(51, 55, 71);
+}
