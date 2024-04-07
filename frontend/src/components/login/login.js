@@ -119,16 +119,18 @@ const Login = () => {
           />
           {passerror && <p className="text-danger"> password is incorrect</p>}
           <br />
-          <button type="submit" className="btn btn-primary add-btn">
-            دخول مستخدم
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary add-btn"
-            onClick={HandleGuestLogin}
-          >
-            دخول كزائر
-          </button>
+          <div>
+            <button type="submit" className="btn btn-primary add-btn ms-1">
+              دخول مستخدم
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary add-btn"
+              onClick={HandleGuestLogin}
+            >
+              دخول كزائر
+            </button>
+          </div>
         </form>
       </div>
     </>

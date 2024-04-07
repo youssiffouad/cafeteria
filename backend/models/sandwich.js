@@ -4,68 +4,64 @@ const Sandwich_Component = require("./sandwich_component");
 class Sandwich {
   // Add a new sandwich
   static async addSandwich(name, componentsList, sellingPrice) {
-    return new Promise((resolve, reject) => {
-      try {
-        db.serialize(async () => {
-          await new Promise((res, rej) => {
-            db.run("BEGIN TRANSACTION", function (err) {
-              if (err) {
-                rej(err);
-                console.log("failed to start hte txn of adding new sandwich");
-              } else {
-                console.log(
-                  "successfully started the txn of adding new sandwich"
-                );
-                res();
-              }
-            });
-          });
-
-          let cost = Sandwich.calculateCost(componentsList);
-          const sql = `INSERT INTO Sandwiches (name, cost, selling_price) VALUES (?, ?, ?)`;
-          const params = [name, cost, sellingPrice];
-          let sandwichId = await new Promise((res, rej) => {
-            db.run(sql, params, function (err) {
-              if (err) {
-                console.log(
-                  "error inserting new sandwich into sandwiches table"
-                );
-                db.run("rollback");
-                rej(err);
-              } else {
-                console.log(
-                  "here is the this of last id entered into sandwich table",
-                  this
-                );
-                res(this.lastID);
-              }
-            });
-          });
-
-          await Sandwich.performMapping(sandwichId, componentsList);
-
-          await new Promise((res, rej) => {
-            db.run("commit", function (err) {
-              if (err) {
-                db.run("rollback");
-                rej(err);
-              } else {
-                res();
-              }
-            });
-          });
-
-          resolve({
-            message: "Sandwich added successfully",
-            sandwich_id: sandwichId,
-          });
+    try {
+      await new Promise((res, rej) => {
+        db.run("BEGIN TRANSACTION", function (err) {
+          if (err) {
+            rej(err);
+            console.log("failed to start hte txn of adding new sandwich");
+          } else {
+            console.log("successfully started the txn of adding new sandwich");
+            res();
+          }
         });
-      } catch (err) {
-        db.run("rollback");
-        console.error("Error in transaction:", err);
-        reject(err);
-      }
-    });
+      });
+
+      let cost = Sandwich.calculateCost(componentsList);
+      const sql = `INSERT INTO Sandwiches (name, cost, selling_price) VALUES (?, ?, ?)`;
+      const params = [name, cost, sellingPrice];
+      let sandwichId = await new Promise((res, rej) => {
+        db.run(sql, params, function (err) {
+          if (err) {
+            console.log("error inserting new sandwich into sandwiches table");
+            db.run("rollback");
+            rej(err);
+          } else {
+            console.log(
+              "here is the this of last id entered into sandwich table",
+              this
+            );
+            res(this.lastID);
+          }
+        });
+      });
+
+      await Sandwich.performMapping(sandwichId, componentsList);
+
+      await new Promise((res, rej) => {
+        db.run("commit", function (err) {
+          if (err) {
+            db.run("rollback");
+            rej(err);
+          } else {
+            res();
+          }
+        });
+      });
+
+      return {
+        message: "Sandwich added successfully",
+        sandwich_id: sandwichId,
+      };
+      // resolve({
+      //   message: "Sandwich added successfully",
+      //   sandwich_id: sandwichId,
+      // });
+    } catch (err) {
+      db.run("rollback");
+      console.error("a7a level 4", err);
+      throw err;
+    }
   }
 
   //perform mapping between the sadwich and its components on adding new sandwich
@@ -83,11 +79,14 @@ class Sandwich {
             ele.component_id,
             sandwich_id,
             ele.mapping_value
-          );
+          ).catch((err) => {
+            console.log("a7a level 2", err);
+            throw err;
+          });
         })
       );
     } catch (err) {
-      console.error(err);
+      console.error("a7a level 3", err);
       throw err;
     }
   }

@@ -7,6 +7,7 @@ class Sandwich_Component {
       const params = [component_id, sandwich_id, mapping_value];
       db.run(sql, params, function (err) {
         if (err) {
+          console.log("a7a level 1", err);
           rej(err);
         } else {
           const sandwich_component_id = this.lastID;
