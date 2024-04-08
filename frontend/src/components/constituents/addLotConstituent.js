@@ -2,8 +2,10 @@ import { useContext } from "react";
 import { createPortal } from "react-dom";
 import { ConstituentContext } from "../../contextStore/constituentContext";
 import { ConstituentLotContext } from "../../contextStore/constituentLotContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
 
-const AddLotConstituent = () => {
+const AddLotConstituent = (props) => {
   const { constituentsList } = useContext(ConstituentContext);
   const LotConstitiuentCtx = useContext(ConstituentLotContext);
 
@@ -27,7 +29,7 @@ const AddLotConstituent = () => {
     if (v1 && v2 && v3) LotConstitiuentCtx.submissionHandler();
   };
   return (
-    <div className="container mb-5 add-container" dir="rtl">
+    <div className="container mb-5 add-container position-relative" dir="rtl">
       <h5 className="add-heading">شراء مكون جديد</h5>
       {createPortal(
         <LotConstitiuentCtx.Msgcomponent />,
@@ -153,6 +155,13 @@ const AddLotConstituent = () => {
           اضافة المكون
         </button>
       </form>
+      <button
+        onClick={() => props.toggleDisplay()}
+        className="btn btn-outline-info position-absolute"
+        style={{ bottom: "-20%", right: "0px" }}
+      >
+        شراء منتج <FontAwesomeIcon icon={faArrowsRotate} />
+      </button>
     </div>
   );
 };

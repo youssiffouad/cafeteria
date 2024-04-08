@@ -9,16 +9,11 @@ const LotChoice = () => {
   };
   return (
     <>
-      <button
-        className="btn btn-primary"
-        onClick={() => {
-          toggleDisplay();
-          console.log(toggle);
-        }}
-      >
-        {toggle ? "  اضافة منتج" : " اضافة مكون"}
-      </button>
-      {toggle ? <LotsWholeConstituent /> : <LotsWholeProducts />}
+      {toggle ? (
+        <LotsWholeConstituent toggleDisplay={toggleDisplay} />
+      ) : (
+        <LotsWholeProducts toggleDisplay={toggleDisplay} />
+      )}
     </>
   );
 };

@@ -12,7 +12,7 @@ exports.addSandwich = async (req, res) => {
     );
     res.status(200).json(result);
   } catch (error) {
-    console.error(error);
+    console.error("error in the controller of adding new sanadwich", error);
     res
       .status(500)
       .json({ error: "Internal server error: failed to add sandwich" });

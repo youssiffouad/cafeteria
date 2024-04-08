@@ -2,8 +2,10 @@ import React, { useContext, useEffect } from "react";
 
 import { ProductContext } from "../../contextStore/productsContext";
 import { createPortal } from "react-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
 
-const NewProductForm = () => {
+const NewProductForm = (props) => {
   const productsCtx = useContext(ProductContext);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ const NewProductForm = () => {
   };
 
   return (
-    <div className="add-container" dir="rtl">
+    <div className="add-container position-relative" dir="rtl">
       {createPortal(
         <productsCtx.Msgcomponent />,
         document.getElementById("popup-portal")
@@ -205,6 +207,13 @@ const NewProductForm = () => {
           اضافة
         </button>
       </form>
+      <button
+        className="position-absolute btn btn-outline-info"
+        style={{ bottom: "-23%", right: "0" }}
+        onClick={() => props.toggleDisplay()}
+      >
+        اظهار المكونات <FontAwesomeIcon icon={faArrowsRotate} />
+      </button>
     </div>
   );
 };

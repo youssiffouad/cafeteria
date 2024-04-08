@@ -1,7 +1,9 @@
 import { useContext } from "react";
 import { ConstituentContext } from "../../contextStore/constituentContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
 
-const AddNewConstituent = () => {
+const AddNewConstituent = (props) => {
   const ConstituentCtx = useContext(ConstituentContext);
   const submissionHandler = (formdata) => {
     const { constituentName, noOfUnits, priceOfUnit } = formdata;
@@ -16,7 +18,7 @@ const AddNewConstituent = () => {
   };
 
   return (
-    <div className="container mb-5 add-container" dir="rtl">
+    <div className="container mb-5 add-container position-relative" dir="rtl">
       <h5 className="add-heading">اضافة مكون جديد</h5>
       <form
         onSubmit={(event) => {
@@ -118,6 +120,13 @@ const AddNewConstituent = () => {
           اضافة المكون
         </button>
       </form>
+      <button
+        className="position-absolute btn btn-outline-info"
+        style={{ bottom: "-20%", right: "0" }}
+        onClick={() => props.toggleDisplay()}
+      >
+        اظهار المنتجات <FontAwesomeIcon icon={faArrowsRotate} />
+      </button>
     </div>
   );
 };

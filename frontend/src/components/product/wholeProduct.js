@@ -3,10 +3,10 @@ import { ProductProvider } from "../../contextStore/productsContext";
 import NewProductForm from "./AddNewProduct";
 import ProductList from "./products_list";
 
-const ProductWhole = () => {
+const ProductWhole = (props) => {
   return (
     <ProductProvider>
-      <NewProductForm />
+      <NewProductForm toggleDisplay={props.toggleDisplay} />
       <ProductList />
     </ProductProvider>
   );

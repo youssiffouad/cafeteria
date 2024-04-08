@@ -2,10 +2,10 @@ import { ConstituentProvider } from "../../contextStore/constituentContext";
 import AddNewConstituent from "./addnewCostituent";
 import ConstituentList from "./viewConstituentsList";
 
-const WholeConstituent = () => {
+const WholeConstituent = (props) => {
   return (
     <ConstituentProvider>
-      <AddNewConstituent />
+      <AddNewConstituent toggleDisplay={props.toggleDisplay} />
       <ConstituentList />
     </ConstituentProvider>
   );

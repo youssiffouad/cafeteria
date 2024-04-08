@@ -4,13 +4,13 @@ import { ConstituentLotProvider } from "../../contextStore/constituentLotContext
 import { LotProvider } from "../../contextStore/lotsContext";
 import AddLotConstituent from "../constituents/addLotConstituent";
 import LotList from "./LotsList";
-const LotsWholeConstituent = () => {
+const LotsWholeConstituent = (props) => {
   return (
     <ConstituentProvider>
       <LotProvider>
         <ConstituentLotProvider>
           {" "}
-          <AddLotConstituent />
+          <AddLotConstituent toggleDisplay={props.toggleDisplay} />
           <LotList />
         </ConstituentLotProvider>
       </LotProvider>

@@ -11,16 +11,11 @@ const ProdChoice = () => {
   };
   return (
     <>
-      <button
-        className="btn btn-primary"
-        onClick={() => {
-          toggleDisplay();
-          console.log(toggle);
-        }}
-      >
-        {toggle ? "  اظهار المنتجات" : " اظهار المكونات"}
-      </button>
-      {toggle ? <WholeConstituent /> : <ProductWhole />}
+      {toggle ? (
+        <WholeConstituent toggleDisplay={toggleDisplay} />
+      ) : (
+        <ProductWhole toggleDisplay={toggleDisplay} />
+      )}
     </>
   );
 };

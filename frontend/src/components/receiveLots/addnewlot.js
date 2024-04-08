@@ -1,11 +1,12 @@
 import React, { useContext, useEffect } from "react";
 import { LotContext } from "../../contextStore/lotsContext";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
 import FilterProdBYCat from "../product/filterbyCategory";
 import { createPortal } from "react-dom";
 import { OrderItemContext } from "../../contextStore/Order/OrderItemContext";
 
-const AddNewLot = () => {
+const AddNewLot = (props) => {
   const LotCtx = useContext(LotContext);
   const prodAndCatCtx = useContext(OrderItemContext);
   useEffect(() => {
@@ -27,7 +28,7 @@ const AddNewLot = () => {
   };
 
   return (
-    <div className="5 add-container" dir="rtl">
+    <div className="5 add-container position-relative" dir="rtl">
       {createPortal(
         <LotCtx.Msgcomponent />,
         document.getElementById("popup-portal")
@@ -157,6 +158,13 @@ const AddNewLot = () => {
           اضافة
         </button>
       </form>
+      <button
+        className="btn btn-outline-info position-absolute"
+        style={{ bottom: "-20%", right: "0px" }}
+        onClick={() => props.toggleDisplay()}
+      >
+        شراء مكون <FontAwesomeIcon icon={faArrowsRotate} />
+      </button>
     </div>
   );
 };
