@@ -9,6 +9,7 @@ import { selectAuth } from "../Redux_Store/authSlice";
 import { useDispatch } from "react-redux";
 import { logout } from "../Redux_Store/authSlice";
 import cafeteriaLogo from "./staticImages/cafeteriaLogo.jpg";
+import AdvancedDropdown from "./Order/advancedDropDown";
 
 const Navbar = () => {
   const [activetab, setactivetab] = useState("");
@@ -63,6 +64,11 @@ const Navbar = () => {
           onMouseEnter={() => settoggleHovered(true)}
           onMouseLeave={() => settoggleHovered(false)}
         >
+          <AdvancedDropdown
+            smallscreen={isSmall}
+            activetab={activetab}
+            handleTabClick={handleTabClick}
+          />
           <li className="nav-item">
             <Link
               to="/home/vendors"
@@ -70,35 +76,6 @@ const Navbar = () => {
               onClick={() => handleTabClick("vendors")}
             >
               الموردين
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/home/products"
-              className={`nav-link ${activetab === "products" ? "active" : ""}`}
-              onClick={() => handleTabClick("products")}
-            >
-              المنتجات
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/home/lots"
-              className={`nav-link ${activetab === "lots" ? "active" : ""}`}
-              onClick={() => handleTabClick("lots")}
-            >
-              المشتريات
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/home/categories"
-              className={`nav-link ${
-                activetab === "categories" ? "active" : ""
-              }`}
-              onClick={() => handleTabClick("categories")}
-            >
-              التصنيفات
             </Link>
           </li>
           <li className="nav-item">
@@ -112,23 +89,22 @@ const Navbar = () => {
               المستهلكين
             </Link>
           </li>
+          <li className="nav-item">
+            <Link
+              to="/home/lots"
+              className={`nav-link ${activetab === "lots" ? "active" : ""}`}
+              onClick={() => handleTabClick("lots")}
+            >
+              المشتريات
+            </Link>
+          </li>
 
           <OrderDropdown
             smallscreen={isSmall}
             activetab={activetab}
             handleTabClick={handleTabClick}
           />
-          <li className="nav-item">
-            <Link
-              to="/home/sandwiches"
-              className={`nav-link ${
-                activetab === "sandwiches" ? "active" : ""
-              }`}
-              onClick={() => handleTabClick("sandwiches")}
-            >
-              الساندوتشات
-            </Link>
-          </li>
+
           {auth.isLoggedIn && (
             <li className="nav-item">
               <Link
