@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { selectAuth } from "../Redux_Store/authSlice";
 import { useDispatch } from "react-redux";
 import { logout } from "../Redux_Store/authSlice";
+import cafeteriaLogo from "./staticImages/cafeteriaLogo.jpg";
 
 const Navbar = () => {
   const [activetab, setactivetab] = useState("");
@@ -45,7 +46,11 @@ const Navbar = () => {
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-between align-items-center">
-        <h2 className="text-center ms-5">cafeteria-STC</h2>
+        <img
+          src={cafeteriaLogo}
+          alt="Logo"
+          style={{ height: "50px", width: "50px" }}
+        />
         <FontAwesomeIcon
           icon={faBars}
           id="fawenav"
