@@ -195,7 +195,7 @@ export const LotProvider = (props) => {
       resetState();
     } catch (error) {
       console.error(error);
-      controlMsgContent(`failed to add the new lot : ${error}`);
+      controlMsgContent(`فشل اضافة مشتريات : ${error}`);
       controlDisplay(true);
       // Handle error
     }

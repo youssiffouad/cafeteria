@@ -10,6 +10,7 @@ const usePopUp = (btnText) => {
     setdisplay(arg);
   };
   const controlDisplayForm = (arg) => {
+    console.log("i am in control display form and here is the arg", arg);
     setDisplayForm(arg);
   };
   const controlMsgContent = (msg) => {
@@ -59,7 +60,17 @@ const usePopUp = (btnText) => {
   /*
    *** this is the button which will control the display of the popupForm
    */
-  const ControllerBtn = () => <button>{btnText}</button>;
+  const ControllerBtn = () => (
+    <button
+      className="btn btn-outline-info w-auto"
+      onClick={() => {
+        setDisplayForm((prev) => !prev);
+        console.log("i clicked the display button");
+      }}
+    >
+      {!displayForm ? btnText : `اخفاء`}
+    </button>
+  );
   return {
     Msgcomponent,
     FormContent,

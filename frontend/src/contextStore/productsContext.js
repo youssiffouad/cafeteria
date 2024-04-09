@@ -137,7 +137,7 @@ export const ProductProvider = (props) => {
       })
       .catch((error) => {
         console.error("فشل اضافة منتج جديد", error);
-        controlMsgContent(`failed to add new Product`);
+        controlMsgContent(`فشل اضافة منتج جديد`);
         controlDisplay(true);
         // Handle error
       });

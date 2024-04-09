@@ -67,11 +67,11 @@ export const CategoriesProvider = (props) => {
       fetchCategories();
 
       // Perform any necessary actions after adding the Categories
-      controlMsgContent("successfully added new category");
+      controlMsgContent("تم اضافة تصنيف جديد بنجاح");
       controlDisplay(true);
     } catch (error) {
       console.error("Failed to add Categories:", error);
-      controlMsgContent(`Failed to add Categories:, ${error}`);
+      controlMsgContent(`فشل اضافة تصنيف جديد:, ${error}`);
       controlDisplay(true);
       // Handle error
     }

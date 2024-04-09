@@ -67,11 +67,11 @@ export const VendorProvider = (props) => {
 
       console.log(data);
       fetchVendors();
-      controlMsgContent(`successfully added new vendor`);
+      controlMsgContent(`تم اضافة مورد جديد بنجاح`);
       controlDisplay(true);
       // Perform any necessary actions after adding the vendor
     } catch (error) {
-      controlMsgContent(`failed to add a new vendor ${error}`);
+      controlMsgContent(`فشل اضافة مورد جديد ${error}`);
       controlDisplay(true);
       console.error("Failed to add vendor:", error);
       // Handle error

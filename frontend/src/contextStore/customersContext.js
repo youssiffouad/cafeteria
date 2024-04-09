@@ -75,7 +75,7 @@ export const CustomerProvider = (props) => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        controlMsgContent("successfully added new customer");
+        controlMsgContent("تم اضافة مستهلك جديد بنجاح");
         controlDisplay(true);
         // Perform any necessary actions after adding the customer
         viewCustomers();
@@ -86,7 +86,7 @@ export const CustomerProvider = (props) => {
 
       .catch((error) => {
         console.error("Failed to add customer:", error);
-        controlMsgContent(`Failed to add customer, error`);
+        controlMsgContent(`فشل اضافة مستهلك جديد, error`);
         controlDisplay(true);
         // Handle error
       });
@@ -114,7 +114,7 @@ export const CustomerProvider = (props) => {
     } catch (err) {
       console.log(err);
       controlDisplay(true);
-      controlMsgContent("تم ازالة المستهلك بنجاح");
+      controlMsgContent("فشل ازالة المستهلك ");
     }
   };
   return (

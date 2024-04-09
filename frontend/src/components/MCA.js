@@ -1,5 +1,5 @@
 // mainContentConfig.js
-import React from "react";
+import React, { useEffect } from "react";
 import CategoryWhole from "./category/wholecategory";
 
 import CustomerWhole from "./customer/wholecustomer";
@@ -19,41 +19,76 @@ import LotChoice from "./receiveLots/lotchoice";
 
 import WholeSandwich from "./sandwiches/wholeSandwich";
 import { SandwichProvider } from "../contextStore/SandwichContext";
+import usePopUp from "../Hooks/use_popup";
 
-const TotalOfTodayWithProviders = () => (
-  <>
-    <OrderItemProvider>
-      <SandwichProvider>
+const TotalOfTodayWithProviders = () => {
+  const { ControllerBtn, controlFormJSX, FormContent } = usePopUp(
+    "اضافة مبيعات منتجات"
+  );
+  const payloadForm = <TotalOfToday />;
+  useEffect(() => {
+    controlFormJSX(payloadForm);
+  }, []);
+  return (
+    <>
+      <OrderItemProvider>
+        <SandwichProvider>
+          <OrderProvider>
+            <div className="d-flex flex-column align-content-center align-items-center mt-3">
+              <ControllerBtn />
+              <FormContent />
+            </div>
+            <OrderWhole />
+          </OrderProvider>
+        </SandwichProvider>
+      </OrderItemProvider>
+    </>
+  );
+};
+
+const CashOfTodayWithProviders = () => {
+  const { ControllerBtn, controlFormJSX, FormContent } =
+    usePopUp("اضافة ايرادات كاش ");
+  const payloadForm = <CashOfToday />;
+  useEffect(() => {
+    controlFormJSX(payloadForm);
+  }, []);
+  return (
+    <>
+      <OrderItemProvider>
         <OrderProvider>
-          <TotalOfToday />
+          <div className="d-flex flex-column align-content-center align-items-center mt-3">
+            <ControllerBtn />
+            <FormContent />
+          </div>
           <OrderWhole />
         </OrderProvider>
-      </SandwichProvider>
-    </OrderItemProvider>
-  </>
-);
+      </OrderItemProvider>
+    </>
+  );
+};
 
-const CashOfTodayWithProviders = () => (
-  <>
-    <OrderItemProvider>
-      <OrderProvider>
-        <CashOfToday />
-        <OrderWhole />
-      </OrderProvider>
-    </OrderItemProvider>
-  </>
-);
-
-const T2reshaOfTodayWithProviders = () => (
-  <>
-    <OrderItemProvider>
-      <OrderProvider>
-        <T2reshaOfToday />
-        <OrderWhole />
-      </OrderProvider>
-    </OrderItemProvider>
-  </>
-);
+const T2reshaOfTodayWithProviders = () => {
+  const { ControllerBtn, controlFormJSX, FormContent } =
+    usePopUp("اضافة  تقريشة ");
+  const payloadForm = <T2reshaOfToday />;
+  useEffect(() => {
+    controlFormJSX(payloadForm);
+  }, []);
+  return (
+    <>
+      <OrderItemProvider>
+        <OrderProvider>
+          <div className="d-flex flex-column align-content-center align-items-center mt-3">
+            <ControllerBtn />
+            <FormContent />
+          </div>
+          <OrderWhole />
+        </OrderProvider>
+      </OrderItemProvider>
+    </>
+  );
+};
 
 const mainContentArea = [
   { path: "vendors", element: <VendorWhole /> },

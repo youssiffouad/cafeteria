@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { selectAuth } from "../Redux_Store/authSlice";
 import { useDispatch } from "react-redux";
 import { logout } from "../Redux_Store/authSlice";
-import cafeteriaLogo from "./staticImages/cafeteriaLogo.jpg";
+import cafeteriaLogo from "./staticImages/logo.png";
 import AdvancedDropdown from "./Order/advancedDropDown";
 
 const Navbar = () => {
@@ -123,7 +123,7 @@ const Navbar = () => {
             className="btn btn-secondary add-btn"
             onClick={() => handleLogout()}
           >
-            logout
+            خروج
           </button>
         </ul>
       </nav>

@@ -83,7 +83,7 @@ const NewCustomerForm = () => {
               >
                 <option value="">اختر الرتبة/ الدرجة</option>
                 {customerCtx.ranks.map((rank) => (
-                  <option key={rank.id} value={rank.id}>
+                  <option className="inputValue" key={rank.id} value={rank.id}>
                     {rank.name}
                   </option>
                 ))}
