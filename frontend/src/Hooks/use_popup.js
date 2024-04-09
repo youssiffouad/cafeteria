@@ -1,13 +1,23 @@
 import { useState } from "react";
 
-const usePopUp = () => {
+const usePopUp = (btnText) => {
   const [display, setdisplay] = useState(false);
   const [msgContent, setmsgContent] = useState("");
+  const [formJSX, setformJSX] = useState(null);
+  const [displayForm, setDisplayForm] = useState(false);
+
   const controlDisplay = (arg) => {
     setdisplay(arg);
   };
+  const controlDisplayForm = (arg) => {
+    setDisplayForm(arg);
+  };
   const controlMsgContent = (msg) => {
     setmsgContent(msg);
+  };
+  const controlFormJSX = (arg) => {
+    console.log("here is the form i received", arg);
+    setformJSX(arg);
   };
   const Msgcomponent = () => (
     <>
@@ -44,6 +54,20 @@ const usePopUp = () => {
       )}
     </>
   );
-  return { Msgcomponent, controlDisplay, controlMsgContent };
+  const FormContent = () => <>{displayForm && formJSX}</>;
+
+  /*
+   *** this is the button which will control the display of the popupForm
+   */
+  const ControllerBtn = () => <button>{btnText}</button>;
+  return {
+    Msgcomponent,
+    FormContent,
+    controlDisplay,
+    controlDisplayForm,
+    controlMsgContent,
+    controlFormJSX,
+    ControllerBtn,
+  };
 };
 export default usePopUp;
