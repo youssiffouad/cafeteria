@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const usePopUp = (btnText) => {
   const [display, setdisplay] = useState(false);
@@ -20,41 +20,50 @@ const usePopUp = (btnText) => {
     console.log("here is the form i received", arg);
     setformJSX(arg);
   };
-  const Msgcomponent = () => (
-    <>
-      {display && (
-        <div className="overlay">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-body">
-                <h1
-                  style={{
-                    fontFamily: "Tajawal",
-                    fontWeight: "600",
-                    color: "rgb(51, 55, 71)",
-                  }}
-                >
-                  {msgContent}
-                </h1>
-              </div>
-              <div className="modal-footer">
-                <button
-                  onClick={() => {
-                    setdisplay(false);
-                  }}
-                  type="button"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
-                >
-                  Close
-                </button>
+  const Msgcomponent = () => {
+    useEffect(() => {
+      console.log(
+        "In UseEffect here is the display.It changed !!!!!!!",
+        display
+      );
+    }, [display]);
+    console.log(" here is the display.It changed !!!!!!!", display);
+    return (
+      <>
+        {display && (
+          <div className="overlay">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-body">
+                  <h1
+                    style={{
+                      fontFamily: "Tajawal",
+                      fontWeight: "600",
+                      color: "rgb(51, 55, 71)",
+                    }}
+                  >
+                    {msgContent}
+                  </h1>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    onClick={() => {
+                      setdisplay(false);
+                    }}
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </>
-  );
+        )}
+      </>
+    );
+  };
   const FormContent = () => <>{displayForm && formJSX}</>;
 
   /*
@@ -64,6 +73,7 @@ const usePopUp = (btnText) => {
     <button
       className="btn btn-outline-info w-auto"
       onClick={() => {
+        setdisplay(true);
         setDisplayForm((prev) => !prev);
         console.log("i clicked the display button");
       }}

@@ -55,24 +55,16 @@ class Finance {
   //function to change cash value
   static changeCashVlaue = async (amountAdded) => {
     await new Promise((res, rej) => {
-      if (typeof amountAdded !== "number" || isNaN(amountAdded)) {
-        const err = new Error(
-          "the argument sent to change cash is not a number"
-        );
-        console.log(err);
-        rej(err);
-      } else {
-        const sql = "update Financial set cash = cash + ? where id=1";
-        db.run(sql, amountAdded, function (err) {
-          if (err) {
-            console.log("failed to change cash value", err);
-            rej(err);
-          } else {
-            console.log("successfully changd the csh value");
-            res();
-          }
-        });
-      }
+      const sql = "update Financial set cash = cash + ? where id=1";
+      db.run(sql, amountAdded, function (err) {
+        if (err) {
+          console.log("failed to change cash value", err);
+          rej(err);
+        } else {
+          console.log("successfully changd the csh value");
+          res();
+        }
+      });
     });
   };
 

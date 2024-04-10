@@ -79,7 +79,7 @@ class Order {
   static getTotalOrderCost(orderID) {
     return new Promise((res, rej) => {
       db.get(
-        `SELECT price
+        `SELECT *
         FROM Orders where id=${orderID}
       `,
         (err, row) => {
@@ -87,7 +87,7 @@ class Order {
             console.error("failed to get total order cost", err);
             rej(err);
           } else {
-            console.log(row);
+            console.log(row, orderID);
             console.log(`iam totalordercost`);
             console.log(row.price);
 

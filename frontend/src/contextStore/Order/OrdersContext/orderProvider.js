@@ -109,13 +109,13 @@ export const OrderProvider = (props) => {
       const data = await fetchOrders();
 
       setOrders(data);
-      controlMsgContent(`successfully updated T2resha`);
+      controlMsgContent(`تم تحديث التقريشة بنجاح`);
       controlDisplay(true);
       resetField("t2reshaperPerson");
       resetField("orderDate");
       resetField("customerId");
     } catch (err) {
-      controlMsgContent(`failed to  update T2resha`);
+      controlMsgContent(`فشل تحديث التقريشة`);
       controlDisplay(true);
     }
   };
@@ -141,12 +141,12 @@ export const OrderProvider = (props) => {
       console.log("here is the orders with items", orderswithItem);
       console.log("here is the data fetched", data);
 
-      controlMsgContent(`successfully updated cash today`);
+      controlMsgContent(`تم تحديث الايرادات النقدية بنجاح`);
       controlDisplay(true);
       resetField("orderDate");
       resetField("cashtoday");
     } catch (error) {
-      controlMsgContent(`failed to update cash today : ${error}`);
+      controlMsgContent(`فشل تحديث الايرادات النقدية : ${error}`);
       controlDisplay(true);
     }
   };
@@ -178,11 +178,11 @@ export const OrderProvider = (props) => {
         data
       );
       await fetchordersAndUpdateUI();
-      controlMsgContent(`successfully updated sold sandwiches`);
+      controlMsgContent(`تم تحديث طلبات الساندوتشات`);
       controlDisplay(true);
     } catch (err) {
-      console.log("error updatin gthe sandwiches orders", err);
-      controlMsgContent(`successfully updated sold sandwiches`);
+      console.log(" فشل تحديث طلبات الساندوتشات ", err);
+      controlMsgContent(`فشل تحديث طلبات الساندوتشات `);
       controlDisplay(true);
     }
   };
@@ -209,10 +209,10 @@ export const OrderProvider = (props) => {
       await addOrder(soldprod);
       // Now, fetchOrderswithItem and update the state
       await fetchordersAndUpdateUI();
-      controlMsgContent(`successfully updated sold products`);
+      controlMsgContent(`تم تحديث المنتجات المباعة بنجاح`);
       controlDisplay(true);
     } catch (error) {
-      controlMsgContent(`failed to update sold products${error}`);
+      controlMsgContent(`فشل تحديث المنتجات المباعة${error}`);
       controlDisplay(true);
     }
 
@@ -224,10 +224,10 @@ export const OrderProvider = (props) => {
       await deleteOrder(orderId, type);
       // Fetch orders again to update the list
       await fetchordersAndUpdateUI();
-      controlMsgContent(`successfully deleted order`);
+      controlMsgContent(`تم ازالة الطلب بنجاح`);
       controlDisplay(true);
     } catch (error) {
-      controlMsgContent(`failed deleted order : ${error}`);
+      controlMsgContent(`فشل ازالة الطلب : ${error}`);
       controlDisplay(true);
     }
   };

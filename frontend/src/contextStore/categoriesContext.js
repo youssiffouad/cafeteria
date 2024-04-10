@@ -93,7 +93,8 @@ export const CategoriesProvider = (props) => {
         }
       );
       console.log("here is the response i received", response);
-      if (!response.ok) {
+      if (response.status !== 200) {
+        console.log("i am in thtrow error");
         throw new Error("failed to delete category internal server error");
       }
       await fetchCategories();
@@ -102,6 +103,7 @@ export const CategoriesProvider = (props) => {
     } catch (err) {
       controlDisplay(true);
       controlMsgContent("فشل ازالة التصنيف");
+      console.log("i caught the error", err);
     }
   };
 
