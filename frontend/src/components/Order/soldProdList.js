@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
+import { createPortal } from "react-dom";
 
 const SoldProdList = () => {
   const orderCtx = useContext(OrderContext);
@@ -11,6 +12,10 @@ const SoldProdList = () => {
   return (
     <>
       <h2 className="text-center tableTitlefont">عرض المبيعات </h2>
+      {createPortal(
+        <orderCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
       <table
         className="table table-striped table-bordered table-hover myResponsiveTable"
         dir="rtl"

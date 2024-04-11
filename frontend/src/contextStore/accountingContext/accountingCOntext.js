@@ -48,13 +48,13 @@ export const AccountingProvider = (props) => {
       .then((data) => {
         console.log(data);
         // Perform any necessary actions after adding the customer
-        controlMsgContent(`reset done successfully`);
+        controlMsgContent(`تم اعادة الضبط بنجاح`);
         controlDisplay(true);
         viewFinance();
       })
       .catch((error) => {
         console.error("Failed to resset:", error);
-        controlMsgContent(`"Failed to resset:", ${error}`);
+        controlMsgContent(`"فشل اعادة الضبط:", ${error}`);
         controlDisplay(true);
         // Handle error
       });

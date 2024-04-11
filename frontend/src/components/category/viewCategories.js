@@ -4,6 +4,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { CategoriesContext } from "../../contextStore/categoriesContext";
+import { createPortal } from "react-dom";
 const CategoryList = () => {
   const catCtx = useContext(CategoriesContext);
 
@@ -41,6 +42,10 @@ const CategoryList = () => {
           })}
         </tbody>
       </table>
+      {createPortal(
+        <catCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
     </React.Fragment>
   );
 };

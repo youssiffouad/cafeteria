@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import FilterProdBYCat from "../product/filterbyCategory";
 import { OrderContext } from "../../contextStore/Order/OrdersContext/orderProvider";
 import { OrderItemContext } from "../../contextStore/Order/OrderItemContext";
-import { createPortal } from "react-dom";
 import { SandwichCtx } from "../../contextStore/SandwichContext";
 
 const TotalOfToday = () => {
@@ -41,10 +40,6 @@ const TotalOfToday = () => {
   return (
     <>
       <div className=" add-container " dir="rtl">
-        {createPortal(
-          <soldprodCtx.Msgcomponent />,
-          document.getElementById("popup-portal")
-        )}
         <h5 className="add-heading">المنتجات المباعة اليوم</h5>
         <form
           onSubmit={(event) => {

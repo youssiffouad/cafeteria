@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import EditPriceOfConstituent from "./editPriceOfConstituent";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { createPortal } from "react-dom";
 import { ConstituentContext } from "../../contextStore/constituentContext";
 import { formatNo } from "../../Hooks/formatno";
 const ConstituentList = () => {
@@ -37,6 +37,10 @@ const ConstituentList = () => {
           ))}
         </tbody>
       </table>
+      {createPortal(
+        <constituentCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
     </React.Fragment>
   );
 };

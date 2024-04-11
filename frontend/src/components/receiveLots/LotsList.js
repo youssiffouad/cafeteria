@@ -4,8 +4,10 @@ import { LotContext } from "../../contextStore/lotsContext";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { ConstituentContext } from "../../contextStore/constituentContext";
 const LotList = () => {
   const Lotctx = useContext(LotContext);
+  const LotConstitiuentCtx = useContext(ConstituentContext);
 
   return (
     <React.Fragment>
@@ -13,6 +15,7 @@ const LotList = () => {
         <Lotctx.Msgcomponent />,
         document.getElementById("popup-portal")
       )}
+
       <h2 className="text-center tableTitlefont">بيانات المشتريات</h2>
       <table
         className="table table-striped table-bordered table-hover myResponsiveTable"

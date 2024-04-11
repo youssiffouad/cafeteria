@@ -1,4 +1,5 @@
 import useFormValidation from "../Hooks/use_fromvalidation";
+import usePopUp from "../Hooks/use_popup";
 import serverport from "../backendconfiguration";
 const { createContext, useState, useEffect } = require("react");
 
@@ -10,6 +11,7 @@ export const ConstituentContext = createContext({
   addConstituent: () => {},
   constituentsList: [],
   viewConstituents: () => {},
+  Msgcomponent: "",
 });
 
 export const ConstituentProvider = (props) => {
@@ -23,6 +25,7 @@ export const ConstituentProvider = (props) => {
       noOfUnits,
       priceOfUnit,
     });
+  const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
 
   //fn to view all current constituents
   const viewConstituents = async () => {
@@ -40,27 +43,34 @@ export const ConstituentProvider = (props) => {
 
   //fn to add a new constituent
   const addConstituent = async () => {
-    const constituentData = {
-      name: formState.constituentName.value,
-      numberOfUnits: formState.noOfUnits.value,
-      pricePerUnit: formState.priceOfUnit.value,
-    };
-    console.log(
-      "here is hte constituent data sent to the server",
-      constituentData
-    );
-    const response = await fetch(
-      `http://localhost:${serverport}/components/addcomponent`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(constituentData),
-      }
-    );
-    console.log(response);
-    const data = await response.json();
-    await viewConstituents();
-    console.log(data);
+    try {
+      const constituentData = {
+        name: formState.constituentName.value,
+        numberOfUnits: formState.noOfUnits.value,
+        pricePerUnit: formState.priceOfUnit.value,
+      };
+      console.log(
+        "here is hte constituent data sent to the server",
+        constituentData
+      );
+      const response = await fetch(
+        `http://localhost:${serverport}/components/addcomponent`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(constituentData),
+        }
+      );
+      console.log(response);
+      const data = await response.json();
+      await viewConstituents();
+      controlDisplay(true);
+      controlMsgContent("تم اضافة مكون جديد بنجاح");
+      console.log(data);
+    } catch (err) {
+      controlDisplay(true);
+      controlMsgContent("فشل اضافة مكون جديد ");
+    }
   };
 
   return (
@@ -73,6 +83,7 @@ export const ConstituentProvider = (props) => {
         addConstituent,
         constituentsList,
         viewConstituents,
+        Msgcomponent,
       }}
     >
       {props.children}
