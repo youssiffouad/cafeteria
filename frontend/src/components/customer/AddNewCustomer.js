@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from "react";
 
 import { CustomerContext } from "../../contextStore/customersContext";
-import { createPortal } from "react-dom";
 
 const NewCustomerForm = () => {
   const customerCtx = useContext(CustomerContext);
@@ -100,11 +99,6 @@ const NewCustomerForm = () => {
         <button type="submit" className="btn btn-primary mt-2 add-btn">
           اضافة مستهلك
         </button>
-
-        {createPortal(
-          <customerCtx.Msgcomponent />,
-          document.getElementById("popup-portal")
-        )}
       </form>
     </div>
   );

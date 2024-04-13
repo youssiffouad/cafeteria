@@ -27,6 +27,7 @@ export const SandwichCtx = createContext({
   sandwich_selling_price: "",
   handleSellingPriceOfsandwich: (sp) => {},
   deleteSandwich: (sid) => {},
+  Msgcomponent: <></>,
 });
 
 export const SandwichProvider = (props) => {

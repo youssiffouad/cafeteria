@@ -4,11 +4,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { CustomerContext } from "../../contextStore/customersContext";
+import { createPortal } from "react-dom";
 const CustomerList = () => {
   const customerCtx = useContext(CustomerContext);
 
   return (
     <React.Fragment>
+      {createPortal(
+        <customerCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
       <h2 className="text-center tableTitlefont">بيانات المستهلكين</h2>
       <table
         className="table table-striped table-bordered table-hover myResponsiveTable"

@@ -4,12 +4,17 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import "../../UI/tableStyle.css";
 import { SandwichCtx } from "../../contextStore/SandwichContext";
 import { formatNo } from "../../Hooks/formatno";
+import { createPortal } from "react-dom";
 const SandwichesList = () => {
   const sandwichesCtx = useContext(SandwichCtx);
   console.log("here is the sandwichesList", sandwichesCtx.SandwichesList);
 
   return (
     <React.Fragment>
+      {createPortal(
+        <sandwichesCtx.Msgcomponent />,
+        document.getElementById("popup-portal")
+      )}
       <h2 className="text-center tableTitlefont"> عرض الساندوتشات</h2>
       <table
         className="table table-striped table-bordered table-hover myResponsiveTable"
