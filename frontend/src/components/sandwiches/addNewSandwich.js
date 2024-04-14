@@ -2,21 +2,13 @@ import { useContext } from "react";
 import ComponentsInSandwiches from "./ComponentsInsandwiches";
 import { SandwichCtx } from "../../contextStore/SandwichContext";
 import { ConstituentProvider } from "../../contextStore/constituentContext";
-import { createPortal } from "react-dom";
 import { formatNo } from "../../Hooks/formatno";
 
 const SandwichForm = () => {
-  const {
-    componentsList,
-    cost,
-    addSandwich,
-    handleInputChange,
-    formState,
-    Msgcomponent,
-  } = useContext(SandwichCtx);
+  const { componentsList, cost, addSandwich, handleInputChange, formState } =
+    useContext(SandwichCtx);
   return (
     <div className="container mb-5 add-container" dir="rtl">
-      {createPortal(<Msgcomponent />, document.getElementById("popup-portal"))}
       <h5 className="add-heading"> اضافة ساندوتش جديد</h5>
       <form
         onSubmit={(e) => {

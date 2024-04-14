@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { createPortal } from "react-dom";
 import { AccountingContext } from "../../contextStore/accountingContext/accountingCOntext";
 import "../../UI/pop-up.css";
+import BarChart from "./barChart";
 
 const Filterprofits = () => {
   const accountingCtx = useContext(AccountingContext);
@@ -40,8 +41,9 @@ const Filterprofits = () => {
           accountingCtx.reset();
         }}
       >
-        lollls
+        اعادة ضبط
       </button>
+      <BarChart data={accountingCtx.chartData} />
       {createPortal(
         <accountingCtx.Msgcomponent />,
         document.getElementById("popup-portal")

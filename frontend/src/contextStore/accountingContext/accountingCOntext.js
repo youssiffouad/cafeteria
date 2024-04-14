@@ -10,6 +10,7 @@ export const AccountingContext = createContext({
   profit: "",
   reset: () => {},
   Msgcomponent: "",
+  chartData: {},
 });
 
 export const AccountingProvider = (props) => {
@@ -18,7 +19,11 @@ export const AccountingProvider = (props) => {
   const [debt, setDebt] = useState("");
   const [productsInStockValue, setProductsInStockValue] = useState("");
   const [profit, setProfit] = useState("");
+  let chartData = { cash, owed, debt, productsInStockValue };
   const { Msgcomponent, controlDisplay, controlMsgContent } = usePopUp();
+  /*
+   *** fn to fetch financial data from server
+   */
   const viewFinance = () => {
     fetch(`http://localhost:${serverport}/finance/view`)
       .then((response) => {
@@ -74,6 +79,7 @@ export const AccountingProvider = (props) => {
         profit,
         reset,
         Msgcomponent,
+        chartData,
       }}
     >
       {props.children}
