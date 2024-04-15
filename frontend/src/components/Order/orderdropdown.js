@@ -13,11 +13,13 @@ const OrderDropdown = (props) => {
     <>
       <li className="nav-item position-relative">
         <Link
+          to="total"
           className={`nav-link ${props.activetab === "orders" ? "active" : ""}`}
           onMouseOver={() => {
             setdisplay(true);
           }}
           onMouseLeave={() => setdisplay(false)}
+          onClick={() => props.handleTabClick("orders")}
         >
           المبيعات
         </Link>
