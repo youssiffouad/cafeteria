@@ -138,6 +138,13 @@ export const SandwichProvider = (props) => {
           body: JSON.stringify(sandwichData),
         }
       );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to add sandwich. Status: ${
+            response.status
+          } ${response.json()}`
+        );
+      }
       const data = await response.json();
       await fetchSandwiches();
       controlMsgContent("تم اضافة الساندوتش بنجاح");

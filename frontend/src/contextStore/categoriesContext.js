@@ -92,14 +92,16 @@ export const CategoriesProvider = (props) => {
           body: JSON.stringify(payload),
         }
       );
+      controlDisplay(true);
+      controlMsgContent("تم ازالة التصنيف بنجاح");
+
       console.log("here is the response i received", response);
+      await fetchCategories();
+
       if (response.status !== 200) {
         console.log("i am in thtrow error");
         throw new Error("failed to delete category internal server error");
       }
-      await fetchCategories();
-      controlDisplay(true);
-      controlMsgContent("تم ازالة التصنيف بنجاح");
     } catch (err) {
       controlDisplay(true);
       controlMsgContent("فشل ازالة التصنيف");

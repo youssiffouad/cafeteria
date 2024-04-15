@@ -116,7 +116,9 @@ class Sandwich_Component {
       db.run(sql, params, function (err) {
         if (err) {
           rej(err);
+          console.log("error in deleting from sandwich compoennt table");
         } else {
+          console.log("success deleting from sandwich components");
           res({
             message: `succesfully deleteed the components of the sandwich ${sandwich_id}`,
           });

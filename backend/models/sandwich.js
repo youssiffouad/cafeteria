@@ -198,68 +198,64 @@ class Sandwich {
   }
 
   // Delete sandwich by ID
-  static deleteSandwich(sandwichId) {
-    return new Promise((resolve, reject) => {
-      try {
-        if (sandwichId === undefined || sandwichId === null) {
-          const err = new Error("the sent id is null ot undefined");
-          reject(err);
-        }
-        db.serialize(async () => {
-          await new Promise((res, rej) => {
-            db.run("begin", (err) => {
-              if (err) {
-                console.log("failed to start txn of deleting Sandwich");
-                rej(err);
-              } else {
-                console.log(
-                  "successfully started the txn of deleting sandwich"
-                );
-                res();
-              }
-            });
-          });
-
-          const sql = `DELETE FROM Sandwiches WHERE id = ?`;
-          const params = [sandwichId];
-
-          await Sandwich_Component.deleteAllComponents(sandwichId);
-          await new Promise((res, rej) => {
-            db.run(sql, params, function (err) {
-              if (err) {
-                console.log("failed to delete Sandwich row", sandwichId);
-                db.run("rollback");
-                rej(err);
-              } else {
-                console.log("successfully deleted the sandwich row");
-                res();
-              }
-            });
-          });
-
-          await new Promise((res, rej) => {
-            db.run("commit", (err) => {
-              if (err) {
-                console.log("failed to commit txn of deleting Sandwich");
-                db.run("rollback");
-                rej(err);
-              } else {
-                console.log("successfully committed deletion of Sandwich");
-                res();
-              }
-            });
-          });
-
-          resolve({
-            message: "Sandwich deleted successfully",
-            sandwich_id: sandwichId,
-          });
-        });
-      } catch (err) {
-        console.error("Error in deleteSandwich:", err);
+  static async deleteSandwich(sandwichId) {
+    try {
+      if (sandwichId === undefined || sandwichId === null) {
+        const err = new Error("the sent id is null ot undefined");
         reject(err);
       }
-    });
+
+      await new Promise((res, rej) => {
+        db.run("begin", (err) => {
+          if (err) {
+            console.log("failed to start txn of deleting Sandwich");
+            rej(err);
+          } else {
+            console.log("successfully started the txn of deleting sandwich");
+            res();
+          }
+        });
+      });
+
+      const sql = `DELETE FROM Sandwiches WHERE id = ?`;
+      const params = [sandwichId];
+
+      await Sandwich_Component.deleteAllComponents(sandwichId);
+      await new Promise((res, rej) => {
+        db.run(sql, params, function (err) {
+          if (err) {
+            console.log("failed to delete Sandwich row", sandwichId);
+            console.log("the erro inside the model", err);
+            db.run("rollback");
+            rej(err);
+          } else {
+            console.log("successfully deleted the sandwich row");
+            res();
+          }
+        });
+      });
+
+      await new Promise((res, rej) => {
+        db.run("commit", (err) => {
+          if (err) {
+            console.log("failed to commit txn of deleting Sandwich");
+            db.run("rollback");
+            rej(err);
+          } else {
+            console.log("successfully committed deletion of Sandwich");
+            res();
+          }
+        });
+      });
+
+      return {
+        message: "Sandwich deleted successfully",
+        sandwich_id: sandwichId,
+      };
+    } catch (err) {
+      console.error("Error in deleteSandwich:", err);
+      throw err;
+    }
   }
 }
 
