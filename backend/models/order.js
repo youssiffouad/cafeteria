@@ -1,0 +1,450 @@
+const db = require("./db");
+
+class Order {
+  // Function to return customer ID given order ID
+  static async getCustomerID(orderID) {
+    return new Promise((res, rej) => {
+      db.get(
+        `SELECT customer_id FROM Orders WHERE id = ?`,
+        [orderID],
+        (err, row) => {
+          if (err) {
+            console.error(err);
+            res("error in getting customer id of certain order", err);
+          } else {
+            const customerID = row ? row.customer_id : null;
+            res(customerID);
+          }
+        }
+      );
+    });
+  }
+
+  // Function to return order items given order ID
+  static async getOrderItems(orderID) {
+    return new Promise((res, rej) => {
+      db.all(
+        `SELECT * FROM OrderItems WHERE order_id = ?`,
+        [orderID],
+        (err, rows) => {
+          if (err) {
+            console.error("error getting order items", err);
+            rej(err);
+          } else {
+            res(rows);
+          }
+        }
+      );
+    });
+  }
+
+  static getSandwichIdFromOrderId = async (orderId) => {
+    return new Promise((res, rej) => {
+      const sql = `select sandwich_id from Orders where id=?`;
+      db.get(sql, orderId, function (err, row) {
+        if (err) {
+          console.log(
+            "failed to get sandwich id of certain order",
+            orderId,
+            err
+          );
+          rej(err);
+        } else {
+          res(row.sandwich_id);
+        }
+      });
+    });
+  };
+
+  // Function to return payment method given order ID
+  static async getPaymentMethod(orderID) {
+    return new Promise((res, rej) => {
+      db.get(
+        `SELECT payment_method FROM Orders WHERE id = ?`,
+        [orderID],
+        (err, row) => {
+          if (err) {
+            console.error("failed to get payment method of certain order", err);
+            rej(err);
+          } else {
+            const paymentMethod = row ? row.payment_method : null;
+            res(paymentMethod);
+          }
+        }
+      );
+    });
+  }
+
+  // Function to return total order cost given order ID
+  static getTotalOrderCost(orderID) {
+    return new Promise((res, rej) => {
+      db.get(
+        `SELECT *
+        FROM Orders where id=${orderID}
+      `,
+        (err, row) => {
+          if (err) {
+            console.error("failed to get total order cost", err);
+            rej(err);
+          } else {
+            console.log(row, orderID);
+            console.log(`iam totalordercost`);
+            console.log(row.price);
+
+            res(row.price);
+          }
+        }
+      );
+    });
+  }
+
+  //function to add SanwichOrder
+  static insertSandwichOrder = async (
+    price,
+    payment_method,
+    customer_id,
+    order_date,
+    sandwich_id
+  ) => {
+    return new Promise((res, rej) => {
+      try {
+        console.log(
+          "here are hte parameters i received",
+          price,
+          payment_method,
+          customer_id,
+          order_date,
+          sandwich_id
+        );
+        const sql = `insert into Orders ( price ,payment_method ,customer_id , order_date ,is_sandwich, sandwich_id) values (?,?,?,?,?,?)`;
+        const params = [
+          price,
+          payment_method,
+          customer_id,
+          order_date,
+          1,
+          sandwich_id,
+        ];
+        db.run(sql, params, function (err) {
+          if (err) {
+            console.log(
+              "failure inserting sandwich order into orders table",
+              err
+            );
+            rej(err);
+          } else {
+            console.log(
+              "i succedded inserting sandwich order into orders table"
+            );
+            const order_id = this.lastID;
+            res({ message: "sandwich order added successfully", order_id });
+          }
+        });
+      } catch (err) {
+        console.log("failed to inset sandwich order", err);
+        rej(err);
+      }
+    });
+  };
+
+  // Function to view all orders without corresponding orderitem
+
+  static viewOrders(callback) {
+    db.all(
+      `
+      SELECT o.id, o.order_date,o.payment_method, c.name AS customer_name,r.name as rankname, o.price AS order_price
+      FROM Orders o
+     left JOIN Customers c ON c.id = o.customer_id
+     left join Ranks r on r.id= c.rank_id`,
+      (err, rows) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, rows);
+        }
+      }
+    );
+  }
+
+  // Function to view all orders with corresponding orderitem or corresponding sandwich
+
+  static viewOrderswithItem(callback) {
+    db.all(
+      `
+      SELECT o.id, o.order_date, o.payment_method,
+      CASE WHEN o.is_sandwich = 1 THEN 'Sandwich' ELSE 'Product' END AS order_type,
+      COALESCE(s.name, p.name) AS item_name,
+      COALESCE(s.selling_price, p.selling_price) AS item_selling_price,
+      COALESCE(oi.quantity,(o.price / COALESCE(s.selling_price, 1))) AS order_quantity,
+      oi.quantity, o.price AS order_price
+FROM Orders o
+LEFT JOIN Sandwiches s ON o.sandwich_id = s.id
+LEFT JOIN OrderItems oi ON oi.order_id = o.id
+LEFT JOIN Products p ON oi.product_id = p.id
+
+     `,
+      (err, rows) => {
+        if (err) {
+          console.log("failed to load order with items or sandwiches", err);
+          callback(err);
+        } else {
+          callback(null, rows);
+        }
+      }
+    );
+  }
+
+  //function to filter orders between certain dates(in certain interval)
+  static filterOrdersdate(startDate, endDate, callback) {
+    db.all(
+      `
+      SELECT o.id, o.order_date, c.name AS customer_name, r.name AS rankname, SUM(p.selling_price * oi.quantity) AS order_price
+      FROM Orders o
+      JOIN Customers c ON c.id = o.customer_id
+      JOIN Ranks r ON r.id = c.rank_id
+      JOIN OrderItems oi ON oi.order_id = o.id
+      JOIN Products p ON p.id = oi.product_id
+      WHERE o.order_date BETWEEN ? AND ?
+      GROUP BY o.id, o.order_date, customer_name`,
+      [startDate, endDate],
+      (err, rows) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, rows);
+        }
+      }
+    );
+  }
+
+  // Function to filter orders by customer_id
+  static filterOrdersByCustomerId(customerId, callback) {
+    db.all(
+      `
+        SELECT o.id, o.order_date, c.name AS customer_name, r.name AS rankname, SUM(p.selling_price * oi.quantity) AS order_price
+        FROM Orders o
+        JOIN Customers c ON c.id = o.customer_id
+        JOIN Ranks r ON r.id = c.rank_id
+        JOIN OrderItems oi ON oi.order_id = o.id
+        JOIN Products p ON p.id = oi.product_id
+        WHERE o.customer_id = ?
+        GROUP BY o.id, o.order_date, customer_name`,
+      [customerId],
+      (err, rows) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, rows);
+        }
+      }
+    );
+  }
+
+  // Function to filter orders by customer_id and date interval
+  static filterOrdersByCustomerAndDateInterval(
+    customerId,
+    startDate,
+    endDate,
+    callback
+  ) {
+    db.all(
+      `
+      SELECT o.id, o.order_date, c.name AS customer_name, r.name AS rankname, SUM(p.selling_price * oi.quantity) AS order_price
+      FROM Orders o
+      JOIN Customers c ON c.id = o.customer_id
+      JOIN Ranks r ON r.id = c.rank_id
+      JOIN OrderItems oi ON oi.order_id = o.id
+      JOIN Products p ON p.id = oi.product_id
+      WHERE o.customer_id = ? AND o.order_date BETWEEN ? AND ?
+      GROUP BY o.id, o.order_date, customer_name`,
+      [customerId, startDate, endDate],
+      (err, rows) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, rows);
+        }
+      }
+    );
+  }
+
+  // Function to insert an order into the Orders table
+  static insertBasicOrder(
+    customer_id,
+    order_date,
+    totalOrderCost,
+    payment_method
+  ) {
+    return new Promise((res, rej) => {
+      const sql = `INSERT INTO Orders (customer_id, order_date, price, payment_method,is_sandwich ,
+      sandwich_id) VALUES (?, ?, ?, ?,?,?)`;
+      const params = [
+        customer_id,
+        order_date,
+        totalOrderCost,
+        payment_method,
+        0,
+        null,
+      ];
+      db.run(sql, params, function (err) {
+        if (err) {
+          console.error(err);
+          rej(err);
+        } else {
+          const orderId = this.lastID;
+          console.log("successfully inserted the order row ");
+          res(orderId);
+        }
+      });
+    });
+  }
+
+  // Function to delete order row
+  static async deleteOrderRow(orderId) {
+    return new Promise((res, rej) => {
+      db.run(`DELETE FROM Orders WHERE id = ${orderId} `, (err) => {
+        if (err) {
+          console.error("error while deleting order row", err);
+          rej(err);
+        } else {
+          console.log(`Deleted successfully the order row`);
+          res();
+        }
+      });
+    });
+  }
+
+  static async handleSoldProdPayment(IncOrDec, orderId, orderItems) {
+    return new Promise((res, rej) => {
+      if (IncOrDec === -1) {
+        changeProductQuantity(-1, orderItems, () => {
+          insertOrderItems(orderId, orderItems, (err) => {
+            if (err) {
+              rej(err);
+            } else {
+              res();
+            }
+          });
+        });
+      } else if (IncOrDec === 1) {
+        changeProductQuantity(1, orderItems, (err) => {
+          if (err) {
+            rej(err);
+          } else res();
+        });
+      }
+    });
+  }
+
+  // Add other order-related methods here
+}
+
+module.exports = Order;
+
+// Function to change the quantity of each product in the Products table
+const changeProductQuantity = (IncOrDec, orderItems, callback) => {
+  if (orderItems.length === 0) {
+    const err = new Error("the order items array is sent empty");
+    callback(err);
+  }
+  if (!orderItems) {
+    const err = new Error("the order items array is undefined or null");
+    callback(err);
+  }
+  orderItems.forEach((item, index) => {
+    const { quantity, product_id } = item;
+
+    console.log(`the od=rder items are`);
+    console.log(orderItems);
+    console.log(`the product is `);
+    console.log(product_id);
+    console.log(`the quantity is `);
+    console.log(quantity);
+    console.log(`a7aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`);
+    console.log(updateProductInStockValue);
+    // updateProductInStockValue(IncOrDec, product_id, quantity, null);
+    updateProductInStockValue(IncOrDec, product_id, quantity, (err) => {
+      if (err) {
+        console.error(err);
+        console.log(`a7aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`);
+        console.log(typeof updateProductInStockValue);
+        // Handle the error
+      } else {
+        // Handle the success
+      }
+    });
+    db.run(
+      `UPDATE Products SET quantity = quantity + ? WHERE id = ?`,
+      [quantity * parseInt(IncOrDec), product_id],
+      function (err) {
+        if (err) {
+          console.error(err);
+
+          callback(err);
+        } else {
+          console.log(`Decreased quantity for product ${product_id}`);
+        }
+
+        // Check if all products have been processed
+        if (index === orderItems.length - 1) {
+          callback(null);
+        }
+      }
+    );
+  });
+};
+// Function to insert individual order items into the OrderItems table
+function insertOrderItems(orderId, orderItems, callback) {
+  orderItems.forEach((item, index) => {
+    const { product_id, quantity } = item;
+    db.run(
+      `INSERT INTO OrderItems (order_id, product_id, quantity) VALUES (?, ?, ?)`,
+      [orderId, product_id, quantity],
+      function (err) {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log(
+            `Inserted order item with ID ${this.lastID} for order ${orderId}`
+          );
+        }
+
+        // Check if all order items have been processed
+        if (index === orderItems.length - 1) {
+          callback();
+        }
+      }
+    );
+  });
+}
+
+// Function to handle soldprod payment method
+
+// Function to update productsInStockValue in the Financial table
+function updateProductInStockValue(IncOrDec, productID, quantity, callback) {
+  db.get(
+    `SELECT selling_price FROM Products WHERE id = ?`,
+    [productID],
+    (err, row) => {
+      if (err) {
+        console.error(err);
+        callback(err);
+      } else {
+        const sellingPrice = row.selling_price;
+        const addedvalue = parseInt(IncOrDec) * sellingPrice * quantity;
+        db.run(
+          `UPDATE Financial SET productsInStockValue = productsInStockValue + ?`,
+          [addedvalue],
+          (err) => {
+            if (err) {
+              console.error(err);
+              callback(err);
+            } else {
+              callback(null);
+            }
+          }
+        );
+      }
+    }
+  );
+}
