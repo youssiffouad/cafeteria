@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "../Redux_Store/authSlice";
 import cafeteriaLogo from "./staticImages/logo.png";
 import AdvancedDropdown from "./Order/advancedDropDown";
+import LotsDropDown from "./receiveLots/lotsDropDown";
 
 const Navbar = () => {
   const [activetab, setactivetab] = useState("");
@@ -89,15 +90,11 @@ const Navbar = () => {
               المستهلكين
             </Link>
           </li>
-          <li className="nav-item">
-            <Link
-              to="/home/lots"
-              className={`nav-link ${activetab === "lots" ? "active" : ""}`}
-              onClick={() => handleTabClick("lots")}
-            >
-              المشتريات
-            </Link>
-          </li>
+          <LotsDropDown
+            smallscreen={isSmall}
+            activetab={activetab}
+            handleTabClick={handleTabClick}
+          />
 
           <OrderDropdown
             smallscreen={isSmall}

@@ -158,13 +158,13 @@ const AddNewLot = (props) => {
           اضافة
         </button>
       </form>
-      <button
+      {/* <button
         className="btn btn-outline-info position-absolute"
         style={{ bottom: "-20%", right: "0px" }}
         onClick={() => props.toggleDisplay()}
       >
         شراء مكون <FontAwesomeIcon icon={faArrowsRotate} />
-      </button>
+      </button> */}
     </div>
   );
 };
