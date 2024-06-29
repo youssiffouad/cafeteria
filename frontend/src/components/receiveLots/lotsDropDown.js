@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import "../../UI/fropdownstyling.css";
 
 import { Link } from "react-router-dom";
-const AdvancedDropdown = (props) => {
+const LotsDropDown = (props) => {
   const [display, setdisplay] = useState(false);
 
   const dropdownDynamicClass = props.smallscreen
@@ -13,15 +13,13 @@ const AdvancedDropdown = (props) => {
     <>
       <li className="nav-item position-relative">
         <Link
-          className={`nav-link ${
-            props.activetab === "advanced" ? "active" : ""
-          }`}
+          className={`nav-link ${props.activetab === "lots" ? "active" : ""}`}
           onMouseOver={() => {
             setdisplay(true);
           }}
           onMouseLeave={() => setdisplay(false)}
         >
-          اعدادات متقدمة
+          المشتريات
         </Link>
         <ul
           className={`${dropdownDynamicClass} ${!display ? "d-none" : ""}`}
@@ -32,34 +30,18 @@ const AdvancedDropdown = (props) => {
         >
           <li className="nav-item">
             <Link
-              to="/home/categories"
-              onClick={() => props.handleTabClick("advanced")}
+              to="/home/prodlot"
+              onClick={() => props.handleTabClick("lots")}
             >
-              التصنيفات
+              شراء منتج
             </Link>
           </li>
           <li className="nav-item">
             <Link
-              to="/home/sandwiches"
-              onClick={() => props.handleTabClick("advanced")}
+              to="/home/componentlot"
+              onClick={() => props.handleTabClick("lots")}
             >
-              الساندوتشات
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/home/products"
-              onClick={() => props.handleTabClick("advanced")}
-            >
-              المنتجات
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              to="/home/constituents"
-              onClick={() => props.handleTabClick("advanced")}
-            >
-              المكونات
+              شراء مكون
             </Link>
           </li>
         </ul>
@@ -68,4 +50,4 @@ const AdvancedDropdown = (props) => {
   );
 };
 
-export default AdvancedDropdown;
+export default LotsDropDown;

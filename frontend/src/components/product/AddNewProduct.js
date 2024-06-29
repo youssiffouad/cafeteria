@@ -207,13 +207,13 @@ const NewProductForm = (props) => {
           اضافة
         </button>
       </form>
-      <button
+      {/* <button
         className="position-absolute btn btn-outline-info"
         style={{ bottom: "-23%", right: "0" }}
         onClick={() => props.toggleDisplay()}
       >
         اظهار المكونات <FontAwesomeIcon icon={faArrowsRotate} />
-      </button>
+      </button> */}
     </div>
   );
 };

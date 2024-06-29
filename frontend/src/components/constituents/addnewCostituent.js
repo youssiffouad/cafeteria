@@ -120,13 +120,13 @@ const AddNewConstituent = (props) => {
           اضافة المكون
         </button>
       </form>
-      <button
+      {/* <button
         className="position-absolute btn btn-outline-info"
         style={{ bottom: "-20%", right: "0" }}
         onClick={() => props.toggleDisplay()}
       >
         اظهار المنتجات <FontAwesomeIcon icon={faArrowsRotate} />
-      </button>
+      </button> */}
     </div>
   );
 };

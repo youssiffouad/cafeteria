@@ -14,12 +14,14 @@ import { OrderItemProvider } from "../contextStore/Order/OrderItemContext";
 import { OrderProvider } from "../contextStore/Order/OrdersContext/orderProvider";
 
 import OrderWhole from "./Order/wholeOrder";
-import ProdChoice from "./product/prodChoice";
-import LotChoice from "./receiveLots/lotchoice";
 
 import WholeSandwich from "./sandwiches/wholeSandwich";
 import { SandwichProvider } from "../contextStore/SandwichContext";
 import usePopUp from "../Hooks/use_popup";
+import ProductWhole from "./product/wholeProduct";
+import WholeConstituent from "./constituents/wholeConstituent";
+import LotsWholeProducts from "./receiveLots/wholeLotsProducts";
+import LotsWholeConstituent from "./receiveLots/wholeLotsConstituents";
 
 const TotalOfTodayWithProviders = () => {
   const { ControllerBtn, controlFormJSX, FormContent } = usePopUp(
@@ -92,8 +94,10 @@ const T2reshaOfTodayWithProviders = () => {
 
 const mainContentArea = [
   { path: "vendors", element: <VendorWhole /> },
-  { path: "products", element: <ProdChoice /> }, //either display the addProd or addConstituent
-  { path: "lots", element: <LotChoice /> }, //either display the addlot or addConstituentLot
+  { path: "products", element: <ProductWhole /> },
+  { path: "constituents", element: <WholeConstituent /> },
+  { path: "prodlot", element: <LotsWholeProducts /> },
+  { path: "componentlot", element: <LotsWholeConstituent /> },
   { path: "categories", element: <CategoryWhole /> },
   { path: "customers", element: <CustomerWhole /> },
   { path: "total", element: <TotalOfTodayWithProviders /> },
