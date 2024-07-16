@@ -16,7 +16,6 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/products", productRoutes);
-console.log(productRoutes);
 app.use("/lots", lotRoutes);
 app.use("/vendors", vendorRoutes);
 app.use("/orders", orderRoutes);

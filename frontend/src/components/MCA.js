@@ -22,6 +22,7 @@ import ProductWhole from "./product/wholeProduct";
 import WholeConstituent from "./constituents/wholeConstituent";
 import LotsWholeProducts from "./receiveLots/wholeLotsProducts";
 import LotsWholeConstituent from "./receiveLots/wholeLotsConstituents";
+import CompositeProduct from "./product/AddCompositeProduct";
 
 const TotalOfTodayWithProviders = () => {
   const { ControllerBtn, controlFormJSX, FormContent } = usePopUp(
@@ -94,7 +95,8 @@ const T2reshaOfTodayWithProviders = () => {
 
 const mainContentArea = [
   { path: "vendors", element: <VendorWhole /> },
-  { path: "products", element: <ProductWhole /> },
+  { path: "compositeproducts", element: <CompositeProduct /> }, //using sandwich for composite products
+  { path: "ordinaryproducts", element: <ProductWhole /> }, //using sandwich for composite products
   { path: "constituents", element: <WholeConstituent /> },
   { path: "prodlot", element: <LotsWholeProducts /> },
   { path: "componentlot", element: <LotsWholeConstituent /> },

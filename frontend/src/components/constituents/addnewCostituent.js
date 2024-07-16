@@ -13,7 +13,8 @@ const AddNewConstituent = (props) => {
       constituentName
     );
     let c2 = ConstituentCtx.validateField("noOfUnits", "number", noOfUnits);
-    let c3 = ConstituentCtx.validateField("priceOfUnit", "number", priceOfUnit);
+    let c3 = ConstituentCtx.validateField("priceOfUnit", "text", priceOfUnit);
+    console.log(c1, c2, c3);
     if (c1 && c2 && c3) ConstituentCtx.addConstituent();
   };
 

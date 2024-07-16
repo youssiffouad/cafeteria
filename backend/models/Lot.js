@@ -3,8 +3,6 @@ const Finance = require("./financial");
 
 const Vendor = require("./Vendor");
 
-// const e = require("cors");
-// const { getVendorIdFromLotId } = require("./Vendor");
 
 class Lot {
   static getCost(lotid) {

@@ -48,10 +48,18 @@ const AdvancedDropdown = (props) => {
           </li>
           <li className="nav-item">
             <Link
-              to="/home/products"
+              to="/home/ordinaryproducts"
               onClick={() => props.handleTabClick("advanced")}
             >
-              المنتجات
+               المنتجات العادية
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link
+              to="/home/compositeproducts"
+              onClick={() => props.handleTabClick("advanced")}
+            >
+               المنتجات المركبة
             </Link>
           </li>
           <li className="nav-item">

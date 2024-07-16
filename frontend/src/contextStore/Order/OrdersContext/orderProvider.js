@@ -159,6 +159,7 @@ export const OrderProvider = (props) => {
         payment_method: "soldprod",
         customer_id: null,
         order_date: formState.orderDate.value,
+        noOfSandwiches:orderItemCtx.formState.quantity.value,
         sandwich_id: formStateFilterByCat.sandwichId.value, //to be filled from sandwichCtx
       };
       console.log("here is hte sold sandwiches  order ", soldSandwiches);

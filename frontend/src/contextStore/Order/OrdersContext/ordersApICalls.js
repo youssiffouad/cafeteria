@@ -71,6 +71,8 @@ export const deleteOrder = async (orderId, type) => {
           body: JSON.stringify(orderid),
         }
       );
+      if (response.status!=200)
+        throw new Error("failed to delete sandwich order");
       const data = await response.json();
 
       return data;

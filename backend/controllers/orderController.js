@@ -32,7 +32,7 @@ exports.addProductOrder = async (req, res) => {
 //function to add sandwich order
 exports.addSanadwichOrder = async (req, res) => {
   try {
-    const { customer_id, order_date, sandwich_id, price, payment_method } =
+    const { customer_id, order_date, sandwich_id, price, payment_method,noOfSandwiches } =
       req.body;
     console.log(
       "here is what i got from front end to add new sandwich order",
@@ -43,7 +43,8 @@ exports.addSanadwichOrder = async (req, res) => {
       payment_method,
       customer_id,
       order_date,
-      sandwich_id
+      sandwich_id,
+      noOfSandwiches
     );
     res.status(200).json(response);
   } catch (err) {
@@ -141,6 +142,7 @@ exports.deleteSandwichOrder = async (req, res) => {
     console.log("her eis hte response from i get from hte model", response);
     res.status(200).json(response);
   } catch (err) {
+    console.log("i caught the error",err)
     res.status(500).json({ error: "failed to delete sandwich order" });
   }
 };

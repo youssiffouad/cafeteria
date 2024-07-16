@@ -14,6 +14,7 @@
   top: 0%;
   overflow: hidden;
   right: 5rem;
+  z-index: 5;
 }
 
 .custom-list li a {

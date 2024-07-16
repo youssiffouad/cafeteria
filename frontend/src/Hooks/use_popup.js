@@ -10,24 +10,16 @@ const usePopUp = (btnText) => {
     setdisplay(arg);
   };
   const controlDisplayForm = (arg) => {
-    console.log("i am in control display form and here is the arg", arg);
     setDisplayForm(arg);
   };
   const controlMsgContent = (msg) => {
     setmsgContent(msg);
   };
   const controlFormJSX = (arg) => {
-    console.log("here is the form i received", arg);
     setformJSX(arg);
   };
   const Msgcomponent = () => {
-    useEffect(() => {
-      console.log(
-        "In UseEffect here is the display.It changed !!!!!!!",
-        display
-      );
-    }, [display]);
-    console.log(" here is the display.It changed !!!!!!!", display);
+    useEffect(() => {}, [display]);
     return (
       <>
         {display && (
@@ -75,7 +67,6 @@ const usePopUp = (btnText) => {
       onClick={() => {
         setdisplay(true);
         setDisplayForm((prev) => !prev);
-        console.log("i clicked the display button");
       }}
     >
       {!displayForm ? btnText : `اخفاء`}
