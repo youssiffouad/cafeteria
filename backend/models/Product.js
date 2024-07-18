@@ -1,6 +1,9 @@
 const deleteLotsOfProduct = require("../businessLogic/deleteAllLotsOfCertainProduct");
 const db = require("./db");
 const Lot = require("./Lot");
+const EventEmitter = require("../utils/EventEmitter");
+const eventEmitter = new EventEmitter();
+console.log("step1 i created event object");
 
 class Product {
   //function to add new product
@@ -22,12 +25,27 @@ class Product {
           console.error(err);
           callback(err);
         } else {
-          callback(null, {
-            message: "Product added successfully",
-            prod_id: this.lastID,
+          //emit event of adding new product
+          eventEmitter.emit("productAdded", {
+            description: "تم اضافة منتج جديد",
+            name,
+            selling_price,
+            buying_price,
           });
+          console.log(`step 3 i emitted event to execute listeners`);
+          if (callback)
+            callback(null, {
+              message: "Product added successfully",
+              prod_id: this.lastID,
+            });
         }
       }
+    );
+  }
+  static on(argevent, arglistener) {
+    eventEmitter.on(argevent, arglistener);
+    console.log(
+      `step 2 i added listener ${arglistener} to certain event ${argevent}`
     );
   }
 

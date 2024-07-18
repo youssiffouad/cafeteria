@@ -161,7 +161,7 @@ const FilterProdBYCat = (props) => {
       {orderItemCtx.formState.cat.value == 1 ? (
         <div className="col">
           <label className="label">
-            الساندوتش
+            المنتج المركب
             <select
               name="sandwichId"
               className={`form-control input inputValue ${
@@ -170,7 +170,7 @@ const FilterProdBYCat = (props) => {
               value={formStateFilterByCat.sandwichId.value}
               onChange={SandwichChangeHandler}
             >
-              <option value="">اختر اسم الساندوتش</option>
+              <option value="">اختر اسم المنتج المركب</option>
               {products.map((prod) => {
                 return (
                   <option

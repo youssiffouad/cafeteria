@@ -47,6 +47,14 @@ class Users {
       throw error;
     }
   }
+  //fn to notifyUser
+  static async notifyUser(data) {
+    try {
+      console.log("i am the user i am notified with data", data);
+    } catch (err) {
+      console.log("an error occured", err);
+    }
+  }
 
   //fn to authenticate user
   static async authenticateUser(name, password) {
