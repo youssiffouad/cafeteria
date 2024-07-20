@@ -1,26 +1,44 @@
 const db = require("./db");
 
 class Notification {
-  static clients = [];
+  static clients = new Map();
 
-  static registerClient(client) {
-    Notification.clients.push(client);
+  static registerClient(clientId, clientResponseObject) {
+    Notification.clients.set(clientId, clientResponseObject);
   }
 
-  static unregisterClient(argclient) {
-    Notification.clients = Notification.clients.filter(
-      (client) => client !== argclient
-    );
+  static unregisterClient(clientId) {
+    Notification.clients.delete(clientId);
   }
 
-  static sendEvent(data) {
-    Notification.clients.forEach((client) => {
-      client.write(`data: ${JSON.stringify(data)}\n\n`);
+  static sendEvent(clientId, data) {
+    try {
+      const client = Notification.clients.get(clientId);
+
+      // Attempt to write data to the client if it exists and has a write method
+      if (client?.write) {
+        client.write(`data: ${JSON.stringify(data)}\n\n`);
+      } else {
+        throw new Error(
+          `Client with ID ${clientId} is not a valid response object.`
+        );
+      }
+    } catch (error) {
+      console.error(
+        `Failed to send event to client ${clientId}:`,
+        error.message
+      );
+    }
+  }
+
+  static broadcastEvent(data) {
+    Notification.clients.forEach((client, clientId) => {
+      Notification.sendEvent(clientId, data);
     });
   }
 
-  // Create a new notification
-  static async createNotification(data) {
+  // Example function to create a new notification and send to specific clients
+  static async createNotification(data, clientId) {
     const query = `
       INSERT INTO Notification (name, description, created_at)
       VALUES (?, ?, CURRENT_TIMESTAMP)
@@ -38,20 +56,15 @@ class Notification {
         if (err) {
           reject(err);
         } else {
-          resolve({
+          const newNotification = {
             id: this.lastID,
             name,
             description,
             seen: 0,
             created_at: new Date(),
-          });
-          Notification.sendEvent({
-            id: this.lastID,
-            name,
-            description,
-            seen: 0,
-            created_at: new Date(),
-          });
+          };
+          resolve(newNotification);
+          Notification.sendEvent(clientId, newNotification);
         }
       });
     });

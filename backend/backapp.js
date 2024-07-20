@@ -12,8 +12,8 @@ const financialRoutes = require("./routes/financeRouutes");
 const userRoutes = require("./routes/userRoutes");
 const sandwichroutes = require("./routes/sandwichRoutes");
 const componentsroutes = require("./routes/componentRoute");
-const NotificationRoutes=require("./routes/NotificationRoutes")
-const {registerEventHandlers}=require("./utils/EventHandlers")
+const NotificationRoutes = require("./routes/NotificationRoutes");
+const { registerEventHandlers } = require("./utils/EventHandlers");
 app.use(express.json());
 app.use(cors());
 
@@ -28,8 +28,7 @@ app.use("/finance", financialRoutes);
 app.use("/users", userRoutes);
 app.use("/sandwiches", sandwichroutes);
 app.use("/components", componentsroutes);
-app.use("/notificaction",NotificationRoutes);
-
+app.use("/notificactions", NotificationRoutes);
 
 //register all event handlers
 registerEventHandlers();

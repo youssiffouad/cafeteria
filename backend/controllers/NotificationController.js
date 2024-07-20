@@ -1,6 +1,12 @@
 const Notification = require("../models/Notification");
 
 class NotificationController {
+  /**
+   * Fetches all notifications.
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {Promise<void>} - Responds with JSON containing all notifications or an error message.
+   */
   static async readAllNotifications(req, res) {
     try {
       const notifications = await Notification.readAllNotifications();
@@ -10,6 +16,12 @@ class NotificationController {
     }
   }
 
+  /**
+   * Marks a notification as seen.
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {Promise<void>} - Responds with JSON containing the result or an error message.
+   */
   static async makeNotificationSeen(req, res) {
     const { id } = req.params;
     try {
@@ -20,6 +32,12 @@ class NotificationController {
     }
   }
 
+  /**
+   * Fetches the latest 10 notifications.
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {Promise<void>} - Responds with JSON containing the latest 10 notifications or an error message.
+   */
   static async getLatest10Notifications(req, res) {
     try {
       const notifications = await Notification.getLatest10Notifications();
@@ -29,6 +47,12 @@ class NotificationController {
     }
   }
 
+  /**
+   * Fetches notifications from the last 30 days.
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {Promise<void>} - Responds with JSON containing notifications from the last 30 days or an error message.
+   */
   static async getNotificationsFromLast30Days(req, res) {
     try {
       const notifications = await Notification.getNotificationsFromLast30Days();
@@ -40,15 +64,26 @@ class NotificationController {
     }
   }
 
+  /**
+   * Registers a client for server-sent events.
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   */
   static registerClient(req, res) {
+    const clientId = req.query.clientId; // Extract client ID from query parameters
+    if (!clientId) {
+      res.status(400).send("Client ID is required");
+      return;
+    }
+
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
-    Notification.registerClient(res);
+    Notification.registerClient(clientId, res); //response object is sent as argument to register client to keep the connection
 
     req.on("close", () => {
-      Notification.unregisterClient(res);
+      Notification.unregisterClient(clientId);
     });
   }
 }
