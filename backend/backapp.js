@@ -28,7 +28,7 @@ app.use("/finance", financialRoutes);
 app.use("/users", userRoutes);
 app.use("/sandwiches", sandwichroutes);
 app.use("/components", componentsroutes);
-app.use("/notificactions", NotificationRoutes);
+app.use("/notifications", NotificationRoutes);
 
 //register all event handlers
 registerEventHandlers();

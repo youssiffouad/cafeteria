@@ -5,6 +5,7 @@ class Notification {
 
   static registerClient(clientId, clientResponseObject) {
     Notification.clients.set(clientId, clientResponseObject);
+    console.log("i registered client", clientId);
   }
 
   static unregisterClient(clientId) {
@@ -13,10 +14,13 @@ class Notification {
 
   static sendEvent(clientId, data) {
     try {
-      const client = Notification.clients.get(clientId);
-
+      const client = this.clients.get(`${clientId}`);
+      console.log("here is the client reponse object", client);
+      console.log("here are all the clients", this.clients);
       // Attempt to write data to the client if it exists and has a write method
-      if (client?.write) {
+      //client is the response object
+
+      if (client) {
         client.write(`data: ${JSON.stringify(data)}\n\n`);
       } else {
         throw new Error(
@@ -38,7 +42,7 @@ class Notification {
   }
 
   // Example function to create a new notification and send to specific clients
-  static async createNotification(data, clientId) {
+  static async createNotification(data) {
     const query = `
       INSERT INTO Notification (name, description, created_at)
       VALUES (?, ?, CURRENT_TIMESTAMP)
@@ -64,7 +68,7 @@ class Notification {
             created_at: new Date(),
           };
           resolve(newNotification);
-          Notification.sendEvent(clientId, newNotification);
+          Notification.sendEvent(1, newNotification);
         }
       });
     });

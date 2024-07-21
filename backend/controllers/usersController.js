@@ -17,10 +17,11 @@ exports.authenticateUser = async (req, res) => {
     const { name, password } = req.body;
     console.log(name, password);
     const result = await Users.authenticateUser(name, password);
+    console.log("here is the user authenticated", result);
 
     if (result && result.token) {
       // Authentication successful
-      res.status(200).json({ token: result.token });
+      res.status(200).json(result);
     } else if (result && result.passerror === "Invalid password") {
       // Incorrect password
       res.status(401).json({ passerror: result.passerror });

@@ -95,8 +95,8 @@ const T2reshaOfTodayWithProviders = () => {
 
 const mainContentArea = [
   { path: "vendors", element: <VendorWhole /> },
-  { path: "compositeproducts", element: <CompositeProduct /> }, //using sandwich for composite products
-  { path: "ordinaryproducts", element: <ProductWhole /> }, //using sandwich for composite products
+  { path: "compositeproducts", element: <CompositeProduct /> },
+  { path: "ordinaryproducts", element: <ProductWhole /> },
   { path: "constituents", element: <WholeConstituent /> },
   { path: "prodlot", element: <LotsWholeProducts /> },
   { path: "componentlot", element: <LotsWholeConstituent /> },

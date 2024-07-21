@@ -116,6 +116,16 @@ const Navbar = () => {
             </li>
           )}
 
+          <li className="nav-item">
+            <Link
+              className={`nav-link ${
+                activetab === "notifications" ? "active" : ""
+              }`}
+            >
+              الاشعارات
+            </Link>
+          </li>
+
           <button
             className="btn btn-secondary add-btn"
             onClick={() => handleLogout()}

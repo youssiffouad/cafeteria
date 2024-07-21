@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { serverSocket } from "../backendSocket";
+import { useSelector } from "react-redux";
 
 const SseComponent = () => {
   const [messages, setMessages] = useState([]);
+  const id = useSelector((state) => state.auth.user.user_id);
 
   useEffect(() => {
-    const eventSourceUrl = `${serverSocket}/notifications/stream?clientId=`; // replace with actual URL and client ID
-    const eventSource = new EventSource(`${serverSocket}/notifications/stream`);
+    const eventSourceUrl = `${serverSocket}/notifications/stream?clientId=${id}`; // replace with actual URL and client ID
+    const eventSource = new EventSource(eventSourceUrl);
 
     eventSource.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
+      console.log("a new message arrived", newMessage);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
@@ -28,7 +31,7 @@ const SseComponent = () => {
       <ul>
         <li>length of msgs is ${messages.length}</li>
         {messages.map((msg, index) => (
-          <li key={index}>{msg.message}</li>
+          <li key={index}>{msg.description}</li>
         ))}
       </ul>
     </div>

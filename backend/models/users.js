@@ -70,8 +70,6 @@ class Users {
               console.error(err);
               rej(err);
             } else {
-              console.log("HERE IA AMAMMAMAMAMAMA", userdata);
-
               // Check if the user exists
               if (userdata) {
                 // Check if the password is correct
@@ -86,7 +84,7 @@ class Users {
                     userdata.username,
                     userdata.role
                   );
-                  res({ token });
+                  res({ token, user_id: userdata.id });
                 } else {
                   // Incorrect password
                   res({ passerror: "Invalid password" });

@@ -38,7 +38,6 @@ const Login = () => {
           }),
         }
       );
-
       if (!response.ok) {
         const { usererror, passerror } = await response.json();
         // Handle authentication failure, show error message, etc.
@@ -47,13 +46,13 @@ const Login = () => {
         else HandleAuthError("password", passerror);
         return;
       }
-
-      const { token } = await response.json();
-      console.log(token);
+      const data = await response.json();
+      console.log("response received", data);
+      const { user_id, token } = data;
 
       dispatch(
         login({
-          username,
+          user_id,
           role: "admin",
           token,
         })

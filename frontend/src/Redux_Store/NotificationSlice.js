@@ -117,19 +117,6 @@ const notificationsSlice = createSlice({
       .addCase(fetchNotificationsLast30Days.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-      })
-
-      // Register client (stream)
-      .addCase(registerClient.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(registerClient.fulfilled, (state, action) => {
-        // Handle the registered client data if needed
-        state.status = "succeeded";
-      })
-      .addCase(registerClient.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
       });
   },
 });
