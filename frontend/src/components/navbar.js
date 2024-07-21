@@ -11,6 +11,7 @@ import { logout } from "../Redux_Store/authSlice";
 import cafeteriaLogo from "./staticImages/logo.png";
 import AdvancedDropdown from "./Order/advancedDropDown";
 import LotsDropDown from "./receiveLots/lotsDropDown";
+import NotificationsDropDown from "./notificatioins/NotificationsDropDown";
 
 const Navbar = () => {
   const [activetab, setactivetab] = useState("");
@@ -116,15 +117,11 @@ const Navbar = () => {
             </li>
           )}
 
-          <li className="nav-item">
-            <Link
-              className={`nav-link ${
-                activetab === "notifications" ? "active" : ""
-              }`}
-            >
-              الاشعارات
-            </Link>
-          </li>
+          <NotificationsDropDown
+            smallscreen={isSmall}
+            activetab={activetab}
+            handleTabClick={handleTabClick}
+          />
 
           <button
             className="btn btn-secondary add-btn"

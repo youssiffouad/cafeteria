@@ -10,7 +10,7 @@ router.get(
 router.put("/:id/mark-seen", notificationController.makeNotificationSeen);
 router.get("/latest", notificationController.getLatest10Notifications);
 router.get(
-  "latest-30-days",
+  "/latest-30-days",
   notificationController.getNotificationsFromLast30Days
 );
 

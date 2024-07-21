@@ -54,6 +54,7 @@ export const fetchNotificationsLast30Days = createAsyncThunk(
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
+    console.log("hjkvnjnvjnvnkv", data);
     return data;
   }
 );
