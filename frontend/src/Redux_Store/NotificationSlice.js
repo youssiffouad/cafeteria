@@ -25,9 +25,11 @@ export const markNotificationSeen = createAsyncThunk(
         method: "PUT",
       }
     );
+    console.log("here is the response of mark notification seen", response);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
+    console.log("here is the iddddddddddddddddddd", id);
     return id; // Return the id to update the state
   }
 );
@@ -66,6 +68,7 @@ const notificationsSlice = createSlice({
     notifications: [],
     latestNotifications: [],
     recentNotifications: [],
+    notread: false,
     status: "idle",
     error: null,
   },
@@ -88,10 +91,14 @@ const notificationsSlice = createSlice({
       // Mark notification as seen
       .addCase(markNotificationSeen.fulfilled, (state, action) => {
         const id = action.payload;
-        const notification = state.notifications.find((n) => n.id === id);
+        const notification = state.recentNotifications.find((n) => n.id == id);
+
         if (notification) {
           notification.seen = true;
         }
+        state.notread = state.recentNotifications.some(
+          (notification) => notification.seen === 0
+        );
       })
 
       // Fetch latest 10 notifications
@@ -114,6 +121,9 @@ const notificationsSlice = createSlice({
       .addCase(fetchNotificationsLast30Days.fulfilled, (state, action) => {
         state.recentNotifications = action.payload;
         state.status = "succeeded";
+        state.notread = state.recentNotifications.some(
+          (notification) => notification.seen === 0
+        );
       })
       .addCase(fetchNotificationsLast30Days.rejected, (state, action) => {
         state.status = "failed";

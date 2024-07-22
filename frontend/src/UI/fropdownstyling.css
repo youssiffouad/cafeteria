@@ -45,3 +45,7 @@
   color: #ffffff; /* Text color for unread notifications */
   background-color: #ff5733; /* Background color for unread notifications */
 }
+
+a.notread {
+  color: #d10909;
+}

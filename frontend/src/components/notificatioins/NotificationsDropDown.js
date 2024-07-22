@@ -4,7 +4,12 @@ import "../../UI/fropdownstyling.css";
 
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchNotificationsLast30Days } from "../../Redux_Store/NotificationSlice";
+import {
+  fetchNotificationsLast30Days,
+  markNotificationSeen,
+} from "../../Redux_Store/NotificationSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 const NotificationsDropDown = (props) => {
   const [display, setdisplay] = useState(false);
   const dispatch = useDispatch();
@@ -12,6 +17,7 @@ const NotificationsDropDown = (props) => {
     (state) => state.notification.recentNotifications
   );
   const loadStatus = useSelector((state) => state.notification.status);
+  const notread = useSelector((state) => state.notification.notread);
 
   useEffect(() => {
     console.log(loadStatus);
@@ -29,13 +35,17 @@ const NotificationsDropDown = (props) => {
         <Link
           className={`nav-link ${
             props.activetab === "notifications" ? "active" : ""
-          }`}
+          } ${notread ? "notread" : ""}`}
           onMouseOver={() => {
             setdisplay(true);
           }}
           onMouseLeave={() => setdisplay(false)}
         >
-          الاشعارات
+          الاشعارات{" "}
+          <FontAwesomeIcon
+            icon={faBell}
+            className={` ${notread ? "notread" : ""}`}
+          />
         </Link>
         <ul
           className={`${dropdownDynamicClass} ${!display ? "d-none" : ""}`}
@@ -48,7 +58,11 @@ const NotificationsDropDown = (props) => {
             <li className="nav-item" key={notification.id} color="red">
               <Link
                 to="/home/ordinaryproducts"
-                onClick={() => props.handleTabClick("notifications")}
+                className={`${notification.seen ? "" : "notread"}`}
+                onClick={() => {
+                  props.handleTabClick("notifications");
+                  dispatch(markNotificationSeen(notification.id));
+                }}
               >
                 {notification.name}
                 <br />
