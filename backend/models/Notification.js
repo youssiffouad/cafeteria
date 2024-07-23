@@ -62,13 +62,13 @@ class Notification {
         } else {
           const newNotification = {
             id: this.lastID,
-            name,
-            description,
+            name: description,
+            description: total_description,
             seen: 0,
             created_at: new Date(),
           };
           resolve(newNotification);
-          Notification.sendEvent(1, newNotification);
+          Notification.broadcastEvent(newNotification);
         }
       });
     });

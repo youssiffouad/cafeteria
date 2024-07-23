@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 
 import "../../UI/fropdownstyling.css";
+import { serverSocket } from "../../backendSocket";
 
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  addRecentNotification,
   fetchNotificationsLast30Days,
   markNotificationSeen,
 } from "../../Redux_Store/NotificationSlice";
@@ -18,6 +20,7 @@ const NotificationsDropDown = (props) => {
   );
   const loadStatus = useSelector((state) => state.notification.status);
   const notread = useSelector((state) => state.notification.notread);
+  const id = useSelector((state) => state.auth?.user?.user_id);
 
   useEffect(() => {
     console.log(loadStatus);
@@ -25,6 +28,26 @@ const NotificationsDropDown = (props) => {
       dispatch(fetchNotificationsLast30Days());
     }
   }, [loadStatus]);
+
+  // useEffect(() => {
+  //   console.log("i am in the eventttttttttttttttttttttt");
+  //   const eventSourceUrl = `${serverSocket}/notifications/stream?clientId=${id}`; // replace with actual URL and client ID
+  //   const eventSource = new EventSource(eventSourceUrl);
+
+  //   eventSource.onmessage = (event) => {
+  //     const newMessage = JSON.parse(event.data);
+  //     console.log("a new message arrived", newMessage);
+  //     dispatch(addRecentNotification(newMessage));
+  //   };
+
+  //   eventSource.onerror = (error) => {
+  //     console.error("SSE error:", error);
+  //   };
+
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // }, []);
 
   const dropdownDynamicClass = props.smallscreen
     ? "verticalnav vertical-nav-small "

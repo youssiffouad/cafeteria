@@ -72,7 +72,18 @@ const notificationsSlice = createSlice({
     status: "idle",
     error: null,
   },
-  reducers: {},
+  reducers: {
+    addRecentNotification: (state, action) => {
+      console.log(" i am n action of add recent notification", action);
+      state.recentNotifications = [
+        action.payload,
+        ...state.recentNotifications,
+      ];
+      state.notread = state.recentNotifications.some(
+        (notification) => notification.seen === 0
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch all notifications
@@ -133,3 +144,4 @@ const notificationsSlice = createSlice({
 });
 
 export default notificationsSlice.reducer;
+export const { addRecentNotification } = notificationsSlice.actions;
