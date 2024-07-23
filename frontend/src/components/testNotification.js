@@ -6,24 +6,24 @@ const SseComponent = () => {
   const [messages, setMessages] = useState([]);
   const id = useSelector((state) => state.auth.user.user_id);
 
-  useEffect(() => {
-    const eventSourceUrl = `${serverSocket}/notifications/stream?clientId=${id}`; // replace with actual URL and client ID
-    const eventSource = new EventSource(eventSourceUrl);
+  // useEffect(() => {
+  //   const eventSourceUrl = `${serverSocket}/notifications/stream?clientId=${id}`; // replace with actual URL and client ID
+  //   const eventSource = new EventSource(eventSourceUrl);
 
-    eventSource.onmessage = (event) => {
-      const newMessage = JSON.parse(event.data);
-      console.log("a new message arrived", newMessage);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    };
+  //   eventSource.onmessage = (event) => {
+  //     const newMessage = JSON.parse(event.data);
+  //     console.log("a new message arrived", newMessage);
+  //     setMessages((prevMessages) => [...prevMessages, newMessage]);
+  //   };
 
-    eventSource.onerror = (error) => {
-      console.error("SSE error:", error);
-    };
+  //   eventSource.onerror = (error) => {
+  //     console.error("SSE error:", error);
+  //   };
 
-    return () => {
-      eventSource.close();
-    };
-  }, []);
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // }, []);
 
   return (
     <div>
